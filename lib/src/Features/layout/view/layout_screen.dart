@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:signature_system/src/Features/layout/cubit/layout_cubit.dart';
+import 'package:signature_system/src/Features/layout/manager/layout_cubit.dart';
 
 class LayoutScreen extends StatelessWidget {
   const LayoutScreen({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:signature_system/src/Features/layout/layout_screen.dart';
-import 'package:signature_system/src/Features/login_screen/login_screen.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:signature_system/src/Features/layout/view/layout_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const LayoutScreen(),
+      home: ScreenUtilInit(child: const LayoutScreen()),
     );
   }
 }
