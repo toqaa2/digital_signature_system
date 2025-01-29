@@ -54,7 +54,11 @@ class LayoutScreen extends StatelessWidget {
                 ),
 
               ),
-              body: Expanded(child: cubit.pages[cubit.page]),
+              body: Column(
+                children: [
+                  Expanded(child: cubit.pages[cubit.page]),
+                ],
+              ),
 
             ),
           );
