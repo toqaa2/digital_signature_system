@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:signature_system/src/Features/login_screen/view/login_screen.dart';
-
+import 'package:signature_system/src/Features/home_screen/view/home_screen.dart';
 part 'layout_state.dart';
 
 class LayoutCubit extends Cubit<LayoutState> {
   LayoutCubit() : super(LayoutInitial());
   static LayoutCubit get(context) => BlocProvider.of(context);
   List<Widget> pages = [
-    const LoginScreen(),
+     HomeScreen(),
     const LoginScreen(),
     const LoginScreen(),
 
