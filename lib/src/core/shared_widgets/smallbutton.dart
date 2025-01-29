@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 
-// Enum for Icon Position
 enum IconPosition { leading, trailing }
 
-// Custom Elevated Button Widget
 class ElevatedButtonWithIcon extends StatelessWidget {
   final String label;
-  final Icon? icon; // Optional leading icon
+  final Icon? icon;
   final VoidCallback onPressed;
   final IconPosition iconPosition;
-  final bool border; // Option for border
-  final Color backgroundColor; // Background color
-  final Color textColor; // Text color
+  final bool border;
+  final Color backgroundColor;
+  final Color textColor;
 
   const ElevatedButtonWithIcon({
     super.key,
     required this.label,
     this.icon,
     required this.onPressed,
-    this.iconPosition = IconPosition.leading, // Default icon position
-    this.border = true, // Default to having a border
-    this.backgroundColor = Colors.white, // Default background color
-    this.textColor = Colors.black, // Default text color
+    this.iconPosition = IconPosition.leading,
+    this.border = true,
+    this.backgroundColor = Colors.white,
+    this.textColor = Colors.black,
   });
 
   @override
@@ -31,12 +29,12 @@ class ElevatedButtonWithIcon extends StatelessWidget {
 
       style: ElevatedButton.styleFrom(
 
-        foregroundColor: textColor, backgroundColor: backgroundColor, // Custom text color
+        foregroundColor: textColor, backgroundColor: backgroundColor,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8), // Border radius
+          borderRadius: BorderRadius.circular(8),
           side: border
-              ?  BorderSide(color: AppColors.mainColor) // Border color
-              : BorderSide.none, // No border if false
+              ?  BorderSide(color: AppColors.mainColor)
+              : BorderSide.none,
         ),
       ),
       onPressed: onPressed,
@@ -46,11 +44,11 @@ class ElevatedButtonWithIcon extends StatelessWidget {
         children: [
           if (iconPosition == IconPosition.leading && icon != null) ...[
             icon!,
-            const SizedBox(width: 8), // Space between icon and label
+            const SizedBox(width: 8),
           ],
           Text(label),
           if (iconPosition == IconPosition.trailing && icon != null) ...[
-            const SizedBox(width: 8), // Space between label and icon
+            const SizedBox(width: 8),
             icon!,
           ],
         ],

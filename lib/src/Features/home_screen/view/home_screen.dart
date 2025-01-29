@@ -6,7 +6,6 @@ import 'package:signature_system/src/Features/home_screen/view/widgets/horizonta
 import 'package:signature_system/src/core/helper/extension/distance.dart';
 import 'package:signature_system/src/core/shared_widgets/smallbutton.dart';
 import 'package:signature_system/src/core/style/colors.dart';
-
 import '../manager/home_cubit.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -80,11 +79,11 @@ class HomeScreen extends StatelessWidget {
                                             cubit.changeStepPrev();
                                           }
                                         : () {},
-                                    // No-op function when there's no previous step
+
                                     backgroundColor: cubit.currentStep > 0
                                         ? Colors.white
                                         : Colors.grey.shade300,
-                                    // Change color based on state
+
                                     label: 'Previous',
                                     border:
                                         cubit.currentStep > 0 ? true : false,
@@ -92,7 +91,9 @@ class HomeScreen extends StatelessWidget {
                                         Icons.keyboard_arrow_left_rounded),
                                     iconPosition: IconPosition.leading,
                                   ),
+
                                   2.isWidth,
+
                                   ElevatedButtonWithIcon(
                                     border: false,
                                     backgroundColor: AppColors.mainColor,
