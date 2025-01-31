@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.6.0
+  sdk: ^3.5.0
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -38,8 +38,6 @@ dependencies:
 
   flutter_full_pdf_viewer_null_safe: ^1.0.0
   intl_phone_field: ^3.2.0
-  device_preview:
-  device_apps:
   path_provider: ^2.1.5
   # Firebase
   firebase_core:
@@ -52,8 +50,11 @@ dependencies:
   flutter_svg:
   flutter_pdfview: ^1.4.0
   html: ^0.15.5
-  syncfusion_flutter_core: ^28.2.3
-  syncfusion_flutter_pdfviewer:
+  syncfusion_flutter_pdfviewer: ^27.2.3
+  file_picker: ^8.3.1
+
+  pdf: ^3.11.2
+
 
 dev_dependencies:
   flutter_test:
@@ -81,6 +82,8 @@ flutter:
   assets:
     - assets/
     - assets/s.pdf
+    - assets/document1.doc
+    - assets/document2.doc
     - assets/Program Launch Memo 2025.docx
   #   - images/a_dot_ham.jpeg
 

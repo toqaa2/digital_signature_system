@@ -4,6 +4,7 @@ import 'package:signature_system/src/Features/login_screen/view/login_screen.dar
 import 'package:signature_system/src/Features/home_screen/view/home_screen.dart';
 
 import '../../form_screen/form_screen.dart';
+import '../../form_screen/sign_page.dart';
 part 'layout_state.dart';
 
 class LayoutCubit extends Cubit<LayoutState> {
@@ -11,8 +12,9 @@ class LayoutCubit extends Cubit<LayoutState> {
   static LayoutCubit get(context) => BlocProvider.of(context);
   List<Widget> pages = [
      HomeScreen(),
-    PDFViewerPage(),
-    const LoginScreen(),
+    SignaturePage(),
+
+     SignaturePage2(),
 
   ];
   List<bool> isSelected = [
