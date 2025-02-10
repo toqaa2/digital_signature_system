@@ -3,15 +3,15 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:file_picker/file_picker.dart';
-import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:image/image.dart' as img; // Import the image package
 
 
 
 class SignaturePage2 extends StatefulWidget {
+  const SignaturePage2({super.key});
+
   @override
   _SignaturePageState createState() => _SignaturePageState();
 }
@@ -103,7 +103,7 @@ Future<Uint8List> signatureBytes()async{
     try{
       final signatureImage = await rootBundle.load(signatureAssetPath);
       final signatureBytes = signatureImage.buffer.asUint8List();
-      final originalImage = await img.decodePng(signatureBytes!); // Assuming PDF is PNG for first page preview
+      final originalImage = img.decodePng(signatureBytes); // Assuming PDF is PNG for first page preview
 
       print('image bytes $signatureBytes');
       // Create a PDF document
@@ -122,7 +122,7 @@ Future<Uint8List> signatureBytes()async{
                 pw.Positioned(
                   left: signatureX,
                   top: signatureY,
-                  child:pw.Image(pw.MemoryImage(img.encodePng(originalImage!) as Uint8List), width:60),
+                  child:pw.Image(pw.MemoryImage(img.encodePng(originalImage!)), width:60),
                 ),
               ],
             );

@@ -7,7 +7,8 @@ part 'home_state.dart';
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeInitial());
   static HomeCubit get(context) => BlocProvider.of(context);
-  final List<String> stepNames = ['Choose From', 'Fill From', 'Send Request'];
+  final List<String> stepNames = ['Choose From','Fill From', 'Send Request'];
+  final List<String> stepNames4 = ['Choose From','Fill From',"Upload Documents", 'Send Request'];
   final List<String> dropdownItems = ['Program Lunch Memo', 'Campaign Memo', 'Internal Committee Memo','Merchant Onboarding Memo','Payment Request Memo'];
   String? selectedItem;
   int currentStep = 0;
@@ -19,7 +20,7 @@ class HomeCubit extends Cubit<HomeState> {
       case  'Internal Committee Memo' :formType= FormType.internalCommitteeMemo;
       case  'Merchant Onboarding Memo' :formType= FormType.merchantOnboardingMemo;
       case  'Payment Request Memo' :formType= FormType.paymentRequestMemo;
-    };
+    }
     selectedItem = newValue!;
     emit(ChangeValue());
   }

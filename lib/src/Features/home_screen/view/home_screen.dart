@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:signature_system/src/Features/home_screen/view/widgets/dropdownmenu.dart';
-import 'package:signature_system/src/Features/home_screen/view/widgets/horizontal_steper.dart';
 import 'package:signature_system/src/core/helper/extension/distance.dart';
 import 'package:signature_system/src/core/shared_widgets/smallbutton.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 import '../manager/home_cubit.dart';
+import 'widgets/custom_stepper.dart';
+import 'widgets/step_switcher_3steps.dart';
+import 'widgets/step_switcher_4steps.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -16,60 +17,43 @@ class HomeScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => HomeCubit(),
       child: BlocConsumer<HomeCubit, HomeState>(
-        listener: (context, state) {
-          // TODO: implement listener
-        },
+        listener: (context, state) {},
         builder: (context, state) {
           HomeCubit cubit = HomeCubit.get(context);
           return Scaffold(
             backgroundColor: Colors.transparent,
             body: Center(
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height * 0.6,
-                width: MediaQuery.of(context).size.height * 1.5,
-                child: SingleChildScrollView(
+              child: SingleChildScrollView(
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20.w),
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.9,
+                    maxWidth: MediaQuery.of(context).size.width * 0.8,
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      //stepper
-                      custom_horizontal_stepper(
-                          stepNames: cubit.stepNames,
-                          currentStep: cubit.currentStep),
+                      CustomStepper(
+                        cubit: cubit,
+                      ),
                       const SizedBox(height: 20),
-                      //center widget
+                      // Center widget
                       Container(
                         padding: const EdgeInsets.symmetric(vertical: 30.0),
-                        height: MediaQuery.of(context).size.height * 0.4,
-                        width: MediaQuery.of(context).size.height * 1,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: AppColors.mainColor),
                         ),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            //title text
-                            Text(
-                              'Send Signature Request Form',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.mainColor),
-                            ),
-                            20.isHeight,
-                            // Dropdown Menu
-                            FormTypeSelector(
-                              onChanged: (String? newValue) {
-                                cubit.selectItem(newValue);
-                              },
-                              dropdownItems: cubit.dropdownItems,
-                              selectedItem: cubit.selectedItem,
-                            ),
+                            cubit.selectedItem == 'Payment Request Memo'
+                                ? StepSwitcher4Steps(cubit: cubit)
+                                : StepSwitcher3Steps(cubit: cubit),
                             15.isHeight,
-                            //buttons
+                            // Buttons
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 120.h),
+                              padding: EdgeInsets.symmetric(horizontal: 20.w),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -79,26 +63,25 @@ class HomeScreen extends StatelessWidget {
                                             cubit.changeStepPrev();
                                           }
                                         : () {},
-
                                     backgroundColor: cubit.currentStep > 0
                                         ? Colors.white
                                         : Colors.grey.shade300,
-
                                     label: 'Previous',
-                                    border:
-                                        cubit.currentStep > 0 ? true : false,
+                                    border: cubit.currentStep > 0,
                                     icon: const Icon(
                                         Icons.keyboard_arrow_left_rounded),
                                     iconPosition: IconPosition.leading,
                                   ),
-
                                   2.isWidth,
-
                                   ElevatedButtonWithIcon(
                                     border: false,
                                     backgroundColor: AppColors.mainColor,
                                     onPressed: () {
                                       if (cubit.currentStep < 2) {
+                                        cubit.changeStepNext();
+                                      } else if (cubit.selectedItem ==
+                                              'Payment Request Memo' &&
+                                          cubit.currentStep < 3) {
                                         cubit.changeStepNext();
                                       }
                                     },

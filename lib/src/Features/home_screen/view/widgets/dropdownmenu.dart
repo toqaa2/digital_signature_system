@@ -4,12 +4,14 @@ class FormTypeSelector extends StatelessWidget {
   final List<String> dropdownItems;
   final String? selectedItem;
   final ValueChanged<String?> onChanged;
+  final String titleText;
+  final String hintText;
 
   const FormTypeSelector({
     super.key,
     required this.dropdownItems,
     required this.selectedItem,
-    required this.onChanged,
+    required this.onChanged, required this.titleText, required this.hintText,
   });
 
   @override
@@ -17,8 +19,7 @@ class FormTypeSelector extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Please Choose The Type of Form *',
+         Text(titleText,
           style: TextStyle(fontSize: 12, color: Colors.grey),
         ),
         const SizedBox(height: 5),
@@ -33,7 +34,7 @@ class FormTypeSelector extends StatelessWidget {
           child: DropdownButton<String>(
             underline: SizedBox(),
             value: selectedItem,
-            hint: const Text('Select Form Type'),
+            hint:  Text(hintText),
             style: const TextStyle(fontSize: 12),
             isExpanded: true,
             items: dropdownItems.map((String item) {

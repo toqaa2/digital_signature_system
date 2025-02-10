@@ -25,7 +25,7 @@ class Textfield extends StatelessWidget {
         decoration: InputDecoration(
 
           labelText: labelText,
-          labelStyle: const TextStyle(fontSize: 10),
+          labelStyle: const TextStyle(fontSize: 10,color: Colors.grey),
 
           filled: true,
           focusedBorder: OutlineInputBorder(

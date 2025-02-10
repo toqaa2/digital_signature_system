@@ -1,13 +1,11 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/rendering.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'dart:html' as html;
 
 
 class SignaturePage extends StatefulWidget {
+  const SignaturePage({super.key});
+
   @override
   _SignaturePageState createState() => _SignaturePageState();
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 
-class custom_horizontal_stepper extends StatelessWidget {
-  const custom_horizontal_stepper({
+class custom_horizontal_stepper_4Steps extends StatelessWidget {
+  const custom_horizontal_stepper_4Steps({
     super.key,
     required List<String> stepNames,
     required int currentStep,
@@ -42,7 +42,8 @@ class custom_horizontal_stepper extends StatelessWidget {
               // Step label
               Text(_stepNames[index]),
               const SizedBox(width: 8),
-              if (index < 2)
+              // Horizontal line between steps if not the last step
+              if (index < 3)
                 Container(
                   height: 2,
                   width: 50,
