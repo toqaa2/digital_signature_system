@@ -53,12 +53,13 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCRmGRUDO_is6rQeF7FYJJhzCA6MM4u1Yw',
-    appId: '1:386416703753:web:cffaa0d93ba93adc8c7bd8',
-    messagingSenderId: '386416703753',
-    projectId: 'smart-onboarding-test',
-    authDomain: 'smart-onboarding-test.firebaseapp.com',
-    storageBucket: 'smart-onboarding-test.firebasestorage.app',
-    measurementId: 'G-F8R7L5E5C5',
+    apiKey: 'AIzaSyCH5C0Q6Ip1bWnvljHqJVyIxt7CxF7xqoc',
+    appId: '1:617736760730:web:ad18477d8dd4c89df1de23',
+    messagingSenderId: '617736760730',
+    projectId: 'e-signature-8ab13',
+    authDomain: 'e-signature-8ab13.firebaseapp.com',
+    storageBucket: 'e-signature-8ab13.firebasestorage.app',
+    measurementId: 'G-LWKK5YXG5G',
   );
+
 }
