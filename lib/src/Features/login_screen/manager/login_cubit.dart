@@ -18,11 +18,14 @@ class LoginCubit extends Cubit<LoginState> {
   static LoginCubit get(context) => BlocProvider.of(context);
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  bool isloading = true;
 
   Future<void> login({
     required BuildContext context,
   }) async {
     String uid;
+    isloading = true;
+    emit(Loading());
     FirebaseAuth.instance
         .signInWithEmailAndPassword(
             email: emailController.text.trim(),
@@ -34,8 +37,10 @@ class LoginCubit extends Cubit<LoginState> {
           .doc(uid)
           .get()
           .then((value) async {
-        Constants.userModel = UserModel.fromJson(value.data());
 
+        Constants.userModel = UserModel.fromJson(value.data());
+        isloading = false;
+        emit(NotLoading());
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (context) => const LayoutScreen(),

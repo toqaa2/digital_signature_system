@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:signature_system/src/Features/home_screen/view/home_screen.dart';
-import 'package:signature_system/src/Features/layout/view/layout_screen.dart';
 import 'package:signature_system/src/Features/login_screen/manager/login_cubit.dart';
 import 'package:signature_system/src/Features/login_screen/view/widgets/custom_text_field.dart';
 import 'package:signature_system/src/core/helper/extension/distance.dart';
@@ -15,116 +13,124 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-  create: (context) => LoginCubit(),
-  child: BlocConsumer<LoginCubit, LoginState>(
-  listener: (context, state) {
-    // TODO: implement listener
-  },
-  builder: (context, state) {
-    final LoginCubit cubit = LoginCubit.get(context);
-    return Container(
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage("assets/BackGround.png"),
-              fit: BoxFit.fill)),
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          title: Padding(
-            padding: EdgeInsets.only(left: 20),
-            child: SvgPicture.asset(
-              'assets/Logo.svg',
-              height: 50,
-            ),
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        body: Center(
-          child: Container(
-            height: MediaQuery.of(context).size.height*0.5,
-            width: MediaQuery.of(context).size.width*0.7,
+      create: (context) => LoginCubit(),
+      child: BlocConsumer<LoginCubit, LoginState>(
+        listener: (context, state) {
+          // TODO: implement listener
+        },
+        builder: (context, state) {
+          final LoginCubit cubit = LoginCubit.get(context);
+          return Container(
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.mainColor),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(35.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/Signup-logo.svg',
-                        ),
-                        5.isWidth,
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Sign In",
-                                  style: TextStyle(
-                                      color: AppColors.mainColor,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  " to your Account ",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ],
+                image: DecorationImage(
+                    image: AssetImage("assets/BackGround.png"),
+                    fit: BoxFit.fill)),
+            child: Scaffold(
+              appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                title: Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: SvgPicture.asset(
+                    'assets/Logo.svg',
+                    height: 50,
+                  ),
+                ),
+              ),
+              backgroundColor: Colors.transparent,
+              body: Center(
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.mainColor),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(35.0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/Signup-logo.svg',
+                              ),
+                              5.isWidth,
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Sign In",
+                                        style: TextStyle(
+                                            color: AppColors.mainColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        " to your Account ",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    "Sign your Form Now, With Waseela’s Digital Signature System",
+                                    style: TextStyle(
+                                        fontSize: 10, color: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          20.isHeight,
+                          Textfield(
+                            controller: cubit.emailController,
+                            labelText: "Enter Your Email Address",
+                          ),
+                          10.isHeight,
+                          Textfield(
+                            controller: cubit.passwordController,
+                            labelText: "Enter Your Password",
+                            trailingIcon: Icon(
+                              Icons.visibility_off_sharp,
+                              color: Colors.grey,
+                              size: 18,
                             ),
-                            Text(
-                              "Sign your Form Now, With Waseela’s Digital Signature System",
-                              style: TextStyle(fontSize: 10, color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    20.isHeight,
-                    Textfield(
-                      controller: cubit.emailController,
-
-                      labelText: "Enter Your Email Address",
-                    ),
-                    10.isHeight,
-                    Textfield(
-                      controller: cubit.passwordController,
-                      labelText: "Enter Your Password",
-                      trailingIcon: Icon(
-                        Icons.visibility_off_sharp,
-                        color: Colors.grey,
-                        size: 18,
+                          ),
+                          5.isHeight,
+                          state is Loading
+                              ? Column(
+                                children: [
+                                  20.isHeight,
+                                  const Center(child: CircularProgressIndicator()),
+                                ],
+                              )
+                              :
+                          ButtonWidget(
+                            onTap: () {
+                              cubit.login(context: context);
+                            },
+                            minWidth: 500,
+                            textStyle:
+                                TextStyle(fontSize: 14, color: Colors.white),
+                            text: "Login",
+                          ),
+                        ],
                       ),
                     ),
-                    5.isHeight,
-                    ButtonWidget(
-                      onTap: (){
-                        cubit.login(context: context);
-                      },
-
-                      minWidth: 500,
-                      textStyle: TextStyle(fontSize: 14,color: Colors.white),
-                      text: "Login",
-                    ),
-
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
-  },
-),
-);
   }
 }

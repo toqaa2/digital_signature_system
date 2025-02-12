@@ -4,6 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:signature_system/src/core/helper/extension/distance.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 
+import '../../../core/constants/constants.dart';
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -43,10 +45,10 @@ class ProfileScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Toqaa Hisham Ibrahim",
+                              Constants.userModel!.name.toString(),
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            Text("T.Hisham@waseela-cf.com"),
+                            Text(Constants.userModel!.email.toString(),),
                           ],
                         ),
                       ],
@@ -74,8 +76,8 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Department : Digitalization"),
-                      Text("Role : UIUX Designer"),
+                      Text(Constants.userModel!.department.toString(),),
+                      Text(Constants.userModel!.role.toString(),),
                       5.isHeight,
                       Text("Signature "),
                       Image.asset(
