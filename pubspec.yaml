@@ -54,9 +54,9 @@ dependencies:
   flutter_svg:
   flutter_pdfview: ^1.4.0
   html: ^0.15.5
-  syncfusion_flutter_pdfviewer: ^27.2.3
+  syncfusion_flutter_pdfviewer: ^28.2.5
   file_picker: ^8.3.1
-
+  universal_html:
   pdf: ^3.11.2
 
 
