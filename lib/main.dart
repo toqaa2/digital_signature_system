@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:signature_system/firebase_options.dart';
 import 'package:signature_system/src/Features/layout/view/layout_screen.dart';
+import 'package:signature_system/src/Features/login_screen/view/login_screen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: ScreenUtilInit(child: const LayoutScreen()),
+      home: ScreenUtilInit(child: const LoginScreen()),
     );
   }
 }

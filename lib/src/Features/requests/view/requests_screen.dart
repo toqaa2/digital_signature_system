@@ -38,7 +38,7 @@ class _RequestsScreenState extends State<RequestsScreen>
           padding: const EdgeInsets.symmetric(vertical: 100.0),
           child: Container(
             decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(8)),
+                color: Colors.white.withAlpha(150), borderRadius: BorderRadius.circular(8)),
             margin: EdgeInsets.symmetric(horizontal: 20.w),
             constraints: BoxConstraints(
               maxHeight: MediaQuery.of(context).size.height * 0.9,

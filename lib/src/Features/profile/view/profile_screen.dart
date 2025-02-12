@@ -14,7 +14,7 @@ class ProfileScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.mainColor),
+          border: Border.all(color: Colors.grey.shade300),
         ),
         margin: EdgeInsets.symmetric(horizontal: 20.w),
         constraints: BoxConstraints(

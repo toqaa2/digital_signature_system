@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:signature_system/src/Features/home_screen/view/widgets/Send_request_emails.dart';
 
 import '../../manager/home_cubit.dart';
+import '../step2_screen.dart';
+import '../success_message.dart';
 import 'first_step.dart';
 
 class StepSwitcher3Steps extends StatelessWidget {
@@ -15,12 +17,13 @@ class StepSwitcher3Steps extends StatelessWidget {
     if (cubit.currentStep == 0) {
       return FirstStep(cubit: cubit); // Show FirstStep for step 0
     } else if (cubit.currentStep == 1) {
-      return Center(
-        child: Text("Step 2"),
-      ); // Replace with actual SecondStep widget
+      return Step2Screen();
     } else if (cubit.currentStep == 2) {
       return SendRequestEmails(); // Replace with actual ThirdStep widget
-    } else {
+    }else if (cubit.currentStep == 3) {
+      return SuccessMessage();
+    }
+    else {
       return Center(
         child: Text('Unknown Step'),
       ); // Handle unexpected step values

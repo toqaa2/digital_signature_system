@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:signature_system/src/Features/layout/manager/layout_cubit.dart';
 import 'package:signature_system/src/Features/login_screen/view/login_screen.dart';
+import 'package:signature_system/src/core/style/colors.dart';
 
 class LayoutScreen extends StatelessWidget {
   const LayoutScreen({super.key});
@@ -40,17 +41,17 @@ class LayoutScreen extends StatelessWidget {
                             onPressed: () {
                               cubit.changePage(0);
                             },
-                            child: Text("Home")),
+                            child: Text("Home",style: TextStyle(fontWeight: cubit.isSelected[0] ?FontWeight.bold: FontWeight.normal ,color: cubit.isSelected[0] ? AppColors.mainColor : Colors.blueGrey,))),
                         TextButton(
                             onPressed: () {
                               cubit.changePage(1);
                             },
-                            child: Text("Requests")),
+                            child: Text("Requests",style: TextStyle(fontWeight: cubit.isSelected[1] ?FontWeight.bold: FontWeight.normal ,color: cubit.isSelected[1] ? AppColors.mainColor : Colors.blueGrey,))),
                         TextButton(
                             onPressed: () {
                               cubit.changePage(2);
                             },
-                            child: Text("Profile")),
+                            child: Text("Profile",style: TextStyle(fontWeight: cubit.isSelected[2] ?FontWeight.bold: FontWeight.normal ,color: cubit.isSelected[2] ? AppColors.mainColor : Colors.blueGrey,))),
                       ],
                     ),
                     GestureDetector(

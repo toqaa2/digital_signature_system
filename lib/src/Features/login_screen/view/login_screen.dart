@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:signature_system/src/Features/home_screen/view/home_screen.dart';
+import 'package:signature_system/src/Features/layout/view/layout_screen.dart';
+import 'package:signature_system/src/Features/login_screen/manager/login_cubit.dart';
 import 'package:signature_system/src/Features/login_screen/view/widgets/custom_text_field.dart';
 import 'package:signature_system/src/core/helper/extension/distance.dart';
 import 'package:signature_system/src/core/shared_widgets/custom_button.dart';
@@ -10,6 +14,14 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+  create: (context) => LoginCubit(),
+  child: BlocConsumer<LoginCubit, LoginState>(
+  listener: (context, state) {
+    // TODO: implement listener
+  },
+  builder: (context, state) {
+    final LoginCubit cubit = LoginCubit.get(context);
     return Container(
       decoration: BoxDecoration(
           image: DecorationImage(
@@ -30,7 +42,7 @@ class LoginScreen extends StatelessWidget {
         body: Center(
           child: Container(
             height: MediaQuery.of(context).size.height*0.5,
-            width: MediaQuery.of(context).size.height*0.9,
+            width: MediaQuery.of(context).size.width*0.7,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -78,11 +90,13 @@ class LoginScreen extends StatelessWidget {
                     ),
                     20.isHeight,
                     Textfield(
+                      controller: cubit.emailController,
 
                       labelText: "Enter Your Email Address",
                     ),
                     10.isHeight,
                     Textfield(
+                      controller: cubit.passwordController,
                       labelText: "Enter Your Password",
                       trailingIcon: Icon(
                         Icons.visibility_off_sharp,
@@ -92,9 +106,11 @@ class LoginScreen extends StatelessWidget {
                     ),
                     5.isHeight,
                     ButtonWidget(
-                      onTap: (){},
+                      onTap: (){
+                        cubit.login(context: context);
+                      },
 
-                      minWidth: 400,
+                      minWidth: 500,
                       textStyle: TextStyle(fontSize: 14,color: Colors.white),
                       text: "Login",
                     ),
@@ -107,5 +123,8 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
+  },
+),
+);
   }
 }

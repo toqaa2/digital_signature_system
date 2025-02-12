@@ -18,7 +18,10 @@ class custom_horizontal_stepper_4Steps extends StatelessWidget {
       children:  List.generate(_stepNames.length,(index) {
         return Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Row(
+          child:
+            index == 4?
+            Text("ddddddddddd"):
+          Row(
             children: [
               Container(
                 decoration: BoxDecoration(
@@ -51,7 +54,9 @@ class custom_horizontal_stepper_4Steps extends StatelessWidget {
                 ),
 
             ],
-          ),
+          )
+
+          ,
         );
       }),
     );
