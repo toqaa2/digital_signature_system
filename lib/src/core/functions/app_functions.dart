@@ -34,7 +34,7 @@ class AppFunctions {
         Uint8List pngBytes = byteData!.buffer.asUint8List();
 
         // Decode the image
-        final img.Image pdfImage = imageDecode(pngBytes);
+        // final img.Image pdfImage = imageDecode(pngBytes);
 
         // Add a page with the image
         pdf.addPage(
