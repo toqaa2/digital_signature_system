@@ -48,7 +48,9 @@ class ProfileScreen extends StatelessWidget {
                               Constants.userModel!.name.toString(),
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            Text(Constants.userModel!.email.toString(),),
+                            Text(
+                              Constants.userModel!.email.toString(),
+                            ),
                           ],
                         ),
                       ],
@@ -76,8 +78,12 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(Constants.userModel!.department.toString(),),
-                      Text(Constants.userModel!.role.toString(),),
+                      Text(
+                        Constants.userModel!.department.toString(),
+                      ),
+                      Text(
+                        Constants.userModel!.role.toString(),
+                      ),
                       5.isHeight,
                       Text("Signature "),
                       Image.asset(

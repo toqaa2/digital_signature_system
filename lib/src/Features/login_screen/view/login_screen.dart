@@ -40,11 +40,11 @@ class LoginScreen extends StatelessWidget {
               body: Center(
                 child: Container(
                   height: MediaQuery.of(context).size.height * 0.5,
-                  width: MediaQuery.of(context).size.width * 0.7,
+                  width: MediaQuery.of(context).size.width * 0.55,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.mainColor),
+                    border: Border.all(color:Colors.grey.shade300),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(35.0),
@@ -106,21 +106,21 @@ class LoginScreen extends StatelessWidget {
                           5.isHeight,
                           state is Loading
                               ? Column(
-                                children: [
-                                  20.isHeight,
-                                  const Center(child: CircularProgressIndicator()),
-                                ],
-                              )
-                              :
-                          ButtonWidget(
-                            onTap: () {
-                              cubit.login(context: context);
-                            },
-                            minWidth: 500,
-                            textStyle:
-                                TextStyle(fontSize: 14, color: Colors.white),
-                            text: "Login",
-                          ),
+                                  children: [
+                                    20.isHeight,
+                                    const Center(
+                                        child: CircularProgressIndicator()),
+                                  ],
+                                )
+                              : ButtonWidget(
+                                  onTap: () {
+                                    cubit.login(context: context);
+                                  },
+                                  minWidth: 500,
+                                  textStyle: TextStyle(
+                                      fontSize: 14, color: Colors.white),
+                                  text: "Login",
+                                ),
                         ],
                       ),
                     ),

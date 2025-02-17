@@ -37,7 +37,6 @@ class LoginCubit extends Cubit<LoginState> {
           .doc(uid)
           .get()
           .then((value) async {
-
         Constants.userModel = UserModel.fromJson(value.data());
         isloading = false;
         emit(NotLoading());

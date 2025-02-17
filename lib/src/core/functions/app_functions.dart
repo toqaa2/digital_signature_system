@@ -3,9 +3,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:universal_html/html.dart' as html;
-// import 'package:syncfusion_flutter_pdf/pdf.dart'; // Import for PDF creation
 import 'package:image/image.dart' as img;
-import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 class AppFunctions {
@@ -25,7 +23,6 @@ class AppFunctions {
 
       for (int i = 0; i < globalKeys.length; i++) {
         final globalKey = globalKeys[i];
-        final imageName = imageNames[i];
 
         RenderRepaintBoundary boundary =
             globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;

@@ -8,22 +8,22 @@ class UserModel {
   String? signature;
 
   UserModel(
-      this.userId,
-      this.department,
-      this.name,
-      this.role,
-      this.email,
-      this.signature,
-      );
+    this.userId,
+    this.department,
+    this.name,
+    this.role,
+    this.email,
+    this.signature,
+  );
 
   Map<String, dynamic> toMap() => {
-    'userId': userId,
-    'department': department,
-    'name': name,
-    'role': role,
-    'email': email,
-    'signature': signature,
-  };
+        'userId': userId,
+        'department': department,
+        'name': name,
+        'role': role,
+        'email': email,
+        'signature': signature,
+      };
 
   UserModel.fromJson(Map<String, dynamic>? json) {
     userId = json!['userId'];

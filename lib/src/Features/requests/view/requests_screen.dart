@@ -65,7 +65,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                     controller: _tabController,
                     children: [
                       sentRequestsWidget(),
-                      recivedRequestsWidget(),
+                      recivedRequestsWidget(context),
                       signedRequestsWidget(),
                     ],
                   ),
