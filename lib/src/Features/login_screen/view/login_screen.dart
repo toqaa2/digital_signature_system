@@ -22,9 +22,9 @@ class LoginScreen extends StatelessWidget {
           final LoginCubit cubit = LoginCubit.get(context);
           return Container(
             decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage("assets/BackGround.png"),
-                    fit: BoxFit.fill)),
+              image: DecorationImage(
+                  image: AssetImage("assets/BackGround.png"), fit: BoxFit.fill),
+            ),
             child: Scaffold(
               appBar: AppBar(
                 backgroundColor: Colors.transparent,
@@ -44,7 +44,7 @@ class LoginScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color:Colors.grey.shade300),
+                    border: Border.all(color: Colors.grey.shade300),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(35.0),
@@ -115,6 +115,12 @@ class LoginScreen extends StatelessWidget {
                               : ButtonWidget(
                                   onTap: () {
                                     cubit.login(context: context);
+                                    // Navigator.of(context).pushAndRemoveUntil(
+                                    //   MaterialPageRoute(
+                                    //     builder: (context) => const LayoutScreen(),
+                                    //   ),
+                                    //       (route) => false,
+                                    // );
                                   },
                                   minWidth: 500,
                                   textStyle: TextStyle(

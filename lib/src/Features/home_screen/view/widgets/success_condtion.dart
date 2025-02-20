@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:signature_system/src/Features/home_screen/manager/home_cubit.dart';
 import 'package:signature_system/src/Features/home_screen/view/widgets/step_switcher_4steps.dart';
+import 'package:signature_system/src/core/constants/constants.dart';
 
 import '../../../../core/shared_widgets/smallbutton.dart';
 import '../../../../core/style/colors.dart';
@@ -9,18 +10,21 @@ import 'custom_stepper.dart';
 import 'step_switcher_3steps.dart';
 
 class ConditionalStepWidget extends StatelessWidget {
-  final HomeCubit cubit; // Replace with your actual cubit type
+  final HomeCubit cubit;
 
   const ConditionalStepWidget({
-    Key? key,
+    super.key,
     required this.cubit,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Determine whether to show the single selector or the detailed column
-    bool showSingleSelector = (cubit.selectedItem == 'Payment Request Memo' && cubit.currentStep == 4) ||
-        (cubit.selectedItem != 'Payment Request Memo' && cubit.currentStep == 3);
+    bool showSingleSelector = (cubit.selectedItem != null &&
+        cubit.selectedItem!.contains('PaymentRequest') &&
+        cubit.currentStep == 4) ||
+        (cubit.selectedItem != null &&
+            !cubit.selectedItem!.contains('PaymentRequest') &&
+            cubit.currentStep == 3);
 
     if (showSingleSelector) {
       return SuccessMessage();
@@ -38,7 +42,8 @@ class ConditionalStepWidget extends StatelessWidget {
             ),
             child: Column(
               children: [
-                cubit.selectedItem == 'Payment Request Memo'
+                cubit.selectedItem != null &&
+                    cubit.selectedItem!.contains('PaymentRequest')
                     ? StepSwitcher4Steps(cubit: cubit)
                     : StepSwitcher3Steps(cubit: cubit),
                 const SizedBox(height: 15), // Adjusted for height
@@ -68,8 +73,22 @@ class ConditionalStepWidget extends StatelessWidget {
                         backgroundColor: AppColors.mainColor,
                         onPressed: () {
                           if (cubit.currentStep < 3 ||
-                              (cubit.selectedItem == 'Payment Request Memo' && cubit.currentStep < 4)) {
+                              (cubit.selectedItem != null && cubit.selectedItem!
+                                  .contains('PaymentRequest') && cubit
+                                  .currentStep < 4)) {
                             cubit.changeStepNext();
+                          }
+                          if (cubit.currentStep == 3 ||
+                              (cubit.selectedItem != null && cubit.selectedItem!
+                                  .contains('PaymentRequest') && cubit
+                                  .currentStep == 4)) {
+
+                            cubit.sendForm(userId: Constants.userModel!.userId!,
+                                formName:  cubit.selectedFormModel!.formName!,
+                                formID: cubit.selectedFormModel!.formID!,
+                                sentBy: Constants.userModel!.email!,
+                                selectedEmails:  cubit.selectedFormModel!.requiredToSign!).then((value) =>cubit.sendToRequiredEmails(sentBy:Constants.userModel!.email!,userID: Constants.userModel!.email!, ) ,);
+
                           }
                         },
                         label: 'Next',

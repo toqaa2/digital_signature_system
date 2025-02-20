@@ -24,8 +24,8 @@ class FirstStep extends StatelessWidget {
               color: AppColors.mainColor),
         ),
         20.isHeight,
-        // Dropdown Menu for Form Type
-        cubit.selectedItem == 'Payment Request Memo'
+
+       cubit.selectedItem!=null&& cubit.selectedItem!.contains('PaymentRequest')
             ? Column(
                 spacing: 10,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -36,12 +36,12 @@ class FirstStep extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       FormTypeSelectorPayment(
-                        hintText: "Select Form Type",
-                        titleText: "Please Choose The Type of Form *",
+                        hintText: "Select Form",
+                        titleText: "Please Choose A Form *",
                         onChanged: (String? newValue) {
-                          cubit.selectItem(newValue);
+                          cubit.selectForm(newValue);
                         },
-                        dropdownItems: cubit.dropdownItems,
+                        dropdownItems: cubit.forms.map((form) => form.formID!).toList(), // Populate dropdown with form IDs
                         selectedItem: cubit.selectedItem,
                       ),
                       FormTypeSelectorPayment(
@@ -84,12 +84,12 @@ class FirstStep extends StatelessWidget {
                 children: [
                   FormTypeSelector(
                     withTitle: true,
-                    hintText: "Select Form Type",
-                    titleText: "Please Choose The Type of Form *",
+                    hintText: "Select Form",
+                    titleText: "Please Choose A Form *",
                     onChanged: (String? newValue) {
-                      cubit.selectItem(newValue);
+                      cubit.selectForm(newValue); // Select the form
                     },
-                    dropdownItems: cubit.dropdownItems,
+                    dropdownItems: cubit.forms.map((form) => form.formID!).toList(), // Populate dropdown with form IDs
                     selectedItem: cubit.selectedItem,
                   ),
                   5.isHeight,
@@ -98,7 +98,7 @@ class FirstStep extends StatelessWidget {
                     withTitle: true,
                     hintText: "Select Form Title",
                     titleText: "Please Choose The Title of Form *",
-                    onChanged: (String? newValue) {},
+                    onChanged: ( newValue) {},
                     dropdownItems: [],
                     selectedItem: cubit.selectedItem,
                   ),

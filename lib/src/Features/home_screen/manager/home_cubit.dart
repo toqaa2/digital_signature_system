@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/helper/enums/form_enum.dart';
+import '../../../core/models/form_model.dart';
 
 part 'home_state.dart';
 
@@ -17,8 +19,71 @@ class HomeCubit extends Cubit<HomeState> {
   String? selectedListLimit;
   int currentStep = 0;
   FormType? formType ;
+  FormModel? selectedFormModel;
+  List<String> requiredEmails = [];
 
 
+
+  List<FormModel> forms = [];
+
+// Fetch forms from Firestore
+  Future<void> fetchForms() async {
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('forms').get();
+      forms = snapshot.docs.map((doc) => FormModel.fromJson(doc.data() as Map<String, dynamic>)).toList();
+      emit(FormsFetched());
+    } catch (error) {
+      print("Error fetching forms: $error");
+    }
+  }
+
+// Select a form from the dropdown
+  void selectForm(String? formId) {
+    selectedItem = formId; // Update the selected form ID
+    if (formId != null) {
+      print(formId);
+      selectedFormModel = forms.firstWhere((form) => form.formID == formId);
+      requiredEmails = selectedFormModel?.requiredToSign ?? [];
+    } else {
+      selectedFormModel = null; // Clear selected form if none is selected
+      requiredEmails.clear();
+    }
+    emit(FormSelected());
+  }
+
+  Future<void> sendToRequiredEmails({
+    required String sentBy,
+    required String userID,
+  }) async {
+    if (selectedFormModel == null) {
+      print("No form selected");
+      return;
+    }
+    String formID = selectedFormModel!.formID!;
+    List<String> selectedEmails = List.from(requiredEmails);
+    DocumentReference formReference =
+    FirebaseFirestore.instance.collection('users')
+        .doc(userID)
+        .collection("sent").doc(formID);
+
+
+    for (String email in selectedEmails) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(email)
+          .collection('received_forms')
+          .doc(formID)
+          .set({
+        "formRef" : formReference
+
+      }).then((_) {
+
+      }).catchError((error) {
+      });
+    }
+
+    emit(SendForm());
+  }
   void selectItem(String? newValue) {
     switch (newValue){
       case  'Program Lunch Memo' :formType= FormType.programLunchMemo;
@@ -46,5 +111,36 @@ class HomeCubit extends Cubit<HomeState> {
 
     currentStep++;
     emit(ChangeStepNext());
+  }
+
+  Future<void> sendForm(
+      {required String userId,
+        required String formName,
+        required String formID,
+        required String sentBy,
+        required List<String> selectedEmails,
+
+      }) async {
+    await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('sent_forms')
+          .doc(formName)
+          .set({
+        'formID': formID,
+        'formName': formName,
+        'formLink': "form.formLink",
+        'sentTo': selectedEmails,
+        'sentBy': sentBy,
+        'sentDate':DateTime.now(),
+      'isFullySigned':false,
+      'formTitle':"title"
+
+
+      }).then((_) {
+        emit(SendForm());
+        print("Form sent successfully!");
+      });
+
   }
 }

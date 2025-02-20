@@ -1,15 +1,11 @@
-import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:signature_system/src/Features/layout/view/layout_screen.dart';
 import 'package:signature_system/src/core/models/user_model.dart';
-
 import '../../../core/constants/constants.dart';
-
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
@@ -31,7 +27,7 @@ class LoginCubit extends Cubit<LoginState> {
             email: emailController.text.trim(),
             password: passwordController.text.trim())
         .then((value) {
-      uid = value.user!.uid;
+      uid = emailController.text.trim();
       FirebaseFirestore.instance
           .collection("users")
           .doc(uid)

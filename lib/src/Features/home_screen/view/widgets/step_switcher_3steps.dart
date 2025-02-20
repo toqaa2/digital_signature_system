@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:signature_system/src/Features/home_screen/view/widgets/Send_request_emails.dart';
+import 'package:signature_system/src/Features/home_screen/view/widgets/send_request_emails.dart';
 
 import '../../manager/home_cubit.dart';
 import '../step2_screen.dart';
@@ -19,7 +19,7 @@ class StepSwitcher3Steps extends StatelessWidget {
     } else if (cubit.currentStep == 1) {
       return Step2Screen();
     } else if (cubit.currentStep == 2) {
-      return SendRequestEmails(); // Replace with actual ThirdStep widget
+      return SendRequestEmails(cubit: cubit,); // Replace with actual ThirdStep widget
     }else if (cubit.currentStep == 3) {
       return SuccessMessage();
     }

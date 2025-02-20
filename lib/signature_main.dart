@@ -2,16 +2,13 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:signature_system/src/core/functions/app_functions.dart';
-import 'package:signature_system/src/core/helper/extension/distance.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import 'package:image/image.dart' as img; // Import the image package
-import 'dart:html' as html;
-import 'package:pdf/widgets.dart' as pw;
+// Import the image package
 
 
 class SignatureHomePage extends StatefulWidget {
-  const SignatureHomePage({Key? key}) : super(key: key);
+  const SignatureHomePage({super.key});
 
   @override
   _SignatureHomePageState createState() => _SignatureHomePageState();
@@ -98,10 +95,10 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
       );
 
       if (result != null) {
-        Uint8List fileBytes = result.files.single.bytes!; // Works for Web & Mobile
+        Uint8List fileBytes = result.files.single.bytes!;
         final PdfDocument document = PdfDocument(inputBytes: fileBytes);
         int pageCount = document.pages.count;
-        document.dispose(); // Free up memory
+        document.dispose();
 
         print('Total PDF pages: $pageCount');
         return (pageCount, fileBytes);

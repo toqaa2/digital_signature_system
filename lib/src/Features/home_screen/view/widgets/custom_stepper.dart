@@ -11,7 +11,7 @@ class CustomStepper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (cubit.selectedItem == 'Payment Request Memo') {
+    if ( cubit.selectedItem!=null&& cubit.selectedItem!.contains('PaymentRequest')) {
       return custom_horizontal_stepper_4Steps(
           stepNames: cubit.stepNames4, currentStep: cubit.currentStep);
     } else {
