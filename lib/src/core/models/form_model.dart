@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class FormModel {
   String? formID;
   String? formLink;
@@ -8,8 +10,8 @@ class FormModel {
   List<String>? signedBy;
   List<String>? serviceType;
   bool? isFullySigned;
-  String? sentDate;
-  String? signedDate;
+  Timestamp? sentDate;
+  Timestamp? signedDate;
   String? formTitle;
   String? paymentType;
   String? limitOfRequest;
@@ -49,11 +51,11 @@ class FormModel {
     if(formID!=null)'formID': formID,
     if(formLink!=null)'formLink': formLink,
     if(formName!=null)'formName': formName,
-    if(requiredToSign!=null)'requiredToSign': requiredToSign,
-    if(sentTo!=null)'sentTo': sentTo,
+    if(requiredToSign!=null)'requiredToSign': List.generate(requiredToSign?.length??0,  (index) => requiredToSign?[index],),
+    if(sentTo!=null)'sentTo': List.generate(sentTo?.length??0,  (index) => sentTo?[index],),
     if(sentBy!=null)'sentBy': sentBy,
-    if(signedBy!=null)'signedBy': signedBy,
-    if(serviceType!=null)'serviceType': serviceType,
+    if(signedBy!=null)'signedBy': List.generate(signedBy?.length??0,  (index) => signedBy?[index],),
+    if(serviceType!=null)'serviceType':  List.generate(serviceType?.length??0,  (index) => serviceType?[index],),
     if(isFullySigned!=null)'isFullySigned': isFullySigned,
     if(sentDate!=null)'sentDate': sentDate,
     if(signedDate!=null)'signedDate': signedDate,
@@ -70,14 +72,16 @@ class FormModel {
   };
 
   FormModel.fromJson(Map<String, dynamic>? json) {
+    print('req');
+    print(json?['requiredToSign']);
     formID = json?['formID'];
     formLink = json?['formLink'];
     formName = json?['formName'];
-    requiredToSign = List<String>.from(json?['requiredToSign'] ?? []);
-    sentTo = List<String>.from(json?['sentTo'] ?? []);
+   if(json?['requiredToSign']!=null) requiredToSign = List.generate(json?['requiredToSign'].length??0,  (index) => json?['requiredToSign']?[index],);
+    if(json?['sentTo']!=null) sentTo =List.generate(json?['sentTo'].length??0,  (index) => json?['sentTo']?[index],) ;
     sentBy = json?['sentBy'];
-    signedBy = List<String>.from(json?['signedBy'] ?? []);
-    serviceType = List<String>.from(json?['serviceType'] ?? []);
+    if(json?['signedBy']!=null)    signedBy =List.generate(json?['signedBy'].length??0,  (index) => json?['signedBy']?[index],)  ;
+    if(json?['serviceType']!=null)    serviceType = List.generate(json?['serviceType'].length??0,  (index) => json?['serviceType']?[index],)  ;
     isFullySigned = json?['isFullySigned'];
     sentDate = json?['sentDate'];
     signedDate = json?['signedDate'];

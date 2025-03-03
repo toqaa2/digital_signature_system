@@ -1,45 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:signature_system/src/Features/requests/view/widgets/received_requests_view.dart';
 import 'package:signature_system/src/core/style/colors.dart';
+import 'package:http/http.dart' as http;
+
 
 import '../../../../../signature_main.dart';
+import '../../manager/requests_cubit.dart';
+import 'package:intl/intl.dart' as intl;
 
-Widget recivedRequestsWidget(context) {
-  return ListView(
-    padding: EdgeInsets.all(16.0),
-    children: List.generate(2, (index) {
-      return Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: Container(
 
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(4),
-            color: Color(0xFFF6F6F6),
+class RecivedRequestWidget extends StatelessWidget {
+   RecivedRequestWidget({super.key, required this.cubit});
+  final RequestsCubit cubit;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: cubit.receivedForms.length,
+      itemBuilder: (context, index) {
+        final receivedForm = cubit.receivedForms[index];
+        return  ListTile(
+          // textColor: Color(0xFFF6F6F6),
+          title: Text(
+              receivedForm.formName.toString(),
+            // "Payment Request Memo",
+            style: TextStyle(fontSize: 14),
           ),
-          child:
+          subtitle: Text(
+            receivedForm.sentBy.toString(),
+            // "Email@Waseela-cf.com",
+            style: TextStyle(
+                fontSize: 12,
+                color: AppColors.mainColor,
+                fontWeight: FontWeight.bold),
+          ),
+          trailing: Text(
+            intl.DateFormat('yyy/MM/dd hh:mm a').format(DateTime.fromMicrosecondsSinceEpoch(receivedForm.sentDate?.microsecondsSinceEpoch??0)),
 
-             ListTile(
-              // textColor: Color(0xFFF6F6F6),
-              title: Text(
-                "Payment Request Memo",
-                style: TextStyle(fontSize: 14),
-              ),
-              subtitle: Text(
-                "Email@Waseela-cf.com",
-                style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.mainColor,
-                    fontWeight: FontWeight.bold),
-              ),
-              trailing: Text(
-                "01/23/2025  03:25 PM",
-                style: TextStyle(color: Colors.grey, fontSize: 12),
-              ),
-               onTap: (){
-                 Navigator.of(context).push(MaterialPageRoute(builder: (context) =>SignatureHomePage() ,));
-               },
-            ),
+            style: TextStyle(color: Colors.grey, fontSize: 12),
+          ),
+          onTap: (){
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => ReceivedFormsView() ,));
+          },
+        ) ;
+      },
+    );
 
-        ),
-      );
-    }),
-  );
+
+  }
 }
+

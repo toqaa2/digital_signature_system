@@ -45,9 +45,10 @@ class HomeCubit extends Cubit<HomeState> {
       selectedFormModel = forms.firstWhere((form) => form.formID == formId);
       requiredEmails = selectedFormModel?.requiredToSign ?? [];
     } else {
-      selectedFormModel = null; // Clear selected form if none is selected
+      selectedFormModel = null;
       requiredEmails.clear();
     }
+
     emit(FormSelected());
   }
 
@@ -64,7 +65,7 @@ class HomeCubit extends Cubit<HomeState> {
     DocumentReference formReference =
     FirebaseFirestore.instance.collection('users')
         .doc(userID)
-        .collection("sent").doc(formID);
+        .collection("sent_forms").doc(formID);
 
 
     for (String email in selectedEmails) {
@@ -81,7 +82,6 @@ class HomeCubit extends Cubit<HomeState> {
       }).catchError((error) {
       });
     }
-
     emit(SendForm());
   }
   void selectItem(String? newValue) {
@@ -143,4 +143,67 @@ class HomeCubit extends Cubit<HomeState> {
       });
 
   }
+  String? commercialRegistration;
+  String? electronicInvoice;
+  String? advancePayment;
+  String? taxID;
+  String? bankName;
+  String? invoiceNumber;
+  String? bankAccountNumber;
+  String? serviceType;
+
+  Future<void> sendPaymentForm(
+      {required String userId,
+        required String formName,
+        required String formID,
+        required String sentBy,
+        required String commercialRegistration,
+        required String paymentType,
+        required String limitOfRequest,
+        required String electronicInvoice,
+        required String advancePayment,
+        required String taxID,
+        required String bankName,
+        required String invoiceNumber,
+        required String bankAccountNumber,
+        required String serviceType,
+        required List<String> selectedEmails,
+
+      }) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('sent_forms')
+        .doc(formName)
+        .set({
+      'formID': formID,
+      'formName': formName,
+      'formLink': "form.formLink",
+      'sentTo': selectedEmails,
+      'sentBy': sentBy,
+      'sentDate':DateTime.now(),
+      'isFullySigned':false,
+      'formTitle':"title",
+      'paymentType': paymentType,
+      'limitOfRequest':limitOfRequest,
+      'commercialRegistration':commercialRegistration,
+      'electronicInvoice':electronicInvoice,
+      'advancePayment':advancePayment,
+      'taxID':taxID,
+      'bankName':bankName,
+      'invoiceNumber':invoiceNumber,
+      'bankAccountNumber':bankAccountNumber,
+      'serviceType':serviceType,
+
+
+
+    }).then((_) {
+      emit(SendPaymentForm());
+      print("Form sent successfully!");
+    });
+
+  }
+
+
+
 }

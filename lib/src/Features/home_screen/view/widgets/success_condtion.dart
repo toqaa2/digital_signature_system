@@ -78,17 +78,37 @@ class ConditionalStepWidget extends StatelessWidget {
                                   .currentStep < 4)) {
                             cubit.changeStepNext();
                           }
-                          if (cubit.currentStep == 3 ||
-                              (cubit.selectedItem != null && cubit.selectedItem!
-                                  .contains('PaymentRequest') && cubit
-                                  .currentStep == 4)) {
+
+                          if (cubit.currentStep == 3 ) {
 
                             cubit.sendForm(userId: Constants.userModel!.userId!,
                                 formName:  cubit.selectedFormModel!.formName!,
                                 formID: cubit.selectedFormModel!.formID!,
                                 sentBy: Constants.userModel!.email!,
-                                selectedEmails:  cubit.selectedFormModel!.requiredToSign!).then((value) =>cubit.sendToRequiredEmails(sentBy:Constants.userModel!.email!,userID: Constants.userModel!.email!, ) ,);
+                                selectedEmails:  cubit.selectedFormModel!.requiredToSign!).then((value)
+                            =>cubit.sendToRequiredEmails(sentBy:Constants.userModel!.email!,userID: Constants.userModel!.email!, ) ,);
 
+                          }
+                          if(cubit.selectedItem != null && cubit.selectedItem!
+                              .contains('PaymentRequest') && cubit
+                              .currentStep == 4){
+                            cubit.sendPaymentForm(
+                              taxID: cubit.taxID??"",
+                              advancePayment: cubit.advancePayment??"",
+                                bankAccountNumber: cubit.bankAccountNumber??"",
+                                bankName: cubit.bankName??"",
+                                commercialRegistration: cubit.commercialRegistration??"",
+                                electronicInvoice: cubit.electronicInvoice??"",
+                                invoiceNumber: cubit.invoiceNumber??"",
+                                limitOfRequest: cubit.selectedListLimit!,
+                                paymentType: cubit.selectedPaymentType!,
+                                serviceType: cubit.serviceType??"",
+                                userId: Constants.userModel!.userId!,
+                                formName:  cubit.selectedFormModel!.formName!,
+                                formID: cubit.selectedFormModel!.formID!,
+                                sentBy: Constants.userModel!.email!,
+                                selectedEmails:  cubit.selectedFormModel!.requiredToSign!).then((value)
+                            =>cubit.sendToRequiredEmails(sentBy:Constants.userModel!.email!,userID: Constants.userModel!.email!, ) ,);
                           }
                         },
                         label: 'Next',

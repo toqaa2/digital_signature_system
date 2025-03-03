@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 
+import '../manager/requests_cubit.dart';
 import 'widgets/recived_request_widget.dart';
 import 'widgets/send_request_widget.dart';
 import 'widgets/signed_request_widget.dart';
@@ -31,6 +34,15 @@ class _RequestsScreenState extends State<RequestsScreen>
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+  create: (context) => RequestsCubit()..getSentForms(Constants.userModel!.userId!)..getReceivedForms(Constants.userModel!.userId!),
+  child: BlocConsumer<RequestsCubit, RequestsState>(
+  listener: (context, state) {
+    // TODO: implement listener
+  },
+  builder: (context, state) {
+    RequestsCubit cubit = RequestsCubit.get(context);
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Center(
@@ -64,8 +76,8 @@ class _RequestsScreenState extends State<RequestsScreen>
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      sentRequestsWidget(),
-                      recivedRequestsWidget(context),
+                      SentRequestsWidget(cubit: cubit,),
+                      RecivedRequestWidget(cubit: cubit,),
                       signedRequestsWidget(),
                     ],
                   ),
@@ -76,5 +88,8 @@ class _RequestsScreenState extends State<RequestsScreen>
         ),
       ),
     );
+  },
+),
+);
   }
 }
