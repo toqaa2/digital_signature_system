@@ -6,7 +6,6 @@ import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 // Import the image package
 
-
 class SignatureHomePage extends StatefulWidget {
   const SignatureHomePage({super.key});
 
@@ -23,7 +22,7 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
   List<double> signatureY = []; // Signature Y position
   Uint8List? signature;
   List<GlobalKey<State<StatefulWidget>>> paintKeys = [];
-
+List<Widget>pdfPageSignatures=[];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,33 +30,49 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
         children: <Widget>[
           MaterialButton(
               onPressed: () async => await pickAndCountPdf().then((onValue) {
-                pageCount = onValue.$1;
-                documentBytes = onValue.$2;
-                documents = List.generate(
-                  pageCount,
+                    pageCount = onValue.$1;
+                    documentBytes = onValue.$2;
+                    documents = List.generate(
+                      pageCount,
                       (index) => Uint8List.fromList(documentBytes!.toList()),
-                );
-                signatureX = List.generate(
-                  pageCount,
+                    );
+                    signatureX = List.generate(
+                      pageCount,
                       (index) => 100,
-                );
-                signatureY = List.generate(
-                  pageCount,
+                    );
+                    signatureY = List.generate(
+                      pageCount,
                       (index) => 100,
-                );
-                paintKeys = List.generate(
-                  pageCount,
+                    );
+                    paintKeys = List.generate(
+                      pageCount,
                       (index) => GlobalKey<State<StatefulWidget>>(),
-                );
-                setState(() {});
-              }),
+                    );
+                    pdfPageSignatures = List.generate(
+                      pageCount,
+                          (index) => PdfPageSignature(
+                        key: ValueKey(index), // Use ValueKey for each widget
+                        document: documents[index],
+                        index: index,
+                        signatureX: signatureX[index],
+                        signatureY: signatureY[index],
+                        paintKey: paintKeys[index],
+                      ),
+                    );
+                    setState(() {});
+                  }),
               child: Text('Pick and Count PDF')),
           SizedBox(
             height: 10,
           ),
           MaterialButton(
             onPressed: () {
-              AppFunctions.saveWidgetsAsPdf(paintKeys, List.generate(paintKeys.length, (index) => 'index',));
+              AppFunctions.saveWidgetsAsPdf(
+                  paintKeys,
+                  List.generate(
+                    paintKeys.length,
+                    (index) => 'index',
+                  ));
             },
             child: Text('Save Form as pdf'),
           ),
@@ -65,22 +80,10 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
             height: 10,
           ),
           Expanded(
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: documents.length,
-                separatorBuilder: (context, index) => SizedBox(
-                  width: 20,
-                ),
-                itemBuilder: (context, index) {
-                  return PdfPageSignature(
-                    document: documents[index],
-                    index: index,
-                    signatureX: signatureX[index],
-                    signatureY: signatureY[index],
-                    paintKey: paintKeys[index],
-                  );
-                },
-              )),
+              child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+         child: Column(children: pdfPageSignatures,),
+          )),
         ],
       ),
     );
@@ -109,7 +112,6 @@ class _SignatureHomePageState extends State<SignatureHomePage> {
 
     return (0, [] as Uint8List); // Return 0 if there's an error or no file selected
   }
-
 }
 
 class PdfPageSignature extends StatefulWidget {
@@ -144,47 +146,58 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
     signatureX = widget.signatureX;
     signatureY = widget.signatureY;
   }
+
   bool showSignature = false;
+
   @override
   Widget build(BuildContext context) {
+    print('hi');
     return Column(
       children: [
-        MaterialButton(onPressed: (){
-          setState(() {
-            showSignature = !showSignature;
-
-          });
-        },child: Text('Toggle Signature'),),
+        MaterialButton(
+          onPressed: () {
+            setState(() {
+              showSignature = !showSignature;
+            });
+          },
+          child: Text('Toggle Signature'),
+        ),
         RepaintBoundary(
           key: widget.paintKey,
           child: Stack(
             children: [
               SizedBox(
-                width: 400,
-                height: 550,
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: SfPdfViewer.memory(
-                    widget.document,
-                    initialPageNumber: widget.index + 1,
-                    scrollDirection: PdfScrollDirection.horizontal,
-                    canShowHyperlinkDialog: false,
-                    canShowPageLoadingIndicator: true,
-                    canShowPaginationDialog: false,
-                    canShowPasswordDialog: false,
-                    canShowScrollHead: false,
-                    canShowScrollStatus: false,
-                    canShowSignaturePadDialog: false,
-                    canShowTextSelectionMenu: false,
-                    enableDocumentLinkAnnotation: false,
-                    enableDoubleTapZooming: false,
-                    enableHyperlinkNavigation: false,
-                    enableTextSelection: false,
-                    interactionMode: PdfInteractionMode.pan,
-                  ),
+                height: 900,
+                width: 600,
+                child: SfPdfViewer.memory(
+                  widget.document,
+                  initialPageNumber: widget.index + 1,
+                  scrollDirection: PdfScrollDirection.horizontal,
+                  canShowHyperlinkDialog: false,
+                  canShowPageLoadingIndicator: true,
+                  canShowPaginationDialog: false,
+                  canShowPasswordDialog: false,
+                  canShowScrollHead: false,
+                  canShowScrollStatus: false,
+                  canShowSignaturePadDialog: false,
+                  canShowTextSelectionMenu: false,
+                  enableDocumentLinkAnnotation: false,
+                  enableDoubleTapZooming: false,
+                  enableHyperlinkNavigation: false,
+                  enableTextSelection: false,
+                  pageLayoutMode: PdfPageLayoutMode.single,
+                  interactionMode: PdfInteractionMode.pan,
                 ),
               ),
-              if(showSignature)
+              GestureDetector(
+                onTap: () {},
+                child: Container(
+                  height: 900,
+                  width: 600,
+                  color: Colors.transparent,
+                ),
+              ),
+              if (showSignature)
                 Positioned(
                   left: signatureX,
                   top: signatureY,
@@ -196,8 +209,10 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
                       });
                     },
                     child: Image.asset(
-                        'assets/toqasignature.png',
-                        width: 40,height: 40,), // Adjust size as needed
+                      'assets/toqasignature.png',
+                      width: 40,
+                      height: 40,
+                    ), // Adjust size as needed
                   ),
                 ),
             ],

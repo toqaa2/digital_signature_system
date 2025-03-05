@@ -19,6 +19,7 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
   List<double> signatureX = [];
   List<double> signatureY = [];
   List<GlobalKey<State<StatefulWidget>>> paintKeys = [];
+  List<Widget>pdfPageSignatures=[];
 
   @override
   Widget build(BuildContext context) {
@@ -48,21 +49,10 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
           ),
           SizedBox(height: 10),
           Expanded(
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: documents.length,
-              separatorBuilder: (context, index) => SizedBox(width: 20),
-              itemBuilder: (context, index) {
-                return PdfPageSignature(
-                  document: documents[index],
-                  index: index,
-                  signatureX: signatureX[index],
-                  signatureY: signatureY[index],
-                  paintKey: paintKeys[index],
-                );
-              },
-            ),
-          ),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(children: pdfPageSignatures,),
+              )),
         ],
       ),
     );
@@ -81,7 +71,17 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
         signatureX = List.generate(pageCount, (index) => 100);
         signatureY = List.generate(pageCount, (index) => 100);
         paintKeys = List.generate(pageCount, (index) => GlobalKey<State<StatefulWidget>>());
-
+        pdfPageSignatures = List.generate(
+          pageCount,
+              (index) => PdfPageSignature(
+            key: ValueKey(index), // Use ValueKey for each widget
+            document: documents[index],
+            index: index,
+            signatureX: signatureX[index],
+            signatureY: signatureY[index],
+            paintKey: paintKeys[index],
+          ),
+        );
         setState(() {});
       } else {
         print('Failed to load PDF: ${response.statusCode}');
