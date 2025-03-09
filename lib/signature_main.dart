@@ -68,11 +68,7 @@ List<Widget>pdfPageSignatures=[];
           MaterialButton(
             onPressed: () {
               AppFunctions.saveWidgetsAsPdf(
-                  paintKeys,
-                  List.generate(
-                    paintKeys.length,
-                    (index) => 'index',
-                  ));
+                  paintKeys);
             },
             child: Text('Save Form as pdf'),
           ),

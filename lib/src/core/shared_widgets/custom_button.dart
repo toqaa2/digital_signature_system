@@ -67,8 +67,8 @@ class ButtonWidget extends StatelessWidget {
             left: leftPadding,
             right: rightPadding,
           ),
-          elevation: isHollow ? 0 : 5,
-          color: isHollow ? Colors.transparent : buttonColor ?? AppColors.mainColor,
+          elevation: isHollow ? 0 : 2,
+          color: isHollow ? Colors.white : buttonColor ?? AppColors.mainColor,
           minWidth: minWidth ?? double.infinity,
           shape: OutlineInputBorder(
             borderRadius: BorderRadius.only(
@@ -108,7 +108,7 @@ class ButtonWidget extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: textStyle ??
                         TextStyle(
-                          fontSize: 17.sp,
+                          fontSize: 12.sp,
                           color: isHollow
                               ? AppColors.mainColor
                               : enabled

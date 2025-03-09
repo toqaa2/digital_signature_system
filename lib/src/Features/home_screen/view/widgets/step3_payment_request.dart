@@ -8,6 +8,8 @@ class Step3PaymentRequest extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<String> typeOfService = ['Service', 'Product'];
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40,vertical: 15),
       child: Column(
@@ -73,7 +75,12 @@ class Step3PaymentRequest extends StatelessWidget {
                     hint: Text("Choose Service type"),
                     style: const TextStyle(fontSize: 11),
                     isExpanded: true,
-                    items: [],
+                    items: typeOfService.map((String item) {
+                      return DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(item),
+                      );
+                    }).toList(),
                     onChanged: (onChanged) {},
                   ),
                 ),

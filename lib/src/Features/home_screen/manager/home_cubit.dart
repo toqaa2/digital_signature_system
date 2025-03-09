@@ -1,8 +1,13 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/helper/enums/form_enum.dart';
 import '../../../core/models/form_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 
 part 'home_state.dart';
 
@@ -12,9 +17,20 @@ class HomeCubit extends Cubit<HomeState> {
   final List<String> stepNames = ['Choose From','Fill From', 'Send Request'];
   final List<String> stepNames4 = ['Choose From','Fill From',"Upload Documents", 'Send Request'];
   final List<String> dropdownItems = ['Program Lunch Memo', 'Campaign Memo', 'Internal Committee Memo','Merchant Onboarding Memo','Payment Request Memo'];
+  final List<String> titleName = ['Problematic Asset Committee', 'Procurement Committee', 'Product / Pricing Committee','Administrative Stuff','Board Authentication Fees',
+    'Board Expenses',
+    'HR Activity',
+    'MD Car Maintenance',
+    'Hospitality Fees',
+    'Call Center Invoice',
+    'Marketing Expenses',
+    'iScore Invoice',
+    'Information Technology Expenses'
+  ];
   final List<String> limitList = ['Less than 5K', 'Above 5K', 'Above 30K',];
   final List<String> paymentType = ['Invoice', 'Petty Cash'];
   String? selectedItem;
+  String? selectedtitleName;
   String? selectedPaymentType;
   String? selectedListLimit;
   int currentStep = 0;
@@ -36,6 +52,10 @@ class HomeCubit extends Cubit<HomeState> {
       print("Error fetching forms: $error");
     }
   }
+  void selectedTitle(String? newValue) {
+    selectedtitleName = newValue!;
+    emit(SelectTitle());
+  }
 
 // Select a form from the dropdown
   void selectForm(String? formId) {
@@ -52,6 +72,55 @@ class HomeCubit extends Cubit<HomeState> {
     emit(FormSelected());
   }
 
+  final SupabaseClient _client = Supabase.instance.client;
+  final String _bucketName = 'my_bucket';
+
+  Future<String?> uploadFileAndGetUrl(String filePath, File file) async {
+    try {
+      await _client.storage
+          .from(_bucketName)
+          .uploadBinary(filePath, file.readAsBytesSync());
+      final publicUrl = _client.storage.from(_bucketName).getPublicUrl(filePath);
+      return publicUrl;
+    } on StorageException catch (e) {
+      print('Error uploading file: ${e.message}');
+      return null;
+    } catch (e) {
+      print('Unexpected error: $e');
+      return null;
+    }
+  }
+
+  Future<String?> getFileUrl(String filePath) async {
+    try {
+      final publicUrl = _client.storage.from(_bucketName).getPublicUrl(filePath);
+      return publicUrl;
+    } on StorageException catch (e) {
+      print('Error getting file URL: ${e.message}');
+      return null;
+    } catch (e) {
+      print('Unexpected error: $e');
+      return null;
+    }
+  }
+  Future<String?> uploadBytesAndGetUrl(String filePath, Uint8List bytes) async {
+    try {
+      await _client.storage
+          .from(_bucketName)
+          .uploadBinary(filePath, bytes);
+
+      final publicUrl = _client.storage.from(_bucketName).getPublicUrl(filePath);
+      return publicUrl;
+    } on StorageException catch (e) {
+      print('Error uploading bytes: ${e.message}');
+      return null;
+    } catch (e) {
+      print('Unexpected error: $e');
+      return null;
+    }
+  }
+
+
   Future<void> sendToRequiredEmails({
     required String sentBy,
     required String userID,
@@ -66,7 +135,6 @@ class HomeCubit extends Cubit<HomeState> {
     FirebaseFirestore.instance.collection('users')
         .doc(userID)
         .collection("sent_forms").doc(formID);
-
 
     for (String email in selectedEmails) {
       await FirebaseFirestore.instance
@@ -115,8 +183,11 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> sendForm(
       {required String userId,
+
         required String formName,
         required String formID,
+        required String pathURL,
+        required String downloadLink,
         required String sentBy,
         required List<String> selectedEmails,
 
@@ -125,16 +196,18 @@ class HomeCubit extends Cubit<HomeState> {
           .collection('users')
           .doc(userId)
           .collection('sent_forms')
-          .doc(formName)
+          .doc(formName+DateTime.now().toString())
           .set({
-        'formID': formID,
+        'formID': formID+DateTime.now().toString(),
         'formName': formName,
+      'pathURL':pathURL,
+      'downloadLink': downloadLink,
         'formLink': "form.formLink",
         'sentTo': selectedEmails,
         'sentBy': sentBy,
         'sentDate':DateTime.now(),
       'isFullySigned':false,
-      'formTitle':"title"
+      'formTitle': selectedtitleName ?? ""
 
 
       }).then((_) {
@@ -155,6 +228,8 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> sendPaymentForm(
       {required String userId,
         required String formName,
+        required String pathURL,
+        required String downloadLink,
         required String formID,
         required String sentBy,
         required String commercialRegistration,
@@ -177,13 +252,15 @@ class HomeCubit extends Cubit<HomeState> {
         .doc(formName)
         .set({
       'formID': formID,
+      'pathURL':pathURL,
+      'downloadLink': downloadLink,
       'formName': formName,
       'formLink': "form.formLink",
       'sentTo': selectedEmails,
       'sentBy': sentBy,
       'sentDate':DateTime.now(),
       'isFullySigned':false,
-      'formTitle':"title",
+      'formTitle':selectedtitleName,
       'paymentType': paymentType,
       'limitOfRequest':limitOfRequest,
       'commercialRegistration':commercialRegistration,

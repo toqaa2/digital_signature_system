@@ -1,12 +1,23 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/functions/app_functions.dart';
+import 'package:signature_system/src/core/style/colors.dart';
+import 'package:supabase/supabase.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+import '../../../../core/shared_widgets/custom_button.dart';
+import '../../../login_screen/view/widgets/custom_text_field.dart';
+
 class ReceivedFormsView extends StatefulWidget {
-  const ReceivedFormsView({super.key});
+  const ReceivedFormsView(
+      {super.key, required this.formName, required this.sentDate});
+
+  final String formName;
+  final String sentDate;
 
   @override
   _ReceivedFormsViewState createState() => _ReceivedFormsViewState();
@@ -19,41 +30,116 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
   List<double> signatureX = [];
   List<double> signatureY = [];
   List<GlobalKey<State<StatefulWidget>>> paintKeys = [];
-  List<Widget>pdfPageSignatures=[];
+  List<Widget> pdfPageSignatures = [];
+
+  @override
+  void initState() {
+    loadPdfFromUrl(
+        'https://rmpfzdccuxeuyshwqprc.supabase.co/storage/v1/object/public/prv1/ProgramLuch%20V1/i.medhat@waseela-cf.com/ProgramLuch%20V12025-03-05%2004:23%20PM');
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: <Widget>[
-          MaterialButton(
-            onPressed: () async {
-              String pdfUrl = 'https://cdn.syncfusion.com/content/PDFViewer/flutter-succinctly.pdf'; // Replace with your PDF URL
-              await loadPdfFromUrl(pdfUrl);
-            },
-            child: Text('Load PDF from URL'),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+            image: AssetImage("assets/BackGround.png"), fit: BoxFit.fill),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Padding(
+          padding: const EdgeInsets.all(30.0),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white.withAlpha(150),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 30, left: 15, right: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(widget.formName),
+                          Text("at ${widget.sentDate}"),
+                        ],
+                      ),
+                      Row(
+                        spacing: 5,
+                        children: [
+                          ButtonWidget(
+                            verticalMargin: 2,
+                            minWidth: 120,
+                            height: 35,
+                            textStyle:
+                                TextStyle(fontSize: 12, color: Colors.white),
+                            text: "Save Form",
+                            onTap: () async {
+                              if (paintKeys.isNotEmpty) {
+                                Uint8List file =
+                                    await AppFunctions.saveWidgetsAsPdf(
+                                        paintKeys);
+
+                                /// save to DB
+                                final SupabaseClient _client =
+                                    Supabase.instance.client;
+                                final String _bucketName = 'prv1';
+                                String path='${widget.formName}/${Constants.userModel?.userId}/${widget.formName}${widget.sentDate}';
+                                await _client.storage
+                                    .from(_bucketName)
+                                    .uploadBinary(
+                                        path,
+                                        file);
+                                final publicUrl = _client.storage.from(_bucketName).getPublicUrl(path);
+                                print(publicUrl);
+                              } else {
+                                print('No pages to save.');
+                              }
+                            },
+                          ),
+                          ButtonWidget(
+                            verticalMargin: 2,
+                            buttonColor: Colors.white,
+                            borderColor: AppColors.mainColor,
+                            minWidth: 120,
+                            height: 35,
+                            textStyle: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.mainColor,
+                            ),
+                            text: "Reverse",
+                            onTap: () {
+                              setState(() {
+                                _showDialog(context);
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Expanded(
+                      child: Center(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Column(
+                        children: pdfPageSignatures,
+                      ),
+                    ),
+                  )),
+                ],
+              ),
+            ),
           ),
-          SizedBox(height: 10),
-          MaterialButton(
-            onPressed: () {
-              if (paintKeys.isNotEmpty) {
-                AppFunctions.saveWidgetsAsPdf(
-                  paintKeys,
-                  List.generate(paintKeys.length, (index) => 'index'),
-                );
-              } else {
-                print('No pages to save.');
-              }
-            },
-            child: Text('Save Form as PDF'),
-          ),
-          SizedBox(height: 10),
-          Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(children: pdfPageSignatures,),
-              )),
-        ],
+        ),
       ),
     );
   }
@@ -67,14 +153,16 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
         pageCount = document.pages.count;
         document.dispose();
 
-        documents = List.generate(pageCount, (index) => Uint8List.fromList(documentBytes!.toList()));
+        documents = List.generate(
+            pageCount, (index) => Uint8List.fromList(documentBytes!.toList()));
         signatureX = List.generate(pageCount, (index) => 100);
         signatureY = List.generate(pageCount, (index) => 100);
-        paintKeys = List.generate(pageCount, (index) => GlobalKey<State<StatefulWidget>>());
+        paintKeys = List.generate(
+            pageCount, (index) => GlobalKey<State<StatefulWidget>>());
         pdfPageSignatures = List.generate(
           pageCount,
-              (index) => PdfPageSignature(
-            key: ValueKey(index), // Use ValueKey for each widget
+          (index) => PdfPageSignature(
+            key: ValueKey(index),
             document: documents[index],
             index: index,
             signatureX: signatureX[index],
@@ -127,22 +215,34 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        MaterialButton(
-          onPressed: () {
+        ButtonWidget(
+          isHollow: true,
+          borderColor: AppColors.mainColor,
+          buttonColor: Colors.white,
+          verticalMargin: 2,
+          minWidth: 200,
+          height: 35,
+          textStyle: TextStyle(
+              fontSize: 10,
+              color: !showSignature ? AppColors.mainColor : Colors.redAccent),
+          text: !showSignature
+              ? "Add Signature to this Page"
+              : "Remove Signature from this Page",
+          onTap: () {
             setState(() {
               showSignature = !showSignature;
             });
           },
-          child: Text('Toggle Signature'),
         ),
         RepaintBoundary(
           key: widget.paintKey,
           child: Stack(
             children: [
               SizedBox(
-                width: 400,
-                height: 550,
+                width: 800,
+                height: 1100,
                 child: Padding(
                   padding: EdgeInsets.all(8.0),
                   child: SfPdfViewer.memory(
@@ -165,6 +265,11 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
                   ),
                 ),
               ),
+              Container(
+                width: 800,
+                height: 1100,
+                color: Colors.transparent,
+              ),
               if (showSignature)
                 Positioned(
                   left: signatureX,
@@ -178,8 +283,8 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
                     },
                     child: Image.asset(
                       'assets/toqasignature.png',
-                      width: 40,
-                      height: 40,
+                      width: 80,
+                      height: 80,
                     ),
                   ),
                 ),
@@ -189,4 +294,64 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
       ],
     );
   }
+}
+
+void _showDialog(BuildContext context) {
+  final TextEditingController _textFieldController = TextEditingController();
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text(
+          'Reverse',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: AppColors.mainColor),
+        ),
+        content: Container(
+          width: 400, // Set the desired width
+          height: 150, // Set the desired height
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Please Enter the Reason for the reverse to help the',
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                'person who sent the request',
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Textfield(
+                controller: _textFieldController,
+                labelText: "Type here..",
+              ),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Cancel'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text('Reverse'),
+            onPressed: () {
+              // Handle the send action
+              String inputText = _textFieldController.text;
+              print(
+                  'Input: $inputText'); // You can replace this with your logic
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
 }

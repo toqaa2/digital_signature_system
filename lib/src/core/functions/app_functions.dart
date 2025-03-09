@@ -2,6 +2,8 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:supabase/supabase.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:image/image.dart' as img;
 import 'package:pdf/widgets.dart' as pw;
@@ -10,8 +12,8 @@ class AppFunctions {
  static  img.Image imageDecode(Uint8List imageData) {
     return img.decodeImage(imageData)!;
   }
- static Future<void> saveWidgetsAsPdf(List<GlobalKey> globalKeys, List<String> imageNames) async {
-   if (globalKeys.length != imageNames.length) {
+ static Future<Uint8List> saveWidgetsAsPdf(List<GlobalKey> globalKeys) async {
+   if (globalKeys.isEmpty) {
      throw ArgumentError('The number of global keys must match the number of image names.');
    }
 
@@ -48,7 +50,8 @@ class AppFunctions {
      }
 
      // Save the PDF to bytes
-     List<int> bytes = await pdf.save();
+     Uint8List bytes = await pdf.save();
+
 
      // Trigger a download of the PDF file
      final blob = html.Blob([bytes]);
@@ -61,9 +64,13 @@ class AppFunctions {
      anchor.click();
      html.document.body!.children.remove(anchor);
      html.Url.revokeObjectUrl(url);
+     return bytes;
+
    } catch (e) {
      print('Error saving widgets as PDF: $e');
+     return [] as Uint8List;
    }
+
  }
 
   // static Future<void> saveWidgetsAsPdf(List<GlobalKey> globalKeys, List<String> imageNames) async {

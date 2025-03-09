@@ -9,6 +9,8 @@ class FormModel {
   String? sentBy;
   List<String>? signedBy;
   List<String>? serviceType;
+  String? pathURL;
+  String? downloadLink;
   bool? isFullySigned;
   Timestamp? sentDate;
   Timestamp? signedDate;
@@ -29,6 +31,8 @@ class FormModel {
     required this.formName,
     required this.requiredToSign,
     this.sentTo,
+    required this.pathURL,
+    required this.downloadLink,
     this.sentBy,
     this.signedBy,
     this.serviceType,
@@ -58,6 +62,8 @@ class FormModel {
     if(serviceType!=null)'serviceType':  List.generate(serviceType?.length??0,  (index) => serviceType?[index],),
     if(isFullySigned!=null)'isFullySigned': isFullySigned,
     if(sentDate!=null)'sentDate': sentDate,
+    if(pathURL!=null)'pathURL': pathURL,
+    if(downloadLink!=null)'downloadLink': downloadLink,
     if(signedDate!=null)'signedDate': signedDate,
     if(formTitle!=null)'formTitle': formTitle,
     if(paymentType!=null)'paymentType': paymentType,

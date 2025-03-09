@@ -73,8 +73,8 @@ class FirstStep extends StatelessWidget {
                         hintText: "Title of Request",
                         titleText: "Please Choose The Title of your Request *",
                         onChanged: (String? newValue) {},
-                        dropdownItems: [],
-                        selectedItem: cubit.selectedItem,
+                        dropdownItems: cubit.titleName,
+                        selectedItem: cubit.selectedtitleName,
                       ),
                     ],
                   ),
@@ -98,9 +98,11 @@ class FirstStep extends StatelessWidget {
                     withTitle: true,
                     hintText: "Select Form Title",
                     titleText: "Please Choose The Title of Form *",
-                    onChanged: ( newValue) {},
-                    dropdownItems: [],
-                    selectedItem: cubit.selectedItem,
+                    onChanged: (String? newValue) {
+                      cubit.selectedTitle(newValue);
+                    },
+                    dropdownItems: cubit.titleName,
+                    selectedItem: cubit.selectedtitleName,
                   ),
                 ],
               )

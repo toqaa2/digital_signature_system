@@ -82,6 +82,8 @@ class ConditionalStepWidget extends StatelessWidget {
                           if (cubit.currentStep == 3 ) {
 
                             cubit.sendForm(userId: Constants.userModel!.userId!,
+                                downloadLink: "",
+                                pathURL: "",
                                 formName:  cubit.selectedFormModel!.formName!,
                                 formID: cubit.selectedFormModel!.formID!,
                                 sentBy: Constants.userModel!.email!,
@@ -97,6 +99,8 @@ class ConditionalStepWidget extends StatelessWidget {
                               advancePayment: cubit.advancePayment??"",
                                 bankAccountNumber: cubit.bankAccountNumber??"",
                                 bankName: cubit.bankName??"",
+                                downloadLink: "",
+                                pathURL: "",
                                 commercialRegistration: cubit.commercialRegistration??"",
                                 electronicInvoice: cubit.electronicInvoice??"",
                                 invoiceNumber: cubit.invoiceNumber??"",

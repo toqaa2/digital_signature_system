@@ -4,7 +4,6 @@ import 'package:signature_system/src/core/style/colors.dart';
 import 'package:http/http.dart' as http;
 
 
-import '../../../../../signature_main.dart';
 import '../../manager/requests_cubit.dart';
 import 'package:intl/intl.dart' as intl;
 
@@ -36,12 +35,15 @@ class RecivedRequestWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold),
           ),
           trailing: Text(
-            intl.DateFormat('yyy/MM/dd hh:mm a').format(DateTime.fromMicrosecondsSinceEpoch(receivedForm.sentDate?.microsecondsSinceEpoch??0)),
+            intl.DateFormat('yyy-MM-dd hh:mm a').format(DateTime.fromMicrosecondsSinceEpoch(receivedForm.sentDate?.microsecondsSinceEpoch??0)),
 
             style: TextStyle(color: Colors.grey, fontSize: 12),
           ),
           onTap: (){
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => ReceivedFormsView() ,));
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => ReceivedFormsView(
+              formName:  receivedForm.formName.toString(),
+              sentDate: intl.DateFormat('yyy-MM-dd hh:mm a').format(DateTime.fromMicrosecondsSinceEpoch(receivedForm.sentDate?.microsecondsSinceEpoch??0),)
+            ) ,));
           },
         ) ;
       },
