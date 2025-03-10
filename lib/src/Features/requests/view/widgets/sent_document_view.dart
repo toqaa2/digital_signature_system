@@ -40,23 +40,13 @@ class SentDocumentView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(formName),
-                        SizedBox(
-                          height: 50,
-                          width: 400,
-                          child: ListView.builder(
-                            itemCount: requiredToSign.length,
-                            itemBuilder: (context, index) {
-                              final email = requiredToSign[index];
-                              return Row(
-                                spacing: 4,
-                                children: [
-                                  SvgPicture.asset('assets/Signed status.svg',width: 22,height: 22,),
-                                  Text(email),
-                                ],
-                              );
-                            },
-                          ),
-                        )
+                        ...List.generate(requiredToSign.length,  (index)=> Row(
+                          spacing: 4,
+                          children: [
+                            SvgPicture.asset('assets/Signed status.svg',width: 22,height: 22,),
+                            Text(requiredToSign[index]),
+                          ],
+                        ))
                       ],
                     ),
                     Text(sentDate)

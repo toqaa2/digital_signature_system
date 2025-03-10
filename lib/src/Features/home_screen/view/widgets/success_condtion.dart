@@ -82,10 +82,11 @@ class ConditionalStepWidget extends StatelessWidget {
                           if (cubit.currentStep == 3 ) {
 
                             cubit.sendForm(userId: Constants.userModel!.userId!,
+
                                 downloadLink: "",
+                                formLink:  cubit.selectedFormModel!.formLink!,
                                 pathURL: "",
                                 formName:  cubit.selectedFormModel!.formName!,
-                                formID: cubit.selectedFormModel!.formID!,
                                 sentBy: Constants.userModel!.email!,
                                 selectedEmails:  cubit.selectedFormModel!.requiredToSign!).then((value)
                             =>cubit.sendToRequiredEmails(sentBy:Constants.userModel!.email!,userID: Constants.userModel!.email!, ) ,);

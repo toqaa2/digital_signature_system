@@ -56,14 +56,15 @@ class HomeCubit extends Cubit<HomeState> {
     selectedtitleName = newValue!;
     emit(SelectTitle());
   }
-
+  String formID='';
 // Select a form from the dropdown
   void selectForm(String? formId) {
-    selectedItem = formId; // Update the selected form ID
+    selectedItem = formId;
     if (formId != null) {
       print(formId);
       selectedFormModel = forms.firstWhere((form) => form.formID == formId);
       requiredEmails = selectedFormModel?.requiredToSign ?? [];
+      formID=selectedFormModel!.formID!+DateTime.now().toString();
     } else {
       selectedFormModel = null;
       requiredEmails.clear();
@@ -91,6 +92,11 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
+
+
+
+
+
   Future<String?> getFileUrl(String filePath) async {
     try {
       final publicUrl = _client.storage.from(_bucketName).getPublicUrl(filePath);
@@ -103,6 +109,13 @@ class HomeCubit extends Cubit<HomeState> {
       return null;
     }
   }
+
+
+
+
+
+
+
   Future<String?> uploadBytesAndGetUrl(String filePath, Uint8List bytes) async {
     try {
       await _client.storage
@@ -121,7 +134,16 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
 
+
+
+
+
+
+
+
+
   Future<void> sendToRequiredEmails({
+    // required String formID,
     required String sentBy,
     required String userID,
   }) async {
@@ -129,7 +151,6 @@ class HomeCubit extends Cubit<HomeState> {
       print("No form selected");
       return;
     }
-    String formID = selectedFormModel!.formID!;
     List<String> selectedEmails = List.from(requiredEmails);
     DocumentReference formReference =
     FirebaseFirestore.instance.collection('users')
@@ -152,6 +173,20 @@ class HomeCubit extends Cubit<HomeState> {
     }
     emit(SendForm());
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   void selectItem(String? newValue) {
     switch (newValue){
       case  'Program Lunch Memo' :formType= FormType.programLunchMemo;
@@ -185,24 +220,25 @@ class HomeCubit extends Cubit<HomeState> {
       {required String userId,
 
         required String formName,
-        required String formID,
+        required String formLink,
         required String pathURL,
         required String downloadLink,
         required String sentBy,
         required List<String> selectedEmails,
 
       }) async {
+    // String formIDWithDate =formName+DateTime.now().toString();
     await FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
           .collection('sent_forms')
-          .doc(formName+DateTime.now().toString())
+          .doc(formID)
           .set({
-        'formID': formID+DateTime.now().toString(),
+        'formID': formID,
         'formName': formName,
       'pathURL':pathURL,
       'downloadLink': downloadLink,
-        'formLink': "form.formLink",
+        'formLink': formLink,
         'sentTo': selectedEmails,
         'sentBy': sentBy,
         'sentDate':DateTime.now(),

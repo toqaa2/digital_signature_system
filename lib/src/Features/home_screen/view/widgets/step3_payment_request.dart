@@ -3,12 +3,19 @@ import 'package:signature_system/src/core/helper/extension/distance.dart';
 import '../../../login_screen/view/widgets/custom_text_field.dart';
 import 'dashed_textfield.dart';
 
-class Step3PaymentRequest extends StatelessWidget {
+class Step3PaymentRequest extends StatefulWidget {
   const Step3PaymentRequest({super.key});
 
   @override
+  State<Step3PaymentRequest> createState() => _Step3PaymentRequestState();
+}
+
+class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
+  @override
   Widget build(BuildContext context) {
     final List<String> typeOfService = ['Service', 'Product'];
+    String? selectedItem;
+
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40,vertical: 15),
@@ -71,7 +78,7 @@ class Step3PaymentRequest extends StatelessWidget {
                   ),
                   child: DropdownButton<String>(
                     underline: SizedBox(),
-                    value: "selectedItem",
+                    value: selectedItem, // Use the selectedItem state variable
                     hint: Text("Choose Service type"),
                     style: const TextStyle(fontSize: 11),
                     isExpanded: true,
@@ -81,7 +88,11 @@ class Step3PaymentRequest extends StatelessWidget {
                         child: Text(item),
                       );
                     }).toList(),
-                    onChanged: (onChanged) {},
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedItem = newValue; // Update the selected item
+                      });
+                    },
                   ),
                 ),
               ),

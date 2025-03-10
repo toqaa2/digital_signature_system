@@ -41,7 +41,7 @@ class SentRequestsWidget extends StatelessWidget {
           onTap: () {
             print(SentForm.sentTo);
             Navigator.of(context).push(MaterialPageRoute(builder: (context) => SentDocumentView(
-              formLink: 'https://cdn.syncfusion.com/content/PDFViewer/flutter-succinctly.pdf',
+              formLink: SentForm.formLink!,
               formName: SentForm.formName!,
               requiredToSign:SentForm.sentTo!,
               sentDate: intl.DateFormat('yyy/MM/dd hh:mm a').format(DateTime.fromMicrosecondsSinceEpoch(SentForm.sentDate?.microsecondsSinceEpoch??0)),

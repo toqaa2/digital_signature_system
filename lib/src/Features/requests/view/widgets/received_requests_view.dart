@@ -14,10 +14,11 @@ import '../../../login_screen/view/widgets/custom_text_field.dart';
 
 class ReceivedFormsView extends StatefulWidget {
   const ReceivedFormsView(
-      {super.key, required this.formName, required this.sentDate});
+      {super.key, required this.formName, required this.sentDate, required this.formLink});
 
   final String formName;
   final String sentDate;
+  final String formLink;
 
   @override
   _ReceivedFormsViewState createState() => _ReceivedFormsViewState();
@@ -35,7 +36,7 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
   @override
   void initState() {
     loadPdfFromUrl(
-        'https://rmpfzdccuxeuyshwqprc.supabase.co/storage/v1/object/public/prv1/ProgramLuch%20V1/i.medhat@waseela-cf.com/ProgramLuch%20V12025-03-05%2004:23%20PM');
+        widget.formLink);
     super.initState();
   }
 
