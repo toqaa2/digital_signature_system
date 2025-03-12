@@ -91,8 +91,8 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                 /// save to DB
                                 final SupabaseClient _client =
                                     Supabase.instance.client;
-                                final String _bucketName = 'prv1';
-                                String path='${widget.formName}/${Constants.userModel?.userId}/${widget.formName}${widget.sentDate}';
+                                final String _bucketName = 'forms';
+                                String path='${widget.formName}/${Constants.userModel?.userId}/${widget.formName}${widget.sentDate}.pdf';
                                 await _client.storage
                                     .from(_bucketName)
                                     .uploadBinary(

@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:signature_system/src/core/helper/extension/distance.dart';
 import '../../../login_screen/view/widgets/custom_text_field.dart';
+import '../../manager/home_cubit.dart';
 import 'dashed_textfield.dart';
 
 class Step3PaymentRequest extends StatefulWidget {
-  const Step3PaymentRequest({super.key});
+  const Step3PaymentRequest({super.key, required this.cubit});
+  final HomeCubit cubit;
 
   @override
   State<Step3PaymentRequest> createState() => _Step3PaymentRequestState();
 }
 
 class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
+
+
   @override
   Widget build(BuildContext context) {
-    final List<String> typeOfService = ['Service', 'Product'];
-    String? selectedItem;
+
 
 
     return Padding(
@@ -27,7 +30,7 @@ class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
               Expanded(
                 child: DashedTextField(
                   hintText: "Upload Commercial Registration",
-                  controller: TextEditingController(),
+                  controller: widget.cubit.commercialRegistrationController,
                   leadingIcon: Icons.upload_rounded,
                 ),
               ),
@@ -35,7 +38,7 @@ class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
               Expanded(
                 child: DashedTextField(
                   hintText: "Upload Advance payment Certificate",
-                  controller: TextEditingController(),
+                  controller: widget.cubit.advancePaymentController,
                   leadingIcon: Icons.upload_rounded,
                 ),
               ),
@@ -48,7 +51,7 @@ class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
               Expanded(
                 child: DashedTextField(
                   hintText: "Upload Electronic Invoice",
-                  controller: TextEditingController(),
+                  controller: widget.cubit.electronicInvoiceController,
                   leadingIcon: Icons.upload_rounded,
                 ),
               ),
@@ -56,7 +59,7 @@ class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
               Expanded(
                 child: DashedTextField(
                   hintText: "Upload Tax ID",
-                  controller: TextEditingController(),
+                  controller: widget.cubit.taxIDController,
                   leadingIcon: Icons.upload_rounded,
                 ),
               ),
@@ -78,11 +81,11 @@ class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
                   ),
                   child: DropdownButton<String>(
                     underline: SizedBox(),
-                    value: selectedItem, // Use the selectedItem state variable
+                    value: widget.cubit.selectedItemTypeofService, // Use the selectedItem state variable
                     hint: Text("Choose Service type"),
                     style: const TextStyle(fontSize: 11),
                     isExpanded: true,
-                    items: typeOfService.map((String item) {
+                    items: widget.cubit.typeOfService.map((String item) {
                       return DropdownMenuItem<String>(
                         value: item,
                         child: Text(item),
@@ -90,7 +93,7 @@ class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
                     }).toList(),
                     onChanged: (String? newValue) {
                       setState(() {
-                        selectedItem = newValue; // Update the selected item
+                        widget.cubit.selectedItemTypeofService = newValue; // Update the selected item
                       });
                     },
                   ),
@@ -99,6 +102,7 @@ class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
               5.isWidth,
               Expanded(
                   child: Textfield(
+                    controller: widget.cubit.bankNameController,
                 labelText: "Enter Bank Name",
               )),
             ],
@@ -109,11 +113,13 @@ class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
             children: [
               Expanded(
                   child: Textfield(
+                    controller: widget.cubit.bankAccountNumberController,
                 labelText: "Enter Bank Account Number",
               )),
               5.isWidth,
               Expanded(
                   child: Textfield(
+                    controller: widget.cubit.invoiceNumberController,
                 labelText: "Enter Invoice Number",
               )),
             ],

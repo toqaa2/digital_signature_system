@@ -79,13 +79,14 @@ class ConditionalStepWidget extends StatelessWidget {
                             cubit.changeStepNext();
                           }
 
-                          if (cubit.currentStep == 3 ) {
+                          if (cubit.currentStep == 2 && !cubit.selectedItem!
+                              .contains('PaymentRequest') ) {
 
                             cubit.sendForm(userId: Constants.userModel!.userId!,
 
-                                downloadLink: "",
+                                downloadLink: "بجرب",
                                 formLink:  cubit.selectedFormModel!.formLink!,
-                                pathURL: "",
+                                pathURL: "بجرب",
                                 formName:  cubit.selectedFormModel!.formName!,
                                 sentBy: Constants.userModel!.email!,
                                 selectedEmails:  cubit.selectedFormModel!.requiredToSign!).then((value)
@@ -96,21 +97,21 @@ class ConditionalStepWidget extends StatelessWidget {
                               .contains('PaymentRequest') && cubit
                               .currentStep == 4){
                             cubit.sendPaymentForm(
-                              taxID: cubit.taxID??"",
-                              advancePayment: cubit.advancePayment??"",
-                                bankAccountNumber: cubit.bankAccountNumber??"",
-                                bankName: cubit.bankName??"",
+                              formLink: cubit.selectedFormModel!.formLink!,
+                              taxID: cubit.taxIDController.text??"",
+                                advancePayment: cubit.advancePaymentController.text??"",
+                                bankAccountNumber: cubit.bankAccountNumberController.text??"",
+                                bankName: cubit.bankNameController.text??"",
                                 downloadLink: "",
                                 pathURL: "",
-                                commercialRegistration: cubit.commercialRegistration??"",
-                                electronicInvoice: cubit.electronicInvoice??"",
-                                invoiceNumber: cubit.invoiceNumber??"",
+                                commercialRegistration: cubit.commercialRegistrationController.text??"",
+                                electronicInvoice: cubit.electronicInvoiceController.text??"",
+                                invoiceNumber: cubit.invoiceNumberController.text??"",
                                 limitOfRequest: cubit.selectedListLimit!,
                                 paymentType: cubit.selectedPaymentType!,
-                                serviceType: cubit.serviceType??"",
+                                serviceType: cubit.serviceTypeController.text??"",
                                 userId: Constants.userModel!.userId!,
                                 formName:  cubit.selectedFormModel!.formName!,
-                                formID: cubit.selectedFormModel!.formID!,
                                 sentBy: Constants.userModel!.email!,
                                 selectedEmails:  cubit.selectedFormModel!.requiredToSign!).then((value)
                             =>cubit.sendToRequiredEmails(sentBy:Constants.userModel!.email!,userID: Constants.userModel!.email!, ) ,);

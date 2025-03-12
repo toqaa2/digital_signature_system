@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/helper/enums/form_enum.dart';
@@ -37,10 +38,8 @@ class HomeCubit extends Cubit<HomeState> {
   FormType? formType ;
   FormModel? selectedFormModel;
   List<String> requiredEmails = [];
-
-
-
   List<FormModel> forms = [];
+
 
 // Fetch forms from Firestore
   Future<void> fetchForms() async {
@@ -52,6 +51,7 @@ class HomeCubit extends Cubit<HomeState> {
       print("Error fetching forms: $error");
     }
   }
+
   void selectedTitle(String? newValue) {
     selectedtitleName = newValue!;
     emit(SelectTitle());
@@ -252,21 +252,23 @@ class HomeCubit extends Cubit<HomeState> {
       });
 
   }
-  String? commercialRegistration;
-  String? electronicInvoice;
-  String? advancePayment;
-  String? taxID;
-  String? bankName;
-  String? invoiceNumber;
-  String? bankAccountNumber;
-  String? serviceType;
+  TextEditingController commercialRegistrationController = TextEditingController();
+  TextEditingController electronicInvoiceController = TextEditingController();
+  TextEditingController advancePaymentController = TextEditingController();
+  TextEditingController taxIDController = TextEditingController();
+  TextEditingController bankNameController = TextEditingController();
+  TextEditingController invoiceNumberController = TextEditingController();
+  TextEditingController bankAccountNumberController = TextEditingController();
+  TextEditingController serviceTypeController = TextEditingController();
+  final List<String> typeOfService = ['Service', 'Product'];
+  String? selectedItemTypeofService;
+
 
   Future<void> sendPaymentForm(
       {required String userId,
         required String formName,
         required String pathURL,
         required String downloadLink,
-        required String formID,
         required String sentBy,
         required String commercialRegistration,
         required String paymentType,
@@ -274,6 +276,7 @@ class HomeCubit extends Cubit<HomeState> {
         required String electronicInvoice,
         required String advancePayment,
         required String taxID,
+        required String formLink,
         required String bankName,
         required String invoiceNumber,
         required String bankAccountNumber,
@@ -285,13 +288,13 @@ class HomeCubit extends Cubit<HomeState> {
         .collection('users')
         .doc(userId)
         .collection('sent_forms')
-        .doc(formName)
+        .doc(formID)
         .set({
       'formID': formID,
       'pathURL':pathURL,
       'downloadLink': downloadLink,
       'formName': formName,
-      'formLink': "form.formLink",
+      'formLink': formLink,
       'sentTo': selectedEmails,
       'sentBy': sentBy,
       'sentDate':DateTime.now(),

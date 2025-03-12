@@ -72,7 +72,9 @@ class FirstStep extends StatelessWidget {
                       FormTypeSelectorPayment(
                         hintText: "Title of Request",
                         titleText: "Please Choose The Title of your Request *",
-                        onChanged: (String? newValue) {},
+                        onChanged: (String? newValue) {
+                          cubit.selectedTitle(newValue);
+                        },
                         dropdownItems: cubit.titleName,
                         selectedItem: cubit.selectedtitleName,
                       ),
