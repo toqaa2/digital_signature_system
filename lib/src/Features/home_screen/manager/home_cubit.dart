@@ -14,7 +14,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-
+import 'package:intl/intl.dart';
 part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
@@ -68,10 +68,12 @@ class HomeCubit extends Cubit<HomeState> {
       String fileName = result.files.single.name;
       docFile = result.files.single.bytes;
       if (docFile != null) {
+        print('File picked: $fileName');
+        print(docFile);
         final storageRef = FirebaseStorage.instance.ref();
-        Reference pdfRef = storageRef.child('sent_forms/$userID/$formName${DateTime.now()}.pdf');
+        Reference pdfRef = storageRef.child('sent_forms/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
 
-        UploadTask uploadTask = pdfRef.putData(docFile!);
+        UploadTask uploadTask = pdfRef.putData(docFile!,SettableMetadata(contentType: 'application/pdf'));
         await uploadTask;
 
         downloadURLOFUploadedDocument  = await pdfRef.getDownloadURL();
@@ -274,27 +276,27 @@ class HomeCubit extends Cubit<HomeState> {
       }) async {
     // String formIDWithDate =formName+DateTime.now().toString();
     await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .collection('sent_forms')
-          .doc(formID)
-          .set({
-        'formID': formID,
-        'formName': formName,
+        .collection('users')
+        .doc(userId)
+        .collection('sent_forms')
+        .doc(formID)
+        .set({
+      'formID': formID,
+      'formName': formName,
       'pathURL':pathURL,
       'downloadLink': downloadLink,
-        'formLink': downloadURLOFUploadedDocument,
-        'sentTo': selectedEmails,
-        'sentBy': sentBy,
-        'sentDate':DateTime.now(),
+      'formLink': downloadURLOFUploadedDocument,
+      'sentTo': selectedEmails,
+      'sentBy': sentBy,
+      'sentDate':DateTime.now(),
       'isFullySigned':false,
       'formTitle': selectedtitleName ?? ""
 
 
-      }).then((_) {
-        emit(SendForm());
-        print("Form sent successfully!");
-      });
+    }).then((_) {
+      emit(SendForm());
+      print("Form sent successfully!");
+    });
 
   }
   TextEditingController commercialRegistrationController = TextEditingController();
