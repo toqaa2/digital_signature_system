@@ -17,7 +17,7 @@ class StepSwitcher4Steps extends StatelessWidget {
     if (cubit.currentStep == 0) {
       return FirstStep(cubit: cubit); // Show FirstStep for step 0
     } else if (cubit.currentStep == 1) {
-      return Step2Screen(); // Replace with actual SecondStep widget
+      return Step2Screen(cubit: cubit,); // Replace with actual SecondStep widget
     } else if (cubit.currentStep == 2) {
       return Step3PaymentRequest(cubit: cubit,); // Replace with actual ThirdStep widget
     } else if (cubit.currentStep == 3) {

@@ -13,3 +13,5 @@ final class SendForm extends HomeState {}
 final class SendPaymentForm extends HomeState {}
 final class GetDepartment extends HomeState {}
 final class SelectTitle extends HomeState {}
+final class UploadfileLoading extends HomeState {}
+final class UploadfileSuccess extends HomeState {}

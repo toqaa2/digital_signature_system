@@ -2,11 +2,16 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/helper/enums/form_enum.dart';
+
 import '../../../core/models/form_model.dart';
+import 'package:web/web.dart' as web;
+import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 
@@ -41,6 +46,57 @@ class HomeCubit extends Cubit<HomeState> {
   List<FormModel> forms = [];
 
 
+
+  TextEditingController docNameController = TextEditingController();
+
+
+
+  void downloadFile(String url, String fileName) {
+    web.window.open(url, fileName);
+  }
+
+
+  Uint8List? docFile;
+  String downloadURLOFUploadedDocument = '';
+
+  Future<void> pickAndUploadDocument(String userID,String formName) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+    if (result != null) {
+      String fileName = result.files.single.name;
+      docFile = result.files.single.bytes;
+      if (docFile != null) {
+        final storageRef = FirebaseStorage.instance.ref();
+        Reference pdfRef = storageRef.child('sent_forms/$userID/$formName${DateTime.now()}.pdf');
+
+        UploadTask uploadTask = pdfRef.putData(docFile!);
+        await uploadTask;
+
+        downloadURLOFUploadedDocument  = await pdfRef.getDownloadURL();
+        print('Download URL: $downloadURLOFUploadedDocument');
+
+        emit(UploadfileSuccess());
+      }
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Fetch forms from Firestore
   Future<void> fetchForms() async {
     try {
@@ -57,7 +113,6 @@ class HomeCubit extends Cubit<HomeState> {
     emit(SelectTitle());
   }
   String formID='';
-// Select a form from the dropdown
   void selectForm(String? formId) {
     selectedItem = formId;
     if (formId != null) {
@@ -178,15 +233,6 @@ class HomeCubit extends Cubit<HomeState> {
 
 
 
-
-
-
-
-
-
-
-
-
   void selectItem(String? newValue) {
     switch (newValue){
       case  'Program Lunch Memo' :formType= FormType.programLunchMemo;
@@ -220,7 +266,6 @@ class HomeCubit extends Cubit<HomeState> {
       {required String userId,
 
         required String formName,
-        required String formLink,
         required String pathURL,
         required String downloadLink,
         required String sentBy,
@@ -238,7 +283,7 @@ class HomeCubit extends Cubit<HomeState> {
         'formName': formName,
       'pathURL':pathURL,
       'downloadLink': downloadLink,
-        'formLink': formLink,
+        'formLink': downloadURLOFUploadedDocument,
         'sentTo': selectedEmails,
         'sentBy': sentBy,
         'sentDate':DateTime.now(),
@@ -294,7 +339,7 @@ class HomeCubit extends Cubit<HomeState> {
       'pathURL':pathURL,
       'downloadLink': downloadLink,
       'formName': formName,
-      'formLink': formLink,
+      'formLink': downloadURLOFUploadedDocument,
       'sentTo': selectedEmails,
       'sentBy': sentBy,
       'sentDate':DateTime.now(),

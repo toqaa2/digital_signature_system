@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:signature_system/src/core/constants/constants.dart';
+
+import '../manager/home_cubit.dart';
 
 class Step2Screen extends StatelessWidget {
-  const Step2Screen({super.key});
+  const Step2Screen({super.key, required this.cubit});
+  final HomeCubit cubit;
+
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +31,9 @@ class Step2Screen extends StatelessWidget {
                 border: Border.all(color: Colors.grey.shade300)
               ),
               child: ListTile(
+                onTap: (){
+                  cubit.downloadFile("https://rmpfzdccuxeuyshwqprc.supabase.co/storage/v1/object/public/prv1//Payment%20Request%20Template%202025.docx", cubit.selectedFormModel!.formName!);
+                },
                 leading:  SvgPicture.asset(
                   'assets/xxx-word.svg',
                   height: 30,
@@ -54,6 +62,9 @@ class Step2Screen extends StatelessWidget {
                 border: Border.all(color: Colors.grey.shade300)
               ),
               child: ListTile(
+                onTap: (){
+                  cubit.pickAndUploadDocument(Constants.userModel!.userId!,cubit.selectedFormModel!.formName!);
+                },
                 leading:  SvgPicture.asset(
                   'assets/pdf.svg',
                   height: 30,

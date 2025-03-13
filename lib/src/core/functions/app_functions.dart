@@ -2,8 +2,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:supabase/supabase.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'package:universal_html/html.dart' as html;
 import 'package:image/image.dart' as img;
 import 'package:pdf/widgets.dart' as pw;

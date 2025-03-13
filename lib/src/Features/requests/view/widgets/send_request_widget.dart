@@ -15,7 +15,6 @@ class SentRequestsWidget extends StatelessWidget {
         final SentForm = cubit.sentForms[index];
         return  ListTile(
 
-          // textColor: Color(0xFFF6F6F6),
           title: Text(
             SentForm.formName.toString(),
             style: TextStyle(fontSize: 14),
