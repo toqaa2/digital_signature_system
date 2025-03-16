@@ -108,8 +108,12 @@ class LoginScreen extends StatelessWidget {
                               ? Column(
                                   children: [
                                     20.isHeight,
-                                    const Center(
-                                        child: CircularProgressIndicator()),
+                                     Center(
+                                        child: CircularProgressIndicator(
+                                          color: AppColors.mainColor,
+
+
+                                        )),
                                   ],
                                 )
                               : ButtonWidget(

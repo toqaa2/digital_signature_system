@@ -23,7 +23,7 @@ class _RequestsScreenState extends State<RequestsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
   }
 
   @override
@@ -66,6 +66,8 @@ class _RequestsScreenState extends State<RequestsScreen>
                     Tab(text: 'Sent Requests'),
                     Tab(text: 'Received Requests'),
                     Tab(text: 'Signed Requests'),
+                    Tab(text: 'Signed By Me'),
+                    Tab(text: 'Reversed'),
                   ],
                   labelColor: AppColors.mainColor,
                   indicatorColor: AppColors.mainColor,
@@ -79,6 +81,8 @@ class _RequestsScreenState extends State<RequestsScreen>
                       SentRequestsWidget(cubit: cubit,),
                       RecivedRequestWidget(cubit: cubit,),
                       signedRequestsWidget(),
+                      Container(),
+                      Container(),
                     ],
                   ),
                 ),

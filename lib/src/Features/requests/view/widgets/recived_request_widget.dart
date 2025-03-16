@@ -41,6 +41,7 @@ class RecivedRequestWidget extends StatelessWidget {
           ),
           onTap: (){
             Navigator.of(context).push(MaterialPageRoute(builder: (context) => ReceivedFormsView(
+              cubit: cubit,
               formLink: receivedForm.formLink!,
               formName:  receivedForm.formName.toString(),
               sentDate: intl.DateFormat('yyy-MM-dd hh:mm a').format(DateTime.fromMicrosecondsSinceEpoch(receivedForm.sentDate?.microsecondsSinceEpoch??0),)

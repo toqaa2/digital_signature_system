@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:signature_system/src/core/constants/constants.dart';
+import 'package:signature_system/src/core/style/colors.dart';
 
 import '../manager/home_cubit.dart';
 
@@ -32,13 +33,13 @@ class Step2Screen extends StatelessWidget {
               ),
               child: ListTile(
                 onTap: (){
-                  cubit.downloadFile("https://rmpfzdccuxeuyshwqprc.supabase.co/storage/v1/object/public/prv1//Payment%20Request%20Template%202025.docx", cubit.selectedFormModel!.formName!);
+                  cubit.downloadFile(cubit.selectedFormModel!.formLink!, cubit.selectedFormModel!.formName!);
                 },
                 leading:  SvgPicture.asset(
                   'assets/xxx-word.svg',
                   height: 30,
                 ),
-                title: Text("Payment Request Memo ",style: TextStyle(fontSize: 14, color: Colors.grey.shade700),),
+                title: Text(cubit.selectedFormModel!.formName!,style: TextStyle(fontSize: 14, color: Colors.grey.shade700),),
                 trailing:  SvgPicture.asset(
                   'assets/downloadsvg.svg',
                   height: 30,
@@ -69,8 +70,19 @@ class Step2Screen extends StatelessWidget {
                   'assets/pdf.svg',
                   height: 30,
                 ),
-                title: Text("Payment Request Memo ",style: TextStyle(fontSize: 14, color: Colors.grey.shade700),),
-                trailing:  SvgPicture.asset(
+                title: Text(cubit.selectedFormModel!.formName!,style: TextStyle(fontSize: 14, color: Colors.grey.shade700),),
+                trailing:
+                cubit.state is UploadfileLoading
+                    ? CircularProgressIndicator(
+
+                  color: AppColors.mainColor,
+                )
+                    : cubit.state is UploadfileSuccess
+                    ? SvgPicture.asset(
+                  'assets/uploaded.svg',
+                  height: 30,
+                )
+                    : SvgPicture.asset(
                   'assets/UploadSvg.svg',
                   height: 30,
                 ),
@@ -82,4 +94,6 @@ class Step2Screen extends StatelessWidget {
     ),
     );
   }
+
 }
+

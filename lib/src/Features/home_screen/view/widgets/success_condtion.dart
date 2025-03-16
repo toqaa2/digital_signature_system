@@ -19,6 +19,7 @@ class ConditionalStepWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isUploaded = cubit.downloadURLOFUploadedDocument != '';
     bool showSingleSelector = (cubit.selectedItem != null &&
         cubit.selectedItem!.contains('PaymentRequest') &&
         cubit.currentStep == 4) ||
@@ -54,7 +55,8 @@ class ConditionalStepWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       ElevatedButtonWithIcon(
-                        onPressed: cubit.currentStep > 0
+                        onPressed:
+                        cubit.currentStep > 0
                             ? () {
                           cubit.changeStepPrev();
                         }
@@ -67,11 +69,14 @@ class ConditionalStepWidget extends StatelessWidget {
                         icon: const Icon(Icons.keyboard_arrow_left_rounded),
                         iconPosition: IconPosition.leading,
                       ),
-                      const SizedBox(width: 4), // Adjusted for width
+                      const SizedBox(width: 4),
                       ElevatedButtonWithIcon(
                         border: false,
-                        backgroundColor: AppColors.mainColor,
-                        onPressed: () {
+                        backgroundColor: cubit.currentStep == 1 && isUploaded == false || cubit.currentStep == 0 && cubit.selectedItem==null
+                            ? Colors.grey: AppColors.mainColor,
+                        onPressed:
+                        cubit.currentStep == 1 && isUploaded == false || cubit.currentStep == 0 && cubit.selectedItem==null? (){}:
+                            () {
                           if (cubit.currentStep < 3 ||
                               (cubit.selectedItem != null && cubit.selectedItem!
                                   .contains('PaymentRequest') && cubit
@@ -98,18 +103,18 @@ class ConditionalStepWidget extends StatelessWidget {
                               .currentStep == 4){
                             cubit.sendPaymentForm(
                               formLink: cubit.selectedFormModel!.formLink!,
-                              taxID: cubit.taxIDController.text??"",
-                                advancePayment: cubit.advancePaymentController.text??"",
-                                bankAccountNumber: cubit.bankAccountNumberController.text??"",
-                                bankName: cubit.bankNameController.text??"",
+                              taxID: cubit.taxIDController.text,
+                                advancePayment: cubit.advancePaymentController.text,
+                                bankAccountNumber: cubit.bankAccountNumberController.text,
+                                bankName: cubit.bankNameController.text,
                                 downloadLink: "",
                                 pathURL: "",
-                                commercialRegistration: cubit.commercialRegistrationController.text??"",
-                                electronicInvoice: cubit.electronicInvoiceController.text??"",
-                                invoiceNumber: cubit.invoiceNumberController.text??"",
+                                commercialRegistration: cubit.commercialRegistrationController.text,
+                                electronicInvoice: cubit.electronicInvoiceController.text,
+                                invoiceNumber: cubit.invoiceNumberController.text,
                                 limitOfRequest: cubit.selectedListLimit!,
                                 paymentType: cubit.selectedPaymentType!,
-                                serviceType: cubit.serviceTypeController.text??"",
+                                serviceType: cubit.serviceTypeController.text,
                                 userId: Constants.userModel!.userId!,
                                 formName:  cubit.selectedFormModel!.formName!,
                                 sentBy: Constants.userModel!.email!,
@@ -119,6 +124,7 @@ class ConditionalStepWidget extends StatelessWidget {
                         },
                         label: 'Next',
                         textColor: Colors.white,
+
                         icon: const Icon(
                           Icons.keyboard_arrow_right_rounded,
                           color: Colors.white,

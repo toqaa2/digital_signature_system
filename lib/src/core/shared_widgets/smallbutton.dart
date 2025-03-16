@@ -27,17 +27,23 @@ class ElevatedButtonWithIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
 
+
       style: ElevatedButton.styleFrom(
 
+
         foregroundColor: textColor, backgroundColor: backgroundColor,
+
         shape: RoundedRectangleBorder(
+
           borderRadius: BorderRadius.circular(8),
+
           side: border
               ?  BorderSide(color: AppColors.mainColor)
               : BorderSide.none,
         ),
       ),
       onPressed: onPressed,
+
 
       child: Row(
         mainAxisSize: MainAxisSize.min,

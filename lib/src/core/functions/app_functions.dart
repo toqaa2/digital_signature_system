@@ -8,133 +8,135 @@ import 'package:image/image.dart' as img;
 import 'package:pdf/widgets.dart' as pw;
 
 class AppFunctions {
- static  img.Image imageDecode(Uint8List imageData) {
+  static img.Image imageDecode(Uint8List imageData) {
     return img.decodeImage(imageData)!;
   }
- static Future<Uint8List> saveWidgetsAsPdf(List<GlobalKey> globalKeys) async {
-   if (globalKeys.isEmpty) {
-     throw ArgumentError('The number of global keys must match the number of image names.');
-   }
 
-   try {
-     final pdf = pw.Document();
+  static Future<Uint8List> saveWidgetsAsPdf(List<GlobalKey> globalKeys) async {
+    if (globalKeys.isEmpty) {
+      throw ArgumentError(
+          'The number of global keys must match the number of image names.');
+    }
 
-     for (int i = 0; i < globalKeys.length; i++) {
-       final globalKey = globalKeys[i];
+    try {
+      final pdf = pw.Document();
 
-       // Check if the global key's context is valid
-       if (globalKey.currentContext == null) {
-         print('Error: Global key context is null for index $i');
-         continue; // Skip this key if the context is invalid
-       }
+      for (int i = 0; i < globalKeys.length; i++) {
+        final globalKey = globalKeys[i];
 
-       // Capture the widget as an image
-       RenderRepaintBoundary boundary = globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-       ui.Image image = await boundary.toImage(pixelRatio: 3.0); // Increase pixel ratio for better quality
-       ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-       Uint8List pngBytes = byteData!.buffer.asUint8List();
+        // Check if the global key's context is valid
+        if (globalKey.currentContext == null) {
+          print('Error: Global key context is null for index $i');
+          continue; // Skip this key if the context is invalid
+        }
 
-       // Add a page with the image
-       pdf.addPage(
-         pw.Page(
-           build: (pw.Context context) {
-             return pw.Center(
-               child: pw.Image(
-                 pw.MemoryImage(pngBytes),
-               ),
-             );
-           },
-         ),
-       );
-     }
+        // Capture the widget as an image
+        RenderRepaintBoundary boundary = globalKey.currentContext!
+            .findRenderObject() as RenderRepaintBoundary;
+        ui.Image image = await boundary.toImage(
+            pixelRatio: 3.0); // Increase pixel ratio for better quality
+        ByteData? byteData =
+            await image.toByteData(format: ui.ImageByteFormat.png);
+        Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-     // Save the PDF to bytes
-     Uint8List bytes = await pdf.save();
+        // Add a page with the image
+        pdf.addPage(
+          pw.Page(
+            build: (pw.Context context) {
+              return pw.Center(
+                child: pw.Image(
+                  pw.MemoryImage(pngBytes),
+                ),
+              );
+            },
+          ),
+        );
+      }
 
+      // Save the PDF to bytes
+      Uint8List bytes = await pdf.save();
 
-     // Trigger a download of the PDF file
-     final blob = html.Blob([bytes]);
-     final url = html.Url.createObjectUrlFromBlob(blob);
-     final anchor = html.document.createElement('a') as html.AnchorElement
-       ..href = url
-       ..style.display = 'none'
-       ..download = 'images.pdf'; // Set the PDF file name
-     html.document.body!.children.add(anchor);
-     anchor.click();
-     html.document.body!.children.remove(anchor);
-     html.Url.revokeObjectUrl(url);
-     return bytes;
+      // Trigger a download of the PDF file
+      final blob = html.Blob([bytes]);
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      final anchor = html.document.createElement('a') as html.AnchorElement
+        ..href = url
+        ..style.display = 'none'
+        ..download = 'images.pdf'; // Set the PDF file name
+      html.document.body!.children.add(anchor);
+      anchor.click();
+      html.document.body!.children.remove(anchor);
+      html.Url.revokeObjectUrl(url);
+      return bytes;
+    } catch (e) {
+      print('Error saving widgets as PDF: $e');
+      return [] as Uint8List;
+    }
+  }
 
-   } catch (e) {
-     print('Error saving widgets as PDF: $e');
-     return [] as Uint8List;
-   }
-
- }
-
-  // static Future<void> saveWidgetsAsPdf(List<GlobalKey> globalKeys, List<String> imageNames) async {
-  //   if (globalKeys.length != imageNames.length) {
-  //     throw ArgumentError('The number of global keys must match the number of image names.');
-  //   }
-  //
-  //   try {
-  //     // Create a new PDF document
-  //     // final PdfDocument document = PdfDocument();
-  //     final pdf = pw.Document();
-  //
-  //     for (int i = 0; i < globalKeys.length; i++) {
-  //       final globalKey = globalKeys[i];
-  //
-  //       RenderRepaintBoundary boundary =
-  //           globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-  //       ui.Image image = await boundary.toImage(pixelRatio: 3.0); // Increase pixelRatio
-  //       ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-  //       Uint8List pngBytes = byteData!.buffer.asUint8List();
-  //
-  //       // Decode the image
-  //       // final img.Image pdfImage = imageDecode(pngBytes);
-  //
-  //       // Add a page with the image
-  //       pdf.addPage(
-  //         pw.Page(
-  //           build: (pw.Context context) {
-  //             return pw.Center(
-  //               child: pw.Image(
-  //                 pw.MemoryImage(pngBytes),
-  //                 // width: 200,
-  //                 // height: 200,
-  //               ),
-  //             );
-  //           },
-  //         ),
-  //       );
-  //
-  //       // Add a new page to the PDF
-  //       // final PdfPage page = document.pages.add();
-  //
-  //       // Draw the image on the page
-  //       // final PdfGraphics graphics = page.graphics;
-  //       // final PdfBitmap pdfImage = PdfBitmap(pngBytes);
-  //       // graphics.drawImage(pdfImage, const Rect.fromLTWH(0, 0, 500, 700)); // Adjust size as needed
-  //     }
-  //
-  //     // Save the PDF to bytes
-  //     List<int> bytes = await pdf.save();
-  //     // pdf.dispose();
-  //
-  //     // Trigger a download of the PDF file
-  //     final blob = html.Blob([bytes]);
-  //     final url = html.Url.createObjectUrlFromBlob(blob);
-  //     final anchor = html.document.createElement('a') as html.AnchorElement
-  //       ..href = url
-  //       ..style.display = 'none'
-  //       ..download = 'images.pdf'; // Set the PDF file name
-  //     html.document.body!.children.add(anchor);
-  //     anchor.click();
-  //     html.document.body!.children.remove(anchor);
-  //     html.Url.revokeObjectUrl(url);
-  //   } catch (e) {
-  //     print('Error saving widgets as PDF: $e');
-  //   }
-  // }
+// static Future<void> saveWidgetsAsPdf(List<GlobalKey> globalKeys, List<String> imageNames) async {
+//   if (globalKeys.length != imageNames.length) {
+//     throw ArgumentError('The number of global keys must match the number of image names.');
+//   }
+//
+//   try {
+//     // Create a new PDF document
+//     // final PdfDocument document = PdfDocument();
+//     final pdf = pw.Document();
+//
+//     for (int i = 0; i < globalKeys.length; i++) {
+//       final globalKey = globalKeys[i];
+//
+//       RenderRepaintBoundary boundary =
+//           globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+//       ui.Image image = await boundary.toImage(pixelRatio: 3.0); // Increase pixelRatio
+//       ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+//       Uint8List pngBytes = byteData!.buffer.asUint8List();
+//
+//       // Decode the image
+//       // final img.Image pdfImage = imageDecode(pngBytes);
+//
+//       // Add a page with the image
+//       pdf.addPage(
+//         pw.Page(
+//           build: (pw.Context context) {
+//             return pw.Center(
+//               child: pw.Image(
+//                 pw.MemoryImage(pngBytes),
+//                 // width: 200,
+//                 // height: 200,
+//               ),
+//             );
+//           },
+//         ),
+//       );
+//
+//       // Add a new page to the PDF
+//       // final PdfPage page = document.pages.add();
+//
+//       // Draw the image on the page
+//       // final PdfGraphics graphics = page.graphics;
+//       // final PdfBitmap pdfImage = PdfBitmap(pngBytes);
+//       // graphics.drawImage(pdfImage, const Rect.fromLTWH(0, 0, 500, 700)); // Adjust size as needed
+//     }
+//
+//     // Save the PDF to bytes
+//     List<int> bytes = await pdf.save();
+//     // pdf.dispose();
+//
+//     // Trigger a download of the PDF file
+//     final blob = html.Blob([bytes]);
+//     final url = html.Url.createObjectUrlFromBlob(blob);
+//     final anchor = html.document.createElement('a') as html.AnchorElement
+//       ..href = url
+//       ..style.display = 'none'
+//       ..download = 'images.pdf'; // Set the PDF file name
+//     html.document.body!.children.add(anchor);
+//     anchor.click();
+//     html.document.body!.children.remove(anchor);
+//     html.Url.revokeObjectUrl(url);
+//   } catch (e) {
+//     print('Error saving widgets as PDF: $e');
+//   }
+// }
 }

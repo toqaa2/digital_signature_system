@@ -1,20 +1,20 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:signature_system/src/core/constants/constants.dart';
-import 'package:signature_system/src/core/functions/app_functions.dart';
+
 import 'package:signature_system/src/core/style/colors.dart';
-import 'package:supabase/supabase.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import '../../../../core/shared_widgets/custom_button.dart';
 import '../../../login_screen/view/widgets/custom_text_field.dart';
+import '../../manager/requests_cubit.dart';
 
 class ReceivedFormsView extends StatefulWidget {
   const ReceivedFormsView(
-      {super.key, required this.formName, required this.sentDate, required this.formLink});
+      {super.key, required this.formName, required this.sentDate, required this.formLink, required this.cubit});
+  final RequestsCubit cubit;
 
   final String formName;
   final String sentDate;
@@ -42,106 +42,103 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage("assets/BackGround.png"), fit: BoxFit.fill),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.white.withAlpha(150),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 30, left: 15, right: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(widget.formName),
-                          Text("at ${widget.sentDate}"),
-                        ],
-                      ),
+    return Stack(
+      children: [
+        // if (widget.cubit.state is LoadingSave)
+        // Center(
+        //   child: CircularProgressIndicator(),
+        // ),
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("assets/BackGround.png"), fit: BoxFit.fill),
+          ),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Padding(
+              padding: const EdgeInsets.all(30.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white.withAlpha(150),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 30, left: 15, right: 15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
                       Row(
-                        spacing: 5,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          ButtonWidget(
-                            verticalMargin: 2,
-                            minWidth: 120,
-                            height: 35,
-                            textStyle:
-                                TextStyle(fontSize: 12, color: Colors.white),
-                            text: "Save Form",
-                            onTap: () async {
-                              if (paintKeys.isNotEmpty) {
-                                Uint8List file =
-                                    await AppFunctions.saveWidgetsAsPdf(
-                                        paintKeys);
-
-                                /// save to DB
-                                final SupabaseClient _client =
-                                    Supabase.instance.client;
-                                final String _bucketName = 'forms';
-                                String path='${widget.formName}/${Constants.userModel?.userId}/${widget.formName}${widget.sentDate}.pdf';
-                                await _client.storage
-                                    .from(_bucketName)
-                                    .uploadBinary(
-                                        path,
-                                        file);
-                                final publicUrl = _client.storage.from(_bucketName).getPublicUrl(path);
-                                print(publicUrl);
-                              } else {
-                                print('No pages to save.');
-                              }
-                            },
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(widget.formName),
+                              Text("at ${widget.sentDate}"),
+                            ],
                           ),
-                          ButtonWidget(
-                            verticalMargin: 2,
-                            buttonColor: Colors.white,
-                            borderColor: AppColors.mainColor,
-                            minWidth: 120,
-                            height: 35,
-                            textStyle: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.mainColor,
-                            ),
-                            text: "Reverse",
-                            onTap: () {
-                              setState(() {
-                                _showDialog(context);
-                              });
-                            },
+                          Row(
+                            spacing: 5,
+                            children: [
+                              ButtonWidget(
+                                  verticalMargin: 2,
+                                  minWidth: 120,
+                                  height: 35,
+                                  textStyle:
+                                  TextStyle(fontSize: 12, color: Colors.white),
+                                  text: "Save Form",
+                                  onTap: () async {
+                                    if (paintKeys.isNotEmpty) {
+                                      Uint8List file =
+                                      await widget.cubit.saveWidgetsAsPdf(
+                                          paintKeys);
+
+                                      /// save to DB
+                                      widget.cubit.setSignedDocument(widget.formName, file);}}
+
+
+                              ),
+                              ButtonWidget(
+                                verticalMargin: 2,
+                                buttonColor: Colors.white,
+                                borderColor: AppColors.mainColor,
+                                minWidth: 120,
+                                height: 35,
+                                textStyle: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.mainColor,
+                                ),
+                                text: "Reverse",
+                                onTap: () {
+                                  setState(() {
+                                    _showDialog(context);
+                                  });
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),
+                      SizedBox(height: 20),
+                      Expanded(
+                          child: Center(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: Column(
+                                children: pdfPageSignatures,
+                              ),
+                            ),
+                          )),
                     ],
                   ),
-                  SizedBox(height: 20),
-                  Expanded(
-                      child: Center(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: Column(
-                        children: pdfPageSignatures,
-                      ),
-                    ),
-                  )),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        )
+
+      ],
     );
   }
 
@@ -244,13 +241,15 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
           key: widget.paintKey,
           child: Stack(
             children: [
-              SizedBox(
+              Container(
+                color: Colors.white,
                 width: 800,
-                height: 1100,
+                height: 1020,
                 child: Padding(
                   padding: EdgeInsets.all(8.0),
                   child: SfPdfViewer.memory(
                     widget.document,
+
                     initialPageNumber: widget.index + 1,
                     scrollDirection: PdfScrollDirection.horizontal,
                     canShowHyperlinkDialog: false,
