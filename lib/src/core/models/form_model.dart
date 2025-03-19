@@ -83,7 +83,7 @@ class FormModel {
     formID = json?['formID'];
     formLink = json?['formLink'];
     formName = json?['formName'];
-    formReference = json?['form_reference']??'No Reference';
+    formReference = json?['form_reference'];
     requiredToSign = List.generate(json?['requiredToSign']==null?0:json?['requiredToSign'].length,  (index) => json?['requiredToSign']?[index],);
      sentTo =List.generate(json?['sentTo']==null?0:json?['sentTo'].length,  (index) => json?['sentTo']?[index],) ;
     sentBy = json?['sentBy'];

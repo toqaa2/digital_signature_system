@@ -27,7 +27,7 @@ class RequestsCubit extends Cubit<RequestsState> {
 
   Future signTheForm(List<GlobalKey> globalKeys, FormModel form,BuildContext context) async {
     try{
-      showDialog(context: context, builder: (context) => AlertDialog(content: Text('Loading'),),);
+      showDialog(barrierDismissible: false,context: context, builder: (context) => AlertDialog(content: Text('Loading'),),);
       await Future.delayed(const Duration(seconds: 1));
       /// sign the form
       Uint8List pdfBytes =   await AppFunctions.saveWidgetsAsPdf(globalKeys);

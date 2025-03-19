@@ -36,6 +36,8 @@ class AppFunctions {
         // Get the original size of the widget
         double originalWidth = boundary.size.width;
         double originalHeight = boundary.size.height;
+        print(originalWidth);
+        print(originalHeight);
 
         ui.Image image =
             await boundary.toImage(pixelRatio: 3.0); // Increase pixel ratio for better quality
