@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:pdf/pdf.dart';
 
 import 'package:universal_html/html.dart' as html;
 import 'package:image/image.dart' as img;
@@ -14,8 +15,7 @@ class AppFunctions {
 
   static Future<Uint8List> saveWidgetsAsPdf(List<GlobalKey> globalKeys) async {
     if (globalKeys.isEmpty) {
-      throw ArgumentError(
-          'The number of global keys must match the number of image names.');
+      throw ArgumentError('The number of global keys must match the number of image names.');
     }
 
     try {
@@ -31,23 +31,35 @@ class AppFunctions {
         }
 
         // Capture the widget as an image
-        RenderRepaintBoundary boundary = globalKey.currentContext!
-            .findRenderObject() as RenderRepaintBoundary;
-        ui.Image image = await boundary.toImage(
-            pixelRatio: 3.0); // Increase pixel ratio for better quality
-        ByteData? byteData =
-        await image.toByteData(format: ui.ImageByteFormat.png);
-        Uint8List pngBytes = byteData!.buffer.asUint8List();
+        RenderRepaintBoundary boundary =
+            globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+        // Get the original size of the widget
+        double originalWidth = boundary.size.width;
+        double originalHeight = boundary.size.height;
 
+        ui.Image image =
+            await boundary.toImage(pixelRatio: 3.0); // Increase pixel ratio for better quality
+        ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+        Uint8List pngBytes = byteData!.buffer.asUint8List();
+        // Calculate the aspect ratio of the original image
+        final double aspectRatio = originalWidth / originalHeight;
+
+        // Define the page format and size. Match the image's aspect ratio for best results
+        PdfPageFormat pageFormat = PdfPageFormat(originalWidth, originalHeight, marginAll: 0);
         // Add a page with the image
         pdf.addPage(
           pw.Page(
+            pageFormat: pageFormat,
             build: (pw.Context context) {
-              return pw.Center(
-                child: pw.Image(
-                  pw.MemoryImage(pngBytes),
-                ),
-              );
+              return
+
+                pw.Center(
+                  child: pw.Image(
+                    fit: pw.BoxFit.fill,
+                    pw.MemoryImage(pngBytes),
+                  )
+                )
+              ;
             },
           ),
         );
@@ -55,16 +67,16 @@ class AppFunctions {
 
       // Save the PDF to bytes
       Uint8List bytes = await pdf.save();
+      downloadPdf(bytes);
       return bytes;
       // Trigger a download of the PDF file
-
     } catch (e) {
       print('sign pdf error: $e');
       return [] as Uint8List;
     }
   }
 
-  downloadPdf(Uint8List bytes) {
+  static downloadPdf(Uint8List bytes) {
     try {
       final blob = html.Blob([bytes]);
       final url = html.Url.createObjectUrlFromBlob(blob);
@@ -148,4 +160,3 @@ class AppFunctions {
 //     print('Error saving widgets as PDF: $e');
 //   }
 // }
-
