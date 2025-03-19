@@ -12,7 +12,6 @@ import '../../../core/models/form_model.dart';
 import 'package:web/web.dart' as web;
 import 'package:firebase_storage/firebase_storage.dart';
 
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:intl/intl.dart';
 
@@ -142,55 +141,10 @@ class HomeCubit extends Cubit<HomeState> {
     emit(FormSelected());
   }
 
-  final SupabaseClient _client = Supabase.instance.client;
-  final String _bucketName = 'my_bucket';
+   final String _bucketName = 'my_bucket';
 
-  Future<String?> uploadFileAndGetUrl(String filePath, File file) async {
-    try {
-      await _client.storage
-          .from(_bucketName)
-          .uploadBinary(filePath, file.readAsBytesSync());
-      final publicUrl =
-          _client.storage.from(_bucketName).getPublicUrl(filePath);
-      return publicUrl;
-    } on StorageException catch (e) {
-      print('Error uploading file: ${e.message}');
-      return null;
-    } catch (e) {
-      print('Unexpected error: $e');
-      return null;
-    }
-  }
 
-  Future<String?> getFileUrl(String filePath) async {
-    try {
-      final publicUrl =
-          _client.storage.from(_bucketName).getPublicUrl(filePath);
-      return publicUrl;
-    } on StorageException catch (e) {
-      print('Error getting file URL: ${e.message}');
-      return null;
-    } catch (e) {
-      print('Unexpected error: $e');
-      return null;
-    }
-  }
 
-  Future<String?> uploadBytesAndGetUrl(String filePath, Uint8List bytes) async {
-    try {
-      await _client.storage.from(_bucketName).uploadBinary(filePath, bytes);
-
-      final publicUrl =
-          _client.storage.from(_bucketName).getPublicUrl(filePath);
-      return publicUrl;
-    } on StorageException catch (e) {
-      print('Error uploading bytes: ${e.message}');
-      return null;
-    } catch (e) {
-      print('Unexpected error: $e');
-      return null;
-    }
-  }
 
   Future<void> sendToRequiredEmails({
     // required String formID,
@@ -265,14 +219,16 @@ class HomeCubit extends Cubit<HomeState> {
     required String downloadLink,
     required String sentBy,
     required List<String> selectedEmails,
-  }) async {
+  }) async
+  {
     // String formIDWithDate =formName+DateTime.now().toString();
-    await FirebaseFirestore.instance
+    DocumentReference<Map<String,dynamic>> formReference= FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
         .collection('sent_forms')
-        .doc(formID)
-        .set({
+        .doc(formID);
+        await formReference.set({
+          'form_reference':formReference,
       'formID': formID,
       'formName': formName,
       'pathURL': pathURL,
@@ -319,13 +275,15 @@ class HomeCubit extends Cubit<HomeState> {
     required String bankAccountNumber,
     required String serviceType,
     required List<String> selectedEmails,
-  }) async {
-    await FirebaseFirestore.instance
+  }) async
+  {
+    DocumentReference<Map<String,dynamic>>formReference= FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
         .collection('sent_forms')
-        .doc(formID)
-        .set({
+        .doc(formID);
+        await formReference.set({
+          'form_reference':formReference,
       'formID': formID,
       'pathURL': pathURL,
       'downloadLink': downloadLink,

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:signature_system/src/core/models/form_model.dart';
 
 import 'package:signature_system/src/core/style/colors.dart';
 
@@ -12,10 +13,17 @@ import '../../../login_screen/view/widgets/custom_text_field.dart';
 import '../../manager/requests_cubit.dart';
 
 class ReceivedFormsView extends StatefulWidget {
-  const ReceivedFormsView(
-      {super.key, required this.formName, required this.sentDate, required this.formLink, required this.cubit});
-  final RequestsCubit cubit;
+  const ReceivedFormsView({
+    super.key,
+    required this.formModel,
+    required this.formName,
+    required this.sentDate,
+    required this.formLink,
+    required this.cubit,
+  });
 
+  final RequestsCubit cubit;
+final FormModel formModel;
   final String formName;
   final String sentDate;
   final String formLink;
@@ -35,8 +43,7 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
 
   @override
   void initState() {
-    loadPdfFromUrl(
-        widget.formLink);
+    loadPdfFromUrl(widget.formLink);
     super.initState();
   }
 
@@ -81,24 +88,21 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                           Row(
                             spacing: 5,
                             children: [
+                              if(widget.cubit.checkIfValidToSign(widget.formModel))
                               ButtonWidget(
                                   verticalMargin: 2,
                                   minWidth: 120,
                                   height: 35,
-                                  textStyle:
-                                  TextStyle(fontSize: 12, color: Colors.white),
+                                  textStyle: TextStyle(
+                                      fontSize: 12, color: Colors.white),
                                   text: "Save Form",
                                   onTap: () async {
                                     if (paintKeys.isNotEmpty) {
-                                      Uint8List file =
-                                      await widget.cubit.saveWidgetsAsPdf(
-                                          paintKeys);
-
                                       /// save to DB
-                                      widget.cubit.setSignedDocument(widget.formName, file);}}
-
-
-                              ),
+                                      widget.cubit
+                                          .signTheForm(paintKeys, widget.formModel,context);
+                                    }
+                                  }),
                               ButtonWidget(
                                 verticalMargin: 2,
                                 buttonColor: Colors.white,
@@ -123,13 +127,13 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                       SizedBox(height: 20),
                       Expanded(
                           child: Center(
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.vertical,
-                              child: Column(
-                                children: pdfPageSignatures,
-                              ),
-                            ),
-                          )),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: Column(
+                            children: pdfPageSignatures,
+                          ),
+                        ),
+                      )),
                     ],
                   ),
                 ),
@@ -137,7 +141,6 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
             ),
           ),
         )
-
       ],
     );
   }
@@ -249,7 +252,6 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
                   padding: EdgeInsets.all(8.0),
                   child: SfPdfViewer.memory(
                     widget.document,
-
                     initialPageNumber: widget.index + 1,
                     scrollDirection: PdfScrollDirection.horizontal,
                     canShowHyperlinkDialog: false,

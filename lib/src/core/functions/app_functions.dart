@@ -36,7 +36,7 @@ class AppFunctions {
         ui.Image image = await boundary.toImage(
             pixelRatio: 3.0); // Increase pixel ratio for better quality
         ByteData? byteData =
-            await image.toByteData(format: ui.ImageByteFormat.png);
+        await image.toByteData(format: ui.ImageByteFormat.png);
         Uint8List pngBytes = byteData!.buffer.asUint8List();
 
         // Add a page with the image
@@ -55,8 +55,17 @@ class AppFunctions {
 
       // Save the PDF to bytes
       Uint8List bytes = await pdf.save();
-
+      return bytes;
       // Trigger a download of the PDF file
+
+    } catch (e) {
+      print('sign pdf error: $e');
+      return [] as Uint8List;
+    }
+  }
+
+  downloadPdf(Uint8List bytes) {
+    try {
       final blob = html.Blob([bytes]);
       final url = html.Url.createObjectUrlFromBlob(blob);
       final anchor = html.document.createElement('a') as html.AnchorElement
@@ -73,7 +82,7 @@ class AppFunctions {
       return [] as Uint8List;
     }
   }
-
+}
 // static Future<void> saveWidgetsAsPdf(List<GlobalKey> globalKeys, List<String> imageNames) async {
 //   if (globalKeys.length != imageNames.length) {
 //     throw ArgumentError('The number of global keys must match the number of image names.');
@@ -139,4 +148,4 @@ class AppFunctions {
 //     print('Error saving widgets as PDF: $e');
 //   }
 // }
-}
+

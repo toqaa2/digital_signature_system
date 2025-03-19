@@ -10,7 +10,6 @@ class FormModel {
   List<String>? signedBy;
   List<String>? serviceType;
   String? pathURL;
-  String? downloadLink;
   bool? isFullySigned;
   Timestamp? sentDate;
   Timestamp? signedDate;
@@ -24,6 +23,7 @@ class FormModel {
   String? bankName;
   String? invoiceNumber;
   String? bankAccountNumber;
+  DocumentReference<Map<String,dynamic>>? formReference;
 
   FormModel({
     required this.formID,
@@ -32,7 +32,7 @@ class FormModel {
     required this.requiredToSign,
     this.sentTo,
     required this.pathURL,
-    required this.downloadLink,
+     required this.formReference,
     this.sentBy,
     this.signedBy,
     this.serviceType,
@@ -52,19 +52,19 @@ class FormModel {
   });
 
   Map<String, dynamic> toMap() => {
+    'form_reference':formReference,
     if(formID!=null)'formID': formID,
     if(formLink!=null)'formLink': formLink,
     if(formName!=null)'formName': formName,
-    if(requiredToSign!=null)'requiredToSign': List.generate(requiredToSign?.length??0,  (index) => requiredToSign?[index],),
-    if(sentTo!=null)'sentTo': List.generate(sentTo?.length??0,  (index) => sentTo?[index],),
+     'requiredToSign': List.generate(requiredToSign?.length??0,  (index) => requiredToSign?[index],),
+     'sentTo': List.generate(sentTo?.length??0,  (index) => sentTo?[index],),
     if(sentBy!=null)'sentBy': sentBy,
-    if(signedBy!=null)'signedBy': List.generate(signedBy?.length??0,  (index) => signedBy?[index],),
-    if(serviceType!=null)'serviceType':  List.generate(serviceType?.length??0,  (index) => serviceType?[index],),
+     'signedBy': List.generate(signedBy?.length??0,  (index) => signedBy?[index],),
+     'serviceType':  List.generate(serviceType?.length??0,  (index) => serviceType?[index],),
     if(isFullySigned!=null)'isFullySigned': isFullySigned,
     if(sentDate!=null)'sentDate': sentDate,
     if(pathURL!=null)'pathURL': pathURL,
-    if(downloadLink!=null)'downloadLink': downloadLink,
-    if(signedDate!=null)'signedDate': signedDate,
+     if(signedDate!=null)'signedDate': signedDate,
     if(formTitle!=null)'formTitle': formTitle,
     if(paymentType!=null)'paymentType': paymentType,
     if(limitOfRequest!=null)'limitOfRequest': limitOfRequest,
@@ -83,11 +83,12 @@ class FormModel {
     formID = json?['formID'];
     formLink = json?['formLink'];
     formName = json?['formName'];
-   if(json?['requiredToSign']!=null) requiredToSign = List.generate(json?['requiredToSign'].length??0,  (index) => json?['requiredToSign']?[index],);
-    if(json?['sentTo']!=null) sentTo =List.generate(json?['sentTo'].length??0,  (index) => json?['sentTo']?[index],) ;
+    formReference = json?['form_reference']??'No Reference';
+    requiredToSign = List.generate(json?['requiredToSign']==null?0:json?['requiredToSign'].length,  (index) => json?['requiredToSign']?[index],);
+     sentTo =List.generate(json?['sentTo']==null?0:json?['sentTo'].length,  (index) => json?['sentTo']?[index],) ;
     sentBy = json?['sentBy'];
-    if(json?['signedBy']!=null)    signedBy =List.generate(json?['signedBy'].length??0,  (index) => json?['signedBy']?[index],)  ;
-    if(json?['serviceType']!=null)    serviceType = List.generate(json?['serviceType'].length??0,  (index) => json?['serviceType']?[index],)  ;
+       signedBy =List.generate(json?['signedBy']==null?0:json?['signedBy'].length,  (index) => json?['signedBy']?[index],)  ;
+       serviceType = List.generate(json?['serviceType']==null?0:json?['serviceType'].length,  (index) => json?['serviceType']?[index],)  ;
     isFullySigned = json?['isFullySigned'];
     sentDate = json?['sentDate'];
     signedDate = json?['signedDate'];

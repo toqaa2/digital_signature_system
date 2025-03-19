@@ -1,3 +1,6 @@
+
+import 'dart:isolate';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
@@ -6,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/src/intl/date_format.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
+import 'package:signature_system/src/core/functions/app_functions.dart';
 
 import 'package:universal_html/html.dart' as html;
 import 'package:pdf/widgets.dart' as pw;
@@ -16,9 +20,65 @@ part 'requests_state.dart';
 
 class RequestsCubit extends Cubit<RequestsState> {
   RequestsCubit() : super(RequestsInitial());
+
   static RequestsCubit get(context) => BlocProvider.of(context);
   List<FormModel> sentForms = [];
   List<FormModel> receivedForms = [];
+
+  Future signTheForm(List<GlobalKey> globalKeys, FormModel form,BuildContext context) async {
+    try{
+      showDialog(context: context, builder: (context) => AlertDialog(content: Text('Loading'),),);
+      await Future.delayed(const Duration(seconds: 1));
+      /// sign the form
+      Uint8List pdfBytes =   await AppFunctions.saveWidgetsAsPdf(globalKeys);
+
+
+      /// upload form get link
+      String downloadLink = form.formLink ?? '';
+      await FirebaseStorage.instance
+          .ref()
+          .child(
+              'SignedForms/$form.formName/${Constants.userModel?.userId}/$form.formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf')
+          .putData(pdfBytes, SettableMetadata(contentType: 'application/pdf'))
+          .then((onValue) async {
+        downloadLink = await onValue.ref.getDownloadURL();
+      });
+
+      /// check if last required email
+      /// change link
+      /// add me to signed by and if last required email change isFullySigned
+      bool isLastRequiredEmail = false;
+      form.signedBy!.add(Constants.userModel!.email!);
+      if (form.sentTo!.length == form.signedBy!.length) {
+        isLastRequiredEmail = true;
+      }
+
+      await form.formReference!.update({
+        'formLink': downloadLink,
+        'signedBy': form.signedBy,
+        'isFullySigned': isLastRequiredEmail,
+      });
+      if(context.mounted)Navigator.pop(context);
+    }catch(e){
+      print('Sign Error: $e');
+    }
+  }
+
+  bool checkIfValidToSign(FormModel form) {
+    late bool isValidToSign;
+    for (int i = 0; i < form.sentTo!.length; i++) {
+      if (Constants.userModel!.email == form.sentTo![i] && i == 0) {
+        isValidToSign = true;
+      } else if (Constants.userModel!.email == form.sentTo![i]) {
+        if (form.signedBy!.length == i) {
+          isValidToSign = true;
+        } else {
+          isValidToSign = false;
+        }
+      }
+    }
+    return isValidToSign;
+  }
 
   void getSentForms(String userId) async {
     sentForms.clear();
@@ -33,79 +93,68 @@ class RequestsCubit extends Cubit<RequestsState> {
       }
 
       sentForms.sort((a, b) {
-        return b.sentDate!.microsecondsSinceEpoch.compareTo(a.sentDate!.microsecondsSinceEpoch);
+        return b.sentDate!.microsecondsSinceEpoch
+            .compareTo(a.sentDate!.microsecondsSinceEpoch);
       });
     });
     emit(GetSentForms());
   }
-  void getReceivedForms(String userId)async{
+
+  void getReceivedForms(String userId) async {
     receivedForms.clear();
     await FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
         .collection('received_forms')
-        .get().then((value) async {
+        .get()
+        .then((value) async {
       for (var element in value.docs) {
-        DocumentReference<Map<String,dynamic>> receivedFormRef;
+        DocumentReference<Map<String, dynamic>> receivedFormRef;
         receivedFormRef = await element['formRef'];
         print(receivedFormRef);
-        await receivedFormRef.get().then((onValue){
+        await receivedFormRef.get().then((onValue) {
           print(onValue.data());
           receivedForms.add(FormModel.fromJson(onValue.data()));
         });
       }
       receivedForms.sort((a, b) {
-        return b.sentDate!.microsecondsSinceEpoch.compareTo(a.sentDate!.microsecondsSinceEpoch);
+        return b.sentDate!.microsecondsSinceEpoch
+            .compareTo(a.sentDate!.microsecondsSinceEpoch);
       });
     });
     emit(GetSentForms());
   }
 
-  void setSignedDocument(
-      String formName,
-      Uint8List file
-      )async {
-
-    final storageRef = FirebaseStorage.instance
-        .ref();
-    Reference pdfRef = storageRef.child(
-        'SignedForms/$formName/${Constants
-            .userModel?.userId}/$formName${DateFormat(
-            'yyy-MM-dd-hh:mm').format(
-            DateTime.now())}.pdf');
-
-    UploadTask uploadTask = pdfRef.putData(file,
-        SettableMetadata(
-            contentType: 'application/pdf'));
-    await uploadTask;
-
-    String signedDocument = await pdfRef
-        .getDownloadURL();
-    print('Download URL: $signedDocument');
-
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(Constants.userModel!.userId)
-        .collection('signedByMe_forms')
-        .doc(
-       formName + DateTime.now().toString())
-        .set({
-      'formID': formName +
-          DateTime.now().toString(),
-      'formName':formName,
-      'pathURL': signedDocument,
-      'downloadLink': signedDocument,
-      'formLink': signedDocument,
-      'sentDate': DateTime.now(),
-      'isFullySigned': false,
-    }).then((_) {
-      emit(SignedByMe());
-      print("Form sent successfully!");
-    });
-  }
+  // void setSignedDocument(String formName, Uint8List file) async {
+  //   final storageRef = FirebaseStorage.instance.ref();
+  //   Reference pdfRef = storageRef.child(
+  //       'SignedForms/$formName/${Constants.userModel?.userId}/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
+  //
+  //   pdfRef.putData(file, SettableMetadata(contentType: 'application/pdf'));
+  //
+  //   String signedDocument = await pdfRef.getDownloadURL();
+  //   print('Download URL: $signedDocument');
+  //
+  //   await FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(Constants.userModel!.userId)
+  //       .collection('signedByMe_forms')
+  //       .doc(formName + DateTime.now().toString())
+  //       .set({
+  //     'formID': formName + DateTime.now().toString(),
+  //     'formName': formName,
+  //     'pathURL': signedDocument,
+  //     'downloadLink': signedDocument,
+  //     'formLink': signedDocument,
+  //     'sentDate': DateTime.now(),
+  //     'isFullySigned': false,
+  //   }).then((_) {
+  //     emit(SignedByMe());
+  //     print("Form sent successfully!");
+  //   });
+  // }
 
   bool isLoading = false;
-
 
   Future<Uint8List> saveWidgetsAsPdf(List<GlobalKey> globalKeys) async {
     if (globalKeys.isEmpty) {
@@ -133,7 +182,7 @@ class RequestsCubit extends Cubit<RequestsState> {
         ui.Image image = await boundary.toImage(
             pixelRatio: 3.0); // Increase pixel ratio for better quality
         ByteData? byteData =
-        await image.toByteData(format: ui.ImageByteFormat.png);
+            await image.toByteData(format: ui.ImageByteFormat.png);
         Uint8List pngBytes = byteData!.buffer.asUint8List();
 
         // Add a page with the image
@@ -167,15 +216,9 @@ class RequestsCubit extends Cubit<RequestsState> {
       // emit(SaveSuccess());
 
       return bytes;
-
-
     } catch (e) {
       print('Error saving widgets as PDF: $e');
       return [] as Uint8List;
     }
   }
-
-  }
-
-
-
+}
