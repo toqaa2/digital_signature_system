@@ -1,5 +1,4 @@
 
-import 'dart:isolate';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -25,14 +24,14 @@ class RequestsCubit extends Cubit<RequestsState> {
   List<FormModel> sentForms = [];
   List<FormModel> receivedForms = [];
 
+
+
   Future signTheForm(List<GlobalKey> globalKeys, FormModel form,BuildContext context) async {
     try{
       showDialog(barrierDismissible: false,context: context, builder: (context) => AlertDialog(content: Text('Loading'),),);
       await Future.delayed(const Duration(seconds: 1));
       /// sign the form
       Uint8List pdfBytes =   await AppFunctions.saveWidgetsAsPdf(globalKeys);
-
-
       /// upload form get link
       String downloadLink = form.formLink ?? '';
       await FirebaseStorage.instance
@@ -43,7 +42,6 @@ class RequestsCubit extends Cubit<RequestsState> {
           .then((onValue) async {
         downloadLink = await onValue.ref.getDownloadURL();
       });
-
       /// check if last required email
       /// change link
       /// add me to signed by and if last required email change isFullySigned
@@ -80,8 +78,11 @@ class RequestsCubit extends Cubit<RequestsState> {
     return isValidToSign;
   }
 
+  List<FormModel> fullSignedList = [];
+
   void getSentForms(String userId) async {
     sentForms.clear();
+    fullSignedList.clear();
     await FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
@@ -89,19 +90,29 @@ class RequestsCubit extends Cubit<RequestsState> {
         .get()
         .then((value) async {
       for (var element in value.docs) {
-        sentForms.add(FormModel.fromJson(element.data()));
+        var form = FormModel.fromJson(element.data());
+        if (form.isFullySigned == true) {
+          fullSignedList.add(form);
+        } else {
+          sentForms.add(form);
+        }
       }
-
       sentForms.sort((a, b) {
         return b.sentDate!.microsecondsSinceEpoch
             .compareTo(a.sentDate!.microsecondsSinceEpoch);
       });
     });
+
     emit(GetSentForms());
   }
+  //if isFullySigned is true put form in Signedbyme List
 
-  void getReceivedForms(String userId) async {
+  List<FormModel> signedByMe = [];
+
+  void getReceivedForms(String userId,) async {
     receivedForms.clear();
+    signedByMe.clear();
+
     await FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
@@ -113,46 +124,26 @@ class RequestsCubit extends Cubit<RequestsState> {
         receivedFormRef = await element['formRef'];
         print(receivedFormRef);
         await receivedFormRef.get().then((onValue) {
-          print(onValue.data());
-          receivedForms.add(FormModel.fromJson(onValue.data()));
+          var form = FormModel.fromJson(onValue.data());
+          if (form.signedBy?.contains(Constants.userModel!.email) ?? false) {
+            signedByMe.add(form);
+          } else {
+            receivedForms.add(form);
+          }
         });
       }
+      print(signedByMe);
+
       receivedForms.sort((a, b) {
         return b.sentDate!.microsecondsSinceEpoch
             .compareTo(a.sentDate!.microsecondsSinceEpoch);
       });
     });
+
     emit(GetSentForms());
   }
 
-  // void setSignedDocument(String formName, Uint8List file) async {
-  //   final storageRef = FirebaseStorage.instance.ref();
-  //   Reference pdfRef = storageRef.child(
-  //       'SignedForms/$formName/${Constants.userModel?.userId}/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
-  //
-  //   pdfRef.putData(file, SettableMetadata(contentType: 'application/pdf'));
-  //
-  //   String signedDocument = await pdfRef.getDownloadURL();
-  //   print('Download URL: $signedDocument');
-  //
-  //   await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(Constants.userModel!.userId)
-  //       .collection('signedByMe_forms')
-  //       .doc(formName + DateTime.now().toString())
-  //       .set({
-  //     'formID': formName + DateTime.now().toString(),
-  //     'formName': formName,
-  //     'pathURL': signedDocument,
-  //     'downloadLink': signedDocument,
-  //     'formLink': signedDocument,
-  //     'sentDate': DateTime.now(),
-  //     'isFullySigned': false,
-  //   }).then((_) {
-  //     emit(SignedByMe());
-  //     print("Form sent successfully!");
-  //   });
-  // }
+
 
   bool isLoading = false;
 

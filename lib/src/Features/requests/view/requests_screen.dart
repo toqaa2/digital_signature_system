@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:signature_system/src/Features/requests/view/widgets/signed_by_me_widget.dart';
 import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 
 import '../manager/requests_cubit.dart';
 import 'widgets/recived_request_widget.dart';
 import 'widgets/send_request_widget.dart';
-import 'widgets/signed_request_widget.dart';
 
 class RequestsScreen extends StatefulWidget {
   const RequestsScreen({super.key});
@@ -23,7 +23,7 @@ class _RequestsScreenState extends State<RequestsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -65,7 +65,6 @@ class _RequestsScreenState extends State<RequestsScreen>
                   tabs: [
                     Tab(text: 'Sent Requests'),
                     Tab(text: 'Received Requests'),
-                    Tab(text: 'Signed Requests'),
                     Tab(text: 'Signed By Me'),
                     Tab(text: 'Reversed'),
                   ],
@@ -80,8 +79,7 @@ class _RequestsScreenState extends State<RequestsScreen>
                     children: [
                       SentRequestsWidget(cubit: cubit,),
                       RecivedRequestWidget(cubit: cubit,),
-                      signedRequestsWidget(),
-                      Container(),
+                      SignedByMeWidget(cubit: cubit,),
                       Container(),
                     ],
                   ),

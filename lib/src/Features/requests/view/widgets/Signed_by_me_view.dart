@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:signature_system/src/core/models/form_model.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-class SentDocumentView extends StatelessWidget {
-  const SentDocumentView(
+import '../../../../core/models/form_model.dart';
+import 'package:intl/intl.dart' as intl;
+
+
+class SignedByMeView extends StatelessWidget {
+  const SignedByMeView(
       {super.key,
-      required this.form,
-      required this.requiredToSign,
-     });
+        required this.form,
+        });
 
   final FormModel form;
 
-  final List requiredToSign;
 
   @override
   Widget build(BuildContext context) {
@@ -38,25 +39,21 @@ class SentDocumentView extends StatelessWidget {
                       spacing: 10,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+
                         Text(form.formName!),
-                        ...List.generate(form.sentTo!.length,  (index){
-                          bool isSigned = form.signedBy!.contains(form.sentTo![index]);
-                          return Row(
-                                      spacing: 5,
-                                      children: [
-                                        SvgPicture.asset(
-                                          isSigned ? 'assets/Signed status.svg' : 'assets/pendingstatus.svg',
-                                          width: 22,
-                                          height: 22,
-                                        ),
-                                        Text(form.sentTo![index]),
-                                      ],
-                                    );
-                        })
+                        Text("Form Is Signed By"),
+                        ...List.generate(form.signedBy!.length,  (index)=> Row(
+                          spacing: 4,
+                          children: [
+                            SvgPicture.asset('assets/Signed status.svg',width: 22,height: 22,),
+                            Text(form.signedBy![index]),
+                          ],
+                        ))
                       ],
                     ),
-
-                    Text(form.sentDate!.toString())
+                    Text(
+                    "${intl.DateFormat('yyy-MM-dd hh:mm a').format(DateTime.fromMicrosecondsSinceEpoch(form.sentDate?.microsecondsSinceEpoch??0))}"
+                        )
                   ],
                 ),
                 SizedBox(
@@ -74,4 +71,3 @@ class SentDocumentView extends StatelessWidget {
     );
   }
 }
-
