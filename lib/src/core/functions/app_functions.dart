@@ -18,7 +18,7 @@ class AppFunctions {
       },
       body: json.encode({
         'service_id': "service_onxkzts",
-        'template_id': "template_5ca9mmc",
+        'template_id': "template_sje8e6m",
         'user_id': "uKgn4fDs-ds-799qo",
         'template_params': {
           'to_email': toEmail,
@@ -27,6 +27,7 @@ class AppFunctions {
         },
       }),
     );
+     print(response.body);
   }
   static img.Image imageDecode(Uint8List imageData) {
     return img.decodeImage(imageData)!;
