@@ -55,7 +55,7 @@ class ButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
 
-      color: verticalMargin==0?Colors.transparent: Colors.white,
+      color: verticalMargin==0?Colors.transparent: Colors.transparent,
       padding: EdgeInsets.symmetric(vertical:verticalMargin?? 18.h),
       child: SizedBox(
         height: 40,

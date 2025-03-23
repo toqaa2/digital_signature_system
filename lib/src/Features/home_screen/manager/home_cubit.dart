@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -141,7 +140,97 @@ class HomeCubit extends Cubit<HomeState> {
     emit(FormSelected());
   }
 
-   final String _bucketName = 'my_bucket';
+String? uploadedCommertialRegestration;
+
+void uploadCommertialRegestration (String userID, String formName)async{
+  emit(UploadCommertialRegestrationLoading());
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+    type: FileType.custom,
+    allowedExtensions: ['pdf'],
+  );
+  if (result != null) {
+    String fileName = result.files.single.name;
+    docFile = result.files.single.bytes;
+    if (docFile != null) {
+      print('File picked: $fileName');
+      print(docFile);
+      final storageRef = FirebaseStorage.instance.ref();
+      Reference pdfRef = storageRef.child(
+          'uploadCommertialRegestration/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
+
+      UploadTask uploadTask = pdfRef.putData(
+          docFile!, SettableMetadata(contentType: 'application/pdf'));
+      await uploadTask;
+
+      uploadedCommertialRegestration = await pdfRef.getDownloadURL();
+      commercialRegistrationController.text = uploadedCommertialRegestration??"";
+      print('Download URL: $uploadedCommertialRegestration');
+
+      emit(UploadCommertialRegestrationSuccess());
+    }
+  }
+}
+  String? uploadedAdvancePaymentCertificate;
+
+  void uploadAdvancePaymentCertificate (String userID, String formName)async{
+    emit(UploadAdvancePaymentLoading());
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+    if (result != null) {
+      String fileName = result.files.single.name;
+      docFile = result.files.single.bytes;
+      if (docFile != null) {
+        print('File picked: $fileName');
+        print(docFile);
+        final storageRef = FirebaseStorage.instance.ref();
+        Reference pdfRef = storageRef.child(
+            'uploadAdvancePaymentCertificate/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
+
+        UploadTask uploadTask = pdfRef.putData(
+            docFile!, SettableMetadata(contentType: 'application/pdf'));
+        await uploadTask;
+
+        uploadedAdvancePaymentCertificate = await pdfRef.getDownloadURL();
+        advancePaymentController.text = uploadedAdvancePaymentCertificate??"";
+        print('Download URL: $uploadedAdvancePaymentCertificate');
+
+        emit(UploadAdvancePaymentSuccess());
+      }
+    }
+
+  }
+  String? uploadedElectronicInvoice;
+  void uploadElectronicInvoice(String userID, String formName)async{
+    emit(UploadElectronicInvoiceLoading());
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+    if (result != null) {
+      String fileName = result.files.single.name;
+      docFile = result.files.single.bytes;
+      if (docFile != null) {
+        print('File picked: $fileName');
+        print(docFile);
+        final storageRef = FirebaseStorage.instance.ref();
+        Reference pdfRef = storageRef.child(
+            'uploadElectronicInvoice/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
+
+        UploadTask uploadTask = pdfRef.putData(
+            docFile!, SettableMetadata(contentType: 'application/pdf'));
+        await uploadTask;
+
+        uploadedElectronicInvoice = await pdfRef.getDownloadURL();
+        electronicInvoiceController.text = uploadedElectronicInvoice??"";
+        print('Download URL: $uploadedElectronicInvoice');
+
+        emit(UploadElectronicInvoiceSuccess());
+      }
+    }
+
+  }
 
 
 
@@ -263,11 +352,8 @@ class HomeCubit extends Cubit<HomeState> {
     required String pathURL,
     required String downloadLink,
     required String sentBy,
-    required String commercialRegistration,
     required String paymentType,
     required String limitOfRequest,
-    required String electronicInvoice,
-    required String advancePayment,
     required String taxID,
     required String formLink,
     required String bankName,
@@ -296,9 +382,9 @@ class HomeCubit extends Cubit<HomeState> {
       'formTitle': selectedtitleName,
       'paymentType': paymentType,
       'limitOfRequest': limitOfRequest,
-      'commercialRegistration': commercialRegistration,
-      'electronicInvoice': electronicInvoice,
-      'advancePayment': advancePayment,
+      'commercialRegistration': uploadedCommertialRegestration??"",
+      'electronicInvoice': uploadedElectronicInvoice??"",
+      'advancePayment': uploadedAdvancePaymentCertificate??"",
       'taxID': taxID,
       'bankName': bankName,
       'invoiceNumber': invoiceNumber,

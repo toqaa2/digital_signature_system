@@ -8,3 +8,4 @@ final class GetSentForms extends RequestsState {}
 final class SignedByMe extends RequestsState {}
 final class LoadingSave extends RequestsState {}
 final class SaveSuccess extends RequestsState {}
+final class ToggleVisibality extends RequestsState {}

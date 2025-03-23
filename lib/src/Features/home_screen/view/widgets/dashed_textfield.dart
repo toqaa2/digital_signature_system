@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 
 class DashedTextField extends StatelessWidget {
   final String hintText;
-  final IconData leadingIcon;
+  final Widget leadingIcon;
   final TextEditingController controller;
+  final TextStyle textStyle;
 
   const DashedTextField({
     super.key,
     required this.hintText,
     required this.leadingIcon,
-    required this.controller,
+    required this.controller, required this.textStyle,
   });
 
   @override
@@ -20,14 +21,17 @@ class DashedTextField extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
           children: [
-            Icon(leadingIcon, color: Colors.grey),
+           leadingIcon,
             const SizedBox(width: 10),
             Expanded(
               child: TextField(
+                enabled: false,
                 controller: controller,
+                style: textStyle,
                 decoration: InputDecoration(
                   hintText: hintText,
-                  hintStyle: TextStyle(fontSize: 11,color: Colors.grey),
+                  hintStyle: textStyle,
+
                   border: InputBorder.none, // Remove default border
                 ),
               ),

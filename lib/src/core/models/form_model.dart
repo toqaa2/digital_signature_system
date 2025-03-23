@@ -85,10 +85,10 @@ class FormModel {
     formName = json?['formName'];
     formReference = json?['form_reference'];
     requiredToSign = List.generate(json?['requiredToSign']==null?0:json?['requiredToSign'].length,  (index) => json?['requiredToSign']?[index],);
-     sentTo =List.generate(json?['sentTo']==null?0:json?['sentTo'].length,  (index) => json?['sentTo']?[index],) ;
+    sentTo =List.generate(json?['sentTo']==null?0:json?['sentTo'].length,  (index) => json?['sentTo']?[index],) ;
     sentBy = json?['sentBy'];
-       signedBy =List.generate(json?['signedBy']==null?0:json?['signedBy'].length,  (index) => json?['signedBy']?[index],)  ;
-       serviceType = List.generate(json?['serviceType']==null?0:json?['serviceType'].length,  (index) => json?['serviceType']?[index],)  ;
+    signedBy =List.generate(json?['signedBy']==null?0:json?['signedBy'].length,  (index) => json?['signedBy']?[index],)  ;
+    serviceType = List.generate(json?['serviceType']==null?0:json?['serviceType'].length,  (index) => json?['serviceType']?[index],)  ;
     isFullySigned = json?['isFullySigned'];
     sentDate = json?['sentDate'];
     signedDate = json?['signedDate'];

@@ -40,6 +40,14 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
   List<double> signatureY = [];
   List<GlobalKey<State<StatefulWidget>>> paintKeys = [];
   List<Widget> pdfPageSignatures = [];
+  bool isVisible = true;
+
+  void toggleVisibility() {
+    setState(() {
+      isVisible = !isVisible;
+    });
+
+  }
 
   @override
   void initState() {
@@ -74,56 +82,146 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      Stack(
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(widget.formName),
-                              Text("at ${widget.sentDate}"),
-                            ],
-                          ),
+                          IconButton(onPressed: (){
+                            toggleVisibility();
+                          }, icon: Icon(Icons.remove_circle_outline)),
                           Row(
-                            spacing: 5,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              if(widget.cubit.checkIfValidToSign(widget.formModel))
-                              ButtonWidget(
-                                  verticalMargin: 2,
-                                  minWidth: 120,
-                                  height: 35,
-                                  textStyle: TextStyle(
-                                      fontSize: 12, color: Colors.white),
-                                  text: "Save Form",
-                                  onTap: () async {
-                                    if (paintKeys.isNotEmpty) {
-                                      /// save to DB
-                                      widget.cubit
-                                          .signTheForm(paintKeys, widget.formModel,context);
-                                    }
-                                  }),
-                              ButtonWidget(
-                                verticalMargin: 2,
-                                buttonColor: Colors.white,
-                                borderColor: AppColors.mainColor,
-                                minWidth: 120,
-                                height: 35,
-                                textStyle: TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.mainColor,
-                                ),
-                                text: "Reverse",
-                                onTap: () {
-                                  setState(() {
-                                    _showDialog(context);
-                                  });
-                                },
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(widget.formName),
+                                  Text("at ${widget.sentDate}"),
+                                ],
+                              ),
+                              Row(
+                                spacing: 5,
+                                children: [
+                                  if(widget.cubit.checkIfValidToSign(widget.formModel))
+                                    ButtonWidget(
+                                        verticalMargin: 2,
+                                        minWidth: 120,
+                                        height: 35,
+                                        textStyle: TextStyle(
+                                            fontSize: 12, color: Colors.white),
+                                        text: "Save Form",
+                                        onTap: () async {
+                                          if (paintKeys.isNotEmpty) {
+                                            /// save to DB
+                                            widget.cubit
+                                                .signTheForm(paintKeys, widget.formModel,context);
+                                          }
+                                        }),
+                                  ButtonWidget(
+                                    verticalMargin: 2,
+                                    buttonColor: Colors.white,
+                                    borderColor: AppColors.mainColor,
+                                    minWidth: 120,
+                                    height: 35,
+                                    textStyle: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.mainColor,
+                                    ),
+                                    text: "Reverse",
+                                    onTap: () {
+                                      setState(() {
+                                        _showDialog(context);
+                                      });
+                                    },
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         ],
                       ),
+
+                      if (widget.formModel.formName!.contains("PaymentRequest")&& isVisible)
+                        Container(
+                          color: Colors.blue.shade50,
+                          margin: EdgeInsets.symmetric(vertical: 20,horizontal: 50),
+                          padding: EdgeInsets.symmetric(vertical: 20,horizontal: 25),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Column(
+                                    spacing: 10,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      if ( widget.formModel.taxID!.isNotEmpty) Text("TaxID:${ widget.formModel.taxID!} "),
+                                      if ( widget.formModel.serviceType!.isNotEmpty) Text("Service Type:${widget.formModel.serviceType!}"),
+                                      if ( widget.formModel.bankName!.isNotEmpty)  Text("Bank Name: ${widget.formModel.bankName!}"),
+                                    ],
+                                  ),
+                                  Column(
+                                    spacing: 10,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+
+                                    children: [
+                                      if ( widget.formModel.bankAccountNumber!.isNotEmpty)  Text("Bank Account No.: ${widget.formModel.bankAccountNumber!}"),
+                                      if ( widget.formModel.invoiceNumber!.isNotEmpty) Text("Invoice Number: ${widget.formModel.invoiceNumber!}"),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 20),
+                              Row(
+                                spacing: 20,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+
+                                  if ( widget.formModel.commercialRegistration!.isNotEmpty)  ButtonWidget(
+                                      verticalMargin: 2,
+                                      buttonColor: Colors.green,
+                                      minWidth: 230,
+                                      height: 35,
+                                      textStyle: TextStyle(
+                                          fontSize: 12, color: Colors.white),
+                                      text: "Download Commercial Reqistration",
+                                      onTap: () async {
+
+                                      }),
+                                  if ( widget.formModel.advancePayment!.isNotEmpty) ButtonWidget(
+                                      verticalMargin: 2,
+                                      minWidth: 230,
+                                      buttonColor: Colors.green,
+
+                                      height: 35,
+                                      textStyle: TextStyle(
+                                          fontSize: 12, color: Colors.white),
+                                      text: "Download Advance Payment",
+                                      onTap: () async {
+
+                                      }),
+                                  if ( widget.formModel.electronicInvoice!.isNotEmpty) ButtonWidget(
+                                      verticalMargin: 2,
+                                      minWidth: 230,
+                                      buttonColor: Colors.green,
+
+                                      height: 35,
+                                      textStyle: TextStyle(
+                                          fontSize: 12, color: Colors.white),
+                                      text: "Download Electronic Invoice",
+                                      onTap: () async {
+
+                                      }),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+
                       SizedBox(height: 20),
                       Expanded(
                           child: Center(
