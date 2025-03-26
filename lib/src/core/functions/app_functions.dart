@@ -4,13 +4,14 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pdf/pdf.dart';
+import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 import 'package:pdf/widgets.dart' as pw;
 
 class AppFunctions {
-  static sendEmailTo({required String fromName,required String toEmail})async{
+  static sendEmailTo(String toEmail,String fromEmail)async{
      var response = await http.post(
       Uri.parse('https://api.emailjs.com/api/v1.0/email/send'),
       headers: {
@@ -22,8 +23,8 @@ class AppFunctions {
         'user_id': "uKgn4fDs-ds-799qo",
         'template_params': {
           'to_email': toEmail,
-          'from_name': fromName,
-          'from_email': 'i.medhat@waseela-cf.com',
+          'from_name': Constants.userModel?.name,
+          'from_email': fromEmail,
         },
       }),
     );
@@ -89,7 +90,7 @@ class AppFunctions {
 
       // Save the PDF to bytes
       Uint8List bytes = await pdf.save();
-      downloadPdf(bytes);
+      // downloadPdf(bytes);
       return bytes;
       // Trigger a download of the PDF file
     } catch (e) {

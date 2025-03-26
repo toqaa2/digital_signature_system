@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:signature_system/src/Features/home_screen/view/home_screen.dart';
+import 'package:signature_system/src/Features/layout/view/layout_screen.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 
 import '../../../core/shared_widgets/custom_button.dart';
@@ -30,13 +32,13 @@ class SuccessMessage extends StatelessWidget {
           Text("Follow up it’s Status at Your Requests",style: TextStyle(color: Colors.grey,fontSize: 10)),
           ButtonWidget(
             onTap: (){
-              // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => RequestsScreen(),));
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LayoutScreen(),));
             },
 
             minWidth: 350,
             height: 45,
             textStyle: TextStyle(fontSize: 14,color: Colors.white),
-            text: "Requests",
+            text: "Home",
           ),
         ],
 

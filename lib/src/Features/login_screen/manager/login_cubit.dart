@@ -22,7 +22,7 @@ class LoginCubit extends Cubit<LoginState> {
     String uid;
     isloading = true;
     emit(Loading());
-    FirebaseAuth.instance
+    await FirebaseAuth.instance
         .signInWithEmailAndPassword(
             email: emailController.text.trim(),
             password: passwordController.text.trim())
@@ -46,5 +46,6 @@ class LoginCubit extends Cubit<LoginState> {
     }).catchError((onError) {
       Fluttertoast.showToast(msg: onError.message.toString());
     });
+    emit(NotLoading());
   }
 }

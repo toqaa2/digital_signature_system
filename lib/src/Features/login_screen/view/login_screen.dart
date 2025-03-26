@@ -90,11 +90,17 @@ class LoginScreen extends StatelessWidget {
                           ),
                           20.isHeight,
                           Textfield(
+                            onSubmitted: (p0) {
+
+                            },
                             controller: cubit.emailController,
                             labelText: "Enter Your Email Address",
                           ),
                           10.isHeight,
                           Textfield(
+                            onSubmitted: (p0) {
+                              cubit.login(context: context);
+                            },
                             controller: cubit.passwordController,
                             labelText: "Enter Your Password",
                             trailingIcon: Icon(

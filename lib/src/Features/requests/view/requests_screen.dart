@@ -16,8 +16,7 @@ class RequestsScreen extends StatefulWidget {
   _RequestsScreenState createState() => _RequestsScreenState();
 }
 
-class _RequestsScreenState extends State<RequestsScreen>
-    with SingleTickerProviderStateMixin {
+class _RequestsScreenState extends State<RequestsScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -35,63 +34,70 @@ class _RequestsScreenState extends State<RequestsScreen>
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-  create: (context) => RequestsCubit()..getSentForms(Constants.userModel!.userId!)..getReceivedForms(Constants.userModel!.userId!),
-  child: BlocConsumer<RequestsCubit, RequestsState>(
-  listener: (context, state) {
-    // TODO: implement listener
-  },
-  builder: (context, state) {
-    RequestsCubit cubit = RequestsCubit.get(context);
+      create: (context) => RequestsCubit()
+        ,
+      child: BlocConsumer<RequestsCubit, RequestsState>(
+        listener: (context, state) {
+          // TODO: implement listener
+        },
+        builder: (context, state) {
+          RequestsCubit cubit = RequestsCubit.get(context);
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 100.0),
-          child: Container(
-            decoration: BoxDecoration(
-                color: Colors.white.withAlpha(150), borderRadius: BorderRadius.circular(8)),
-            margin: EdgeInsets.symmetric(horizontal: 20.w),
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.9,
-              maxWidth: MediaQuery.of(context).size.width * 0.8,
-            ),
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                TabBar(
-                  controller: _tabController,
-                  isScrollable: true,
-                  tabs: [
-                    Tab(text: 'Sent Requests'),
-                    Tab(text: 'Received Requests'),
-                    Tab(text: 'Signed By Me'),
-                    Tab(text: 'Reversed'),
-                  ],
-                  labelColor: AppColors.mainColor,
-                  indicatorColor: AppColors.mainColor,
-                  indicatorWeight: 4.0,
-                  unselectedLabelColor: Colors.grey.shade400,
-                ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
+          return Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 100.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white.withAlpha(150), borderRadius: BorderRadius.circular(8)),
+                  margin: EdgeInsets.symmetric(horizontal: 20.w),
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.9,
+                    maxWidth: MediaQuery.of(context).size.width * 0.8,
+                  ),
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
                     children: [
-                      SentRequestsWidget(cubit: cubit,),
-                      RecivedRequestWidget(cubit: cubit,),
-                      SignedByMeWidget(cubit: cubit,),
-                      Container(),
+                      TabBar(
+                        controller: _tabController,
+                        isScrollable: true,
+                        tabs: [
+                          Tab(text: 'Sent Requests'),
+                          Tab(text: 'Received Requests'),
+                          Tab(text: 'Signed By Me'),
+                          Tab(text: 'Reversed'),
+                        ],
+                        labelColor: AppColors.mainColor,
+                        indicatorColor: AppColors.mainColor,
+                        indicatorWeight: 4.0,
+                        unselectedLabelColor: Colors.grey.shade400,
+                      ),
+                      Expanded(
+                        child: TabBarView(
+                          controller: _tabController,
+                          children: [
+                            SentRequestsWidget(
+                              cubit: cubit,
+                            ),
+                            RecivedRequestWidget(
+                              cubit: cubit,
+                            ),
+                            SignedByMeWidget(
+                              cubit: cubit,
+                            ),
+                            Container(),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
-  },
-),
-);
   }
 }

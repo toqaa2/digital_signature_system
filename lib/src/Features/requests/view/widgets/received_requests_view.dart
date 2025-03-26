@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/models/form_model.dart';
 
 import 'package:signature_system/src/core/style/colors.dart';
@@ -113,7 +114,9 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                           if (paintKeys.isNotEmpty) {
                                             /// save to DB
                                             widget.cubit
-                                                .signTheForm(paintKeys, widget.formModel,context);
+                                                .signTheForm(paintKeys, widget.formModel,context).then((onValue){
+                                                  if(context.mounted)Navigator.pop(context);
+                                            });
                                           }
                                         }),
                                   ButtonWidget(
@@ -381,10 +384,10 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
                         signatureY += details.delta.dy;
                       });
                     },
-                    child: Image.asset(
-                      'assets/toqasignature.png',
-                      width: 80,
-                      height: 80,
+                    child: Image.network(
+                      Constants.userModel?.mainSignature??'',
+                      width: 200,
+                      height: 200,
                     ),
                   ),
                 ),

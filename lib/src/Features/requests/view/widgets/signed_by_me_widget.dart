@@ -1,28 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/style/colors.dart';
-
 
 import '../../manager/requests_cubit.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'Signed_by_me_view.dart';
 
-
-class SignedByMeWidget extends StatelessWidget {
+class SignedByMeWidget extends StatefulWidget {
   const SignedByMeWidget({super.key, required this.cubit});
+
   final RequestsCubit cubit;
 
+  @override
+  State<SignedByMeWidget> createState() => _SignedByMeWidgetState();
+}
+
+class _SignedByMeWidgetState extends State<SignedByMeWidget> {
+  @override
+  void initState() {
+    super.initState();
+    widget.cubit.getReceivedForms(Constants.userModel?.userId ?? '');
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: cubit.signedByMe.length,
+    return widget.cubit.state is LoadingReceivedForms
+        ? const Center(child: CircularProgressIndicator())
+        :ListView.builder(
+      itemCount: widget.cubit.signedByMe.length,
       itemBuilder: (context, index) {
-        final signedByMe = cubit.signedByMe[index];
-        return  ListTile(
-          leading: signedByMe.isFullySigned==true?
-          SvgPicture.asset('Signed.svg',width: 40,height: 35,): SvgPicture.asset('pending.svg',width: 40,height: 35,),
+        final signedByMe = widget.cubit.signedByMe[index];
+        return ListTile(
+          leading: signedByMe.isFullySigned == true
+              ? SvgPicture.asset(
+                  'Signed.svg',
+                  width: 40,
+                  height: 35,
+                )
+              : SvgPicture.asset(
+                  'pending.svg',
+                  width: 40,
+                  height: 35,
+                ),
           // textColor: Color(0xFFF6F6F6),
           title: Text(
             signedByMe.formName.toString(),
@@ -32,26 +53,22 @@ class SignedByMeWidget extends StatelessWidget {
           subtitle: Text(
             signedByMe.sentBy.toString(),
             // "Email@Waseela-cf.com",
-            style: TextStyle(
-                fontSize: 12,
-                color: AppColors.mainColor,
-                fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 12, color: AppColors.mainColor, fontWeight: FontWeight.bold),
           ),
           trailing: Text(
-            intl.DateFormat('yyy-MM-dd hh:mm a').format(DateTime.fromMicrosecondsSinceEpoch(signedByMe.sentDate?.microsecondsSinceEpoch??0)),
-
+            intl.DateFormat('yyy-MM-dd hh:mm a').format(
+                DateTime.fromMicrosecondsSinceEpoch(signedByMe.sentDate?.microsecondsSinceEpoch ?? 0)),
             style: TextStyle(color: Colors.grey, fontSize: 12),
           ),
-          onTap: (){
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignedByMeView(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => SignedByMeView(
                 form: signedByMe,
-
-            ) ,));
+              ),
+            ));
           },
-        ) ;
+        );
       },
     );
-
-
   }
 }

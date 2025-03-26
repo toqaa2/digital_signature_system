@@ -11,6 +11,8 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Constants.userModel!.mainSignature');
+    print(Constants.userModel!.mainSignature);
     return Center(
       child: Container(
         decoration: BoxDecoration(
@@ -86,25 +88,12 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       5.isHeight,
                       Text("Signature "),
-                      Image.asset(
-                        "assets/mysegniture.png",
+                      Image.network(
+                        Constants.userModel?.mainSignature??'',
                         height: 50,
                         width: 100,
                       ),
                       5.isHeight,
-                      Container(
-                        decoration: BoxDecoration(
-                            color: AppColors.mainColor,
-                            borderRadius: BorderRadius.circular(4)),
-                        height: 30,
-                        width: 180,
-                        child: Center(
-                          child: Text(
-                            "Add Signature Request",
-                            style: TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),

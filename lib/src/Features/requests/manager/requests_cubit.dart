@@ -56,6 +56,7 @@ class RequestsCubit extends Cubit<RequestsState> {
         'signedBy': form.signedBy,
         'isFullySigned': isLastRequiredEmail,
       });
+      if (form.sentTo!.length != form.signedBy!.length) await AppFunctions.sendEmailTo(form.sentTo?[form.signedBy?.length??0]??'',form.sentBy??'');
       if(context.mounted)Navigator.pop(context);
     }catch(e){
       print('Sign Error: $e');
@@ -82,6 +83,7 @@ class RequestsCubit extends Cubit<RequestsState> {
 
 
   void getSentForms(String userId) async {
+    emit(LoadingSentForms());
     sentForms.clear();
     fullSignedList.clear();
     await FirebaseFirestore.instance
@@ -113,7 +115,7 @@ class RequestsCubit extends Cubit<RequestsState> {
   void getReceivedForms(String userId,) async {
     receivedForms.clear();
     signedByMe.clear();
-
+emit(LoadingReceivedForms());
     await FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
@@ -141,7 +143,7 @@ class RequestsCubit extends Cubit<RequestsState> {
       });
     });
 
-    emit(GetSentForms());
+    emit(GetReceivedForms());
   }
 
 

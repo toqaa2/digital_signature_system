@@ -7,11 +7,11 @@ class Textfield extends StatelessWidget {
   final Icon? trailingIcon;
   final bool? obscureText;
   final TextEditingController? controller;
-
+final Function(String)? onSubmitted;
   const Textfield({
     super.key,
     required this.labelText,
-    this.trailingIcon,  this.obscureText,  this.controller,
+    this.trailingIcon,  this.obscureText,  this.controller,this.onSubmitted
   });
 
   @override
@@ -19,6 +19,8 @@ class Textfield extends StatelessWidget {
     return SizedBox(
       width: 600,
       child: TextField(
+        textInputAction: TextInputAction.next,
+        onSubmitted: onSubmitted,
         obscureText: false,
         controller: controller,
         style: const TextStyle(fontSize: 10),

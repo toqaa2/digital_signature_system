@@ -5,7 +5,7 @@ class UserModel {
   String? name;
   String? role;
   String? email;
-  String? signature;
+  String? mainSignature;
 
   UserModel(
     this.userId,
@@ -13,7 +13,7 @@ class UserModel {
     this.name,
     this.role,
     this.email,
-    this.signature,
+    this.mainSignature,
   );
 
   Map<String, dynamic> toMap() => {
@@ -22,7 +22,7 @@ class UserModel {
         'name': name,
         'role': role,
         'email': email,
-        'signature': signature,
+        'mainSignature': mainSignature,
       };
 
   UserModel.fromJson(Map<String, dynamic>? json) {
@@ -32,6 +32,6 @@ class UserModel {
     name = json['name'];
     role = json['role'];
     email = json['email'];
-    signature = json['signature'];
+    mainSignature = json['mainSignature'];
   }
 }

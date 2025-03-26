@@ -4,13 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:signature_system/src/core/functions/app_functions.dart';
 
 import '../../../core/helper/enums/form_enum.dart';
 
 import '../../../core/models/form_model.dart';
 import 'package:web/web.dart' as web;
 import 'package:firebase_storage/firebase_storage.dart';
-
 
 import 'package:intl/intl.dart';
 
@@ -21,12 +21,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   static HomeCubit get(context) => BlocProvider.of(context);
   final List<String> stepNames = ['Choose From', 'Fill From', 'Send Request'];
-  final List<String> stepNames4 = [
-    'Choose From',
-    'Fill From',
-    "Upload Documents",
-    'Send Request'
-  ];
+  final List<String> stepNames4 = ['Choose From', 'Fill From', "Upload Documents", 'Send Request'];
   final List<String> dropdownItems = [
     'Program Lunch Memo',
     'Campaign Memo',
@@ -92,8 +87,8 @@ class HomeCubit extends Cubit<HomeState> {
         Reference pdfRef = storageRef.child(
             'sent_forms/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
 
-        UploadTask uploadTask = pdfRef.putData(
-            docFile!, SettableMetadata(contentType: 'application/pdf'));
+        UploadTask uploadTask =
+            pdfRef.putData(docFile!, SettableMetadata(contentType: 'application/pdf'));
         await uploadTask;
 
         downloadURLOFUploadedDocument = await pdfRef.getDownloadURL();
@@ -107,11 +102,9 @@ class HomeCubit extends Cubit<HomeState> {
 // Fetch forms from Firestore
   Future<void> fetchForms() async {
     try {
-      QuerySnapshot snapshot =
-          await FirebaseFirestore.instance.collection('forms').get();
-      forms = snapshot.docs
-          .map((doc) => FormModel.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
+      QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('forms').get();
+      forms =
+          snapshot.docs.map((doc) => FormModel.fromJson(doc.data() as Map<String, dynamic>)).toList();
       emit(FormsFetched());
     } catch (error) {
       print("Error fetching forms: $error");
@@ -140,39 +133,40 @@ class HomeCubit extends Cubit<HomeState> {
     emit(FormSelected());
   }
 
-String? uploadedCommertialRegestration;
+  String? uploadedCommertialRegestration;
 
-void uploadCommertialRegestration (String userID, String formName)async{
-  emit(UploadCommertialRegestrationLoading());
-  FilePickerResult? result = await FilePicker.platform.pickFiles(
-    type: FileType.custom,
-    allowedExtensions: ['pdf'],
-  );
-  if (result != null) {
-    String fileName = result.files.single.name;
-    docFile = result.files.single.bytes;
-    if (docFile != null) {
-      print('File picked: $fileName');
-      print(docFile);
-      final storageRef = FirebaseStorage.instance.ref();
-      Reference pdfRef = storageRef.child(
-          'uploadCommertialRegestration/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
+  void uploadCommertialRegestration(String userID, String formName) async {
+    emit(UploadCommertialRegestrationLoading());
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+    if (result != null) {
+      String fileName = result.files.single.name;
+      docFile = result.files.single.bytes;
+      if (docFile != null) {
+        print('File picked: $fileName');
+        print(docFile);
+        final storageRef = FirebaseStorage.instance.ref();
+        Reference pdfRef = storageRef.child(
+            'uploadCommertialRegestration/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
 
-      UploadTask uploadTask = pdfRef.putData(
-          docFile!, SettableMetadata(contentType: 'application/pdf'));
-      await uploadTask;
+        UploadTask uploadTask =
+            pdfRef.putData(docFile!, SettableMetadata(contentType: 'application/pdf'));
+        await uploadTask;
 
-      uploadedCommertialRegestration = await pdfRef.getDownloadURL();
-      commercialRegistrationController.text = uploadedCommertialRegestration??"";
-      print('Download URL: $uploadedCommertialRegestration');
+        uploadedCommertialRegestration = await pdfRef.getDownloadURL();
+        commercialRegistrationController.text = uploadedCommertialRegestration ?? "";
+        print('Download URL: $uploadedCommertialRegestration');
 
-      emit(UploadCommertialRegestrationSuccess());
+        emit(UploadCommertialRegestrationSuccess());
+      }
     }
   }
-}
+
   String? uploadedAdvancePaymentCertificate;
 
-  void uploadAdvancePaymentCertificate (String userID, String formName)async{
+  void uploadAdvancePaymentCertificate(String userID, String formName) async {
     emit(UploadAdvancePaymentLoading());
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -188,21 +182,22 @@ void uploadCommertialRegestration (String userID, String formName)async{
         Reference pdfRef = storageRef.child(
             'uploadAdvancePaymentCertificate/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
 
-        UploadTask uploadTask = pdfRef.putData(
-            docFile!, SettableMetadata(contentType: 'application/pdf'));
+        UploadTask uploadTask =
+            pdfRef.putData(docFile!, SettableMetadata(contentType: 'application/pdf'));
         await uploadTask;
 
         uploadedAdvancePaymentCertificate = await pdfRef.getDownloadURL();
-        advancePaymentController.text = uploadedAdvancePaymentCertificate??"";
+        advancePaymentController.text = uploadedAdvancePaymentCertificate ?? "";
         print('Download URL: $uploadedAdvancePaymentCertificate');
 
         emit(UploadAdvancePaymentSuccess());
       }
     }
-
   }
+
   String? uploadedElectronicInvoice;
-  void uploadElectronicInvoice(String userID, String formName)async{
+
+  void uploadElectronicInvoice(String userID, String formName) async {
     emit(UploadElectronicInvoiceLoading());
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -218,22 +213,18 @@ void uploadCommertialRegestration (String userID, String formName)async{
         Reference pdfRef = storageRef.child(
             'uploadElectronicInvoice/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
 
-        UploadTask uploadTask = pdfRef.putData(
-            docFile!, SettableMetadata(contentType: 'application/pdf'));
+        UploadTask uploadTask =
+            pdfRef.putData(docFile!, SettableMetadata(contentType: 'application/pdf'));
         await uploadTask;
 
         uploadedElectronicInvoice = await pdfRef.getDownloadURL();
-        electronicInvoiceController.text = uploadedElectronicInvoice??"";
+        electronicInvoiceController.text = uploadedElectronicInvoice ?? "";
         print('Download URL: $uploadedElectronicInvoice');
 
         emit(UploadElectronicInvoiceSuccess());
       }
     }
-
   }
-
-
-
 
   Future<void> sendToRequiredEmails({
     // required String formID,
@@ -245,11 +236,8 @@ void uploadCommertialRegestration (String userID, String formName)async{
       return;
     }
     List<String> selectedEmails = List.from(requiredEmails);
-    DocumentReference formReference = FirebaseFirestore.instance
-        .collection('users')
-        .doc(userID)
-        .collection("sent_forms")
-        .doc(formID);
+    DocumentReference formReference =
+        FirebaseFirestore.instance.collection('users').doc(userID).collection("sent_forms").doc(formID);
 
     for (String email in selectedEmails) {
       await FirebaseFirestore.instance
@@ -308,16 +296,12 @@ void uploadCommertialRegestration (String userID, String formName)async{
     required String downloadLink,
     required String sentBy,
     required List<String> selectedEmails,
-  }) async
-  {
+  }) async {
     // String formIDWithDate =formName+DateTime.now().toString();
-    DocumentReference<Map<String,dynamic>> formReference= FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('sent_forms')
-        .doc(formID);
-        await formReference.set({
-          'form_reference':formReference,
+    DocumentReference<Map<String, dynamic>> formReference =
+        FirebaseFirestore.instance.collection('users').doc(userId).collection('sent_forms').doc(formID);
+    await formReference.set({
+      'form_reference': formReference,
       'formID': formID,
       'formName': formName,
       'pathURL': pathURL,
@@ -328,14 +312,15 @@ void uploadCommertialRegestration (String userID, String formName)async{
       'sentDate': DateTime.now(),
       'isFullySigned': false,
       'formTitle': selectedtitleName ?? ""
-    }).then((_) {
+    }).then((_) async {
+      await AppFunctions.sendEmailTo(selectedEmails[0],sentBy);
       emit(SendForm());
+
       print("Form sent successfully!");
     });
   }
 
-  TextEditingController commercialRegistrationController =
-      TextEditingController();
+  TextEditingController commercialRegistrationController = TextEditingController();
   TextEditingController electronicInvoiceController = TextEditingController();
   TextEditingController advancePaymentController = TextEditingController();
   TextEditingController taxIDController = TextEditingController();
@@ -361,15 +346,11 @@ void uploadCommertialRegestration (String userID, String formName)async{
     required String bankAccountNumber,
     required String serviceType,
     required List<String> selectedEmails,
-  }) async
-  {
-    DocumentReference<Map<String,dynamic>>formReference= FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('sent_forms')
-        .doc(formID);
-        await formReference.set({
-          'form_reference':formReference,
+  }) async {
+    DocumentReference<Map<String, dynamic>> formReference =
+        FirebaseFirestore.instance.collection('users').doc(userId).collection('sent_forms').doc(formID);
+    await formReference.set({
+      'form_reference': formReference,
       'formID': formID,
       'pathURL': pathURL,
       'downloadLink': downloadLink,
@@ -382,15 +363,17 @@ void uploadCommertialRegestration (String userID, String formName)async{
       'formTitle': selectedtitleName,
       'paymentType': paymentType,
       'limitOfRequest': limitOfRequest,
-      'commercialRegistration': uploadedCommertialRegestration??"",
-      'electronicInvoice': uploadedElectronicInvoice??"",
-      'advancePayment': uploadedAdvancePaymentCertificate??"",
+      'commercialRegistration': uploadedCommertialRegestration ?? "",
+      'electronicInvoice': uploadedElectronicInvoice ?? "",
+      'advancePayment': uploadedAdvancePaymentCertificate ?? "",
       'taxID': taxID,
       'bankName': bankName,
       'invoiceNumber': invoiceNumber,
       'bankAccountNumber': bankAccountNumber,
       'serviceType': serviceType,
-    }).then((_) {
+    }).then((_) async{
+      await AppFunctions.sendEmailTo(selectedEmails[0],sentBy);
+
       emit(SendPaymentForm());
       print("Form sent successfully!");
     });
