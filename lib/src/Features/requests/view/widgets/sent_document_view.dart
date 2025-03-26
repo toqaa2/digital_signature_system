@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:signature_system/src/core/models/form_model.dart';
+import 'package:intl/intl.dart' as intl;
+
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class SentDocumentView extends StatelessWidget {
@@ -56,7 +58,7 @@ class SentDocumentView extends StatelessWidget {
                       ],
                     ),
 
-                    Text(form.sentDate!.toString())
+                    Text(intl.DateFormat('yyy-MM-dd hh:mm a').format(DateTime.fromMicrosecondsSinceEpoch(form.sentDate!.microsecondsSinceEpoch??0)))
                   ],
                 ),
                 SizedBox(

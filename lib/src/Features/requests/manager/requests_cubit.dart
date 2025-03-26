@@ -9,6 +9,7 @@ import 'package:intl/src/intl/date_format.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 import 'package:signature_system/src/core/functions/app_functions.dart';
+import 'package:signature_system/src/core/style/colors.dart';
 
 import 'package:universal_html/html.dart' as html;
 import 'package:pdf/widgets.dart' as pw;
@@ -28,7 +29,9 @@ class RequestsCubit extends Cubit<RequestsState> {
 
   Future signTheForm(List<GlobalKey> globalKeys, FormModel form,BuildContext context) async {
     try{
-      showDialog(barrierDismissible: false,context: context, builder: (context) => AlertDialog(content: Text('Loading'),),);
+      showDialog(barrierDismissible: false,context: context, builder: (context) => AlertDialog(
+
+        content: Text('Loading',style: TextStyle(color: AppColors.mainColor),textAlign: TextAlign.center,),),);
       await Future.delayed(const Duration(seconds: 1));
       /// sign the form
       Uint8List pdfBytes =   await AppFunctions.saveWidgetsAsPdf(globalKeys);
@@ -56,7 +59,7 @@ class RequestsCubit extends Cubit<RequestsState> {
         'signedBy': form.signedBy,
         'isFullySigned': isLastRequiredEmail,
       });
-      if (form.sentTo!.length != form.signedBy!.length) await AppFunctions.sendEmailTo(form.sentTo?[form.signedBy?.length??0]??'',form.sentBy??'');
+      if (form.sentTo!.length != form.signedBy!.length) await AppFunctions.sendEmailTo( toEmail:  form.sentTo?[form.signedBy?.length??0]??'',fromEmail:  form.sentBy??'');
       if(context.mounted)Navigator.pop(context);
     }catch(e){
       print('Sign Error: $e');

@@ -313,11 +313,12 @@ class HomeCubit extends Cubit<HomeState> {
       'isFullySigned': false,
       'formTitle': selectedtitleName ?? ""
     }).then((_) async {
-      await AppFunctions.sendEmailTo(selectedEmails[0],sentBy);
+      await AppFunctions.sendEmailTo(toEmail: selectedEmails[0],fromEmail: sentBy);
       emit(SendForm());
 
       print("Form sent successfully!");
     });
+    formSent=true;
   }
 
   TextEditingController commercialRegistrationController = TextEditingController();
@@ -330,7 +331,7 @@ class HomeCubit extends Cubit<HomeState> {
   TextEditingController serviceTypeController = TextEditingController();
   final List<String> typeOfService = ['Service', 'Product'];
   String? selectedItemTypeofService;
-
+bool formSent=false;
   Future<void> sendPaymentForm({
     required String userId,
     required String formName,
@@ -372,10 +373,11 @@ class HomeCubit extends Cubit<HomeState> {
       'bankAccountNumber': bankAccountNumber,
       'serviceType': serviceType,
     }).then((_) async{
-      await AppFunctions.sendEmailTo(selectedEmails[0],sentBy);
+      await AppFunctions.sendEmailTo(toEmail: selectedEmails[0],fromEmail: sentBy);
 
       emit(SendPaymentForm());
       print("Form sent successfully!");
     });
+    formSent=true;
   }
 }

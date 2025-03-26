@@ -22,10 +22,10 @@ class ConditionalStepWidget extends StatelessWidget {
     bool isUploaded = cubit.downloadURLOFUploadedDocument != '';
     bool showSingleSelector = (cubit.selectedItem != null &&
         cubit.selectedItem!.contains('PaymentRequest') &&
-        cubit.currentStep == 4) ||
+        cubit.currentStep == 4&&cubit.formSent) ||
         (cubit.selectedItem != null &&
             !cubit.selectedItem!.contains('PaymentRequest') &&
-            cubit.currentStep == 3);
+            cubit.currentStep == 3&&cubit.formSent);
 
     if (showSingleSelector) {
       return SuccessMessage();

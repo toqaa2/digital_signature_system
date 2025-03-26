@@ -20,7 +20,7 @@ class StepSwitcher3Steps extends StatelessWidget {
       return Step2Screen(cubit: cubit,);
     } else if (cubit.currentStep == 2) {
       return SendRequestEmails(cubit: cubit,); // Replace with actual ThirdStep widget
-    }else if (cubit.currentStep == 3) {
+    }else if (cubit.currentStep == 3&&cubit.formSent) {
       return SuccessMessage();
     }
     else {

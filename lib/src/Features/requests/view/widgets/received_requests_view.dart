@@ -348,7 +348,7 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
               Container(
                 color: Colors.white,
                 width: 1100,
-                height: 1320,
+                height: 1410,
                 child: SfPdfViewer.memory(
                   widget.document,
                   initialPageNumber: widget.index + 1,
@@ -370,7 +370,7 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
               ),
               Container(
                 width: 1100,
-                height: 1320,
+                height: 1410,
                 color: Colors.transparent,
               ),
               if (showSignature)

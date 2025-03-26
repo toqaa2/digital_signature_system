@@ -22,7 +22,7 @@ class StepSwitcher4Steps extends StatelessWidget {
       return Step3PaymentRequest(cubit: cubit,); // Replace with actual ThirdStep widget
     } else if (cubit.currentStep == 3) {
       return SendRequestEmails(cubit: cubit,);
-    }else if (cubit.currentStep == 4) {
+    }else if (cubit.currentStep == 4&&cubit.formSent) {
       return SuccessMessage();
     }
     else {
