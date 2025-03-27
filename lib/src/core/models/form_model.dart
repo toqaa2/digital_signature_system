@@ -15,7 +15,6 @@ class FormModel {
   Timestamp? signedDate;
   String? formTitle;
   String? paymentType;
-  String? limitOfRequest;
   String? commercialRegistration;
   String? electronicInvoice;
   String? advancePayment;
@@ -41,7 +40,6 @@ class FormModel {
     this.signedDate,
     this.formTitle,
     this.paymentType,
-    this.limitOfRequest,
     this.commercialRegistration,
     this.electronicInvoice,
     this.advancePayment,
@@ -67,7 +65,6 @@ class FormModel {
      if(signedDate!=null)'signedDate': signedDate,
     if(formTitle!=null)'formTitle': formTitle,
     if(paymentType!=null)'paymentType': paymentType,
-    if(limitOfRequest!=null)'limitOfRequest': limitOfRequest,
     if(commercialRegistration!=null)'commercialRegistration': commercialRegistration,
     if(electronicInvoice!=null)'electronicInvoice': electronicInvoice,
     if(advancePayment!=null)'advancePayment': advancePayment,
@@ -94,7 +91,6 @@ class FormModel {
     signedDate = json?['signedDate'];
     formTitle = json?['formTitle'];
     paymentType = json?['paymentType'];
-    limitOfRequest = json?['limitOfRequest'];
     commercialRegistration = json?['commercialRegistration'];
     electronicInvoice = json?['electronicInvoice'];
     advancePayment = json?['advancePayment'];

@@ -1,7 +1,7 @@
 class UserModel {
   String? userId;
   String? department;
-
+  bool? isFirstLogin;
   String? name;
   String? role;
   String? email;
@@ -10,6 +10,7 @@ class UserModel {
   UserModel(
     this.userId,
     this.department,
+    this.isFirstLogin,
     this.name,
     this.role,
     this.email,
@@ -18,6 +19,7 @@ class UserModel {
 
   Map<String, dynamic> toMap() => {
         'userId': userId,
+        'isFirstLogin': isFirstLogin,
         'department': department,
         'name': name,
         'role': role,
@@ -28,7 +30,7 @@ class UserModel {
   UserModel.fromJson(Map<String, dynamic>? json) {
     userId = json!['userId'];
     department = json['department'];
-
+    isFirstLogin = json['isFirstLogin']??true;
     name = json['name'];
     role = json['role'];
     email = json['email'];

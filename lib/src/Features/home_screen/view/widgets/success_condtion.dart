@@ -21,11 +21,13 @@ class ConditionalStepWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isUploaded = cubit.downloadURLOFUploadedDocument != '';
     bool showSingleSelector = (cubit.selectedItem != null &&
-        cubit.selectedItem!.contains('PaymentRequest') &&
-        cubit.currentStep == 4&&cubit.formSent) ||
+            cubit.selectedItem!.contains('PaymentRequest') &&
+            cubit.currentStep == 4 &&
+            cubit.formSent) ||
         (cubit.selectedItem != null &&
             !cubit.selectedItem!.contains('PaymentRequest') &&
-            cubit.currentStep == 3&&cubit.formSent);
+            cubit.currentStep == 3 &&
+            cubit.formSent);
 
     if (showSingleSelector) {
       return SuccessMessage();
@@ -44,93 +46,133 @@ class ConditionalStepWidget extends StatelessWidget {
             child: Column(
               children: [
                 cubit.selectedItem != null &&
-                    cubit.selectedItem!.contains('PaymentRequest')
+                        cubit.selectedItem!.contains('PaymentRequest')
                     ? StepSwitcher4Steps(cubit: cubit)
                     : StepSwitcher3Steps(cubit: cubit),
                 const SizedBox(height: 15), // Adjusted for height
                 // Buttons
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButtonWithIcon(
-                        onPressed:
-                        cubit.currentStep > 0
-                            ? () {
-                          cubit.changeStepPrev();
-                        }
-                            : () {},
-                        backgroundColor: cubit.currentStep > 0
-                            ? Colors.white
-                            : Colors.grey.shade300,
-                        label: 'Previous',
-                        border: cubit.currentStep > 0,
-                        icon: const Icon(Icons.keyboard_arrow_left_rounded),
-                        iconPosition: IconPosition.leading,
-                      ),
-                      const SizedBox(width: 4),
-                      ElevatedButtonWithIcon(
-                        border: false,
-                        backgroundColor: cubit.currentStep == 1 && isUploaded == false || cubit.currentStep == 0 && cubit.selectedItem==null
-                            ? Colors.grey: AppColors.mainColor,
-                        onPressed:
-                        cubit.currentStep == 1 && isUploaded == false || cubit.currentStep == 0 && cubit.selectedItem==null? (){}:
-                            () {
-                          if (cubit.currentStep < 3 ||
-                              (cubit.selectedItem != null && cubit.selectedItem!
-                                  .contains('PaymentRequest') && cubit
-                                  .currentStep < 4)) {
-                            cubit.changeStepNext();
-                          }
-
-                          if (cubit.currentStep == 2 && !cubit.selectedItem!
-                              .contains('PaymentRequest') ) {
-
-                            cubit.sendForm(userId: Constants.userModel!.userId!,
-
-                                downloadLink: "بجرب",
-                                // formLink:  cubit.selectedFormModel!.formLink!,
-                                pathURL: "بجرب",
-                                formName:  cubit.selectedFormModel!.formName!,
-                                sentBy: Constants.userModel!.email!,
-                                selectedEmails:  cubit.selectedFormModel!.requiredToSign!).then((value)
-                            =>cubit.sendToRequiredEmails(sentBy:Constants.userModel!.email!,userID: Constants.userModel!.email!, ) ,);
-
-                          }
-                          if(cubit.selectedItem != null && cubit.selectedItem!
-                              .contains('PaymentRequest') && cubit
-                              .currentStep == 4){
-                            cubit.sendPaymentForm(
-                              formLink: cubit.selectedFormModel!.formLink!,
-                              taxID: cubit.taxIDController.text,
-                                bankAccountNumber: cubit.bankAccountNumberController.text,
-                                bankName: cubit.bankNameController.text,
-                                downloadLink: "",
-                                pathURL: "",
-                                invoiceNumber: cubit.invoiceNumberController.text,
-                                limitOfRequest: cubit.selectedListLimit!,
-                                paymentType: cubit.selectedPaymentType!,
-                                serviceType: cubit.selectedItemTypeofService??"",
-                                userId: Constants.userModel!.userId!,
-                                formName:  cubit.selectedFormModel!.formName!,
-                                sentBy: Constants.userModel!.email!,
-                                selectedEmails:  cubit.selectedFormModel!.requiredToSign!).then((value)
-                            =>cubit.sendToRequiredEmails(sentBy:Constants.userModel!.email!,userID: Constants.userModel!.email!, ) ,);
-                          }
-                        },
-                        label: 'Next',
-                        textColor: Colors.white,
-
-                        icon: const Icon(
-                          Icons.keyboard_arrow_right_rounded,
-                          color: Colors.white,
+                if (cubit.selectedItem == null ||
+                    cubit.selectedItem!.contains('PaymentRequest') &&
+                        cubit.currentStep != 4 ||
+                    !cubit.selectedItem!.contains('PaymentRequest') &&
+                        cubit.currentStep != 3)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButtonWithIcon(
+                          onPressed: cubit.currentStep > 0
+                              ? () {
+                                  cubit.changeStepPrev();
+                                }
+                              : () {},
+                          backgroundColor: cubit.currentStep > 0
+                              ? Colors.white
+                              : Colors.grey.shade300,
+                          label: 'Previous',
+                          border: cubit.currentStep > 0,
+                          icon: const Icon(Icons.keyboard_arrow_left_rounded),
+                          iconPosition: IconPosition.leading,
                         ),
-                        iconPosition: IconPosition.trailing,
-                      ),
-                    ],
+                        const SizedBox(width: 4),
+                        ElevatedButtonWithIcon(
+                          border: false,
+                          backgroundColor: cubit.selectedtitleName == null ||
+                                  cubit.currentStep == 1 &&
+                                      isUploaded == false ||
+                                  cubit.currentStep == 0 &&
+                                      cubit.selectedItem == null
+                              ? Colors.grey
+                              : AppColors.mainColor,
+                          onPressed: cubit.selectedtitleName == null ||
+                                  cubit.currentStep == 1 &&
+                                      isUploaded == false ||
+                                  cubit.currentStep == 0 &&
+                                      cubit.selectedItem == null
+                              ? () {}
+                              : () {
+                                  if (cubit.currentStep < 3 ||
+                                      (cubit.selectedItem != null &&
+                                          cubit.selectedItem!
+                                              .contains('PaymentRequest') &&
+                                          cubit.currentStep < 4)) {
+                                    cubit.changeStepNext();
+                                  }
+
+                                  if (cubit.currentStep == 2 &&
+                                      !cubit.selectedItem!
+                                          .contains('PaymentRequest')) {
+                                    cubit
+                                        .sendForm(
+                                            userId:
+                                                Constants.userModel!.userId!,
+                                            downloadLink: "بجرب",
+                                            // formLink:  cubit.selectedFormModel!.formLink!,
+                                            pathURL: "بجرب",
+                                            formName: cubit
+                                                .selectedFormModel!.formName!,
+                                            sentBy: Constants.userModel!.email!,
+                                            selectedEmails: cubit
+                                                .selectedFormModel!
+                                                .requiredToSign!)
+                                        .then(
+                                          (value) => cubit.sendToRequiredEmails(
+                                            sentBy: Constants.userModel!.email!,
+                                            userID: Constants.userModel!.email!,
+                                          ),
+                                        );
+                                  }
+                                  if (cubit.selectedItem != null &&
+                                      cubit.selectedItem!
+                                          .contains('PaymentRequest') &&
+                                      cubit.currentStep == 4) {
+                                    cubit
+                                        .sendPaymentForm(
+                                            formLink: cubit
+                                                .selectedFormModel!.formLink!,
+                                            taxID: cubit.taxIDController.text,
+                                            bankAccountNumber: cubit
+                                                .bankAccountNumberController
+                                                .text,
+                                            bankName:
+                                                cubit.bankNameController.text,
+                                            downloadLink: "",
+                                            pathURL: "",
+                                            invoiceNumber: cubit
+                                                .invoiceNumberController.text,
+                                            paymentType:
+                                                cubit.selectedPaymentType!,
+                                            serviceType: cubit
+                                                    .selectedItemTypeofService ??
+                                                "",
+                                            userId:
+                                                Constants.userModel!.userId!,
+                                            formName: cubit
+                                                .selectedFormModel!.formName!,
+                                            sentBy: Constants.userModel!.email!,
+                                            selectedEmails: cubit
+                                                .selectedFormModel!
+                                                .requiredToSign!)
+                                        .then(
+                                          (value) => cubit.sendToRequiredEmails(
+                                            sentBy: Constants.userModel!.email!,
+                                            userID: Constants.userModel!.email!,
+                                          ),
+                                        );
+                                  }
+                                },
+                          label: 'Next',
+                          textColor: Colors.white,
+                          icon: const Icon(
+                            Icons.keyboard_arrow_right_rounded,
+                            color: Colors.white,
+                          ),
+                          iconPosition: IconPosition.trailing,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
               ],
             ),
           ),

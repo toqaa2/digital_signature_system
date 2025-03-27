@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signature_system/src/Features/home_screen/view/widgets/send_request_emails.dart';
+import 'package:signature_system/src/core/style/colors.dart';
 
 import '../../manager/home_cubit.dart';
 import '../step2_screen.dart';
@@ -25,7 +26,9 @@ class StepSwitcher3Steps extends StatelessWidget {
     }
     else {
       return Center(
-        child: Text('Unknown Step'),
+        child: CircularProgressIndicator(
+          color: AppColors.mainColor,
+        ),
       ); // Handle unexpected step values
     }
   }

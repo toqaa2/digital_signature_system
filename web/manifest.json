@@ -1,6 +1,6 @@
 {
-    "name": "signature_system",
-    "short_name": "signature_system",
+    "name": "E-Document",
+    "short_name": "E-Document",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

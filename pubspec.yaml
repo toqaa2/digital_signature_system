@@ -60,7 +60,7 @@ dependencies:
   universal_html:
   pdf: ^3.11.2
   firebase_storage: ^12.4.4
-
+  http:
 
 dev_dependencies:
   flutter_test:

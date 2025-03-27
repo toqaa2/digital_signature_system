@@ -28,7 +28,7 @@ class SuccessMessage extends StatelessWidget {
             'assets/Sucssess.svg',
             height: 120,
           ),
-          Text("Request Send Successfully",style: TextStyle(color: AppColors.mainColor,fontSize: 16,fontWeight: FontWeight.bold),),
+          Text("Request Sent Successfully",style: TextStyle(color: AppColors.mainColor,fontSize: 16,fontWeight: FontWeight.bold),),
           Text("Follow up it’s Status at Your Requests",style: TextStyle(color: Colors.grey,fontSize: 10)),
           ButtonWidget(
             onTap: (){
@@ -41,7 +41,6 @@ class SuccessMessage extends StatelessWidget {
             text: "Home",
           ),
         ],
-
       ),
     );
   }

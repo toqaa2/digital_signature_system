@@ -56,30 +56,74 @@ class FirstStep extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    spacing: 10,
-                    children: [
-                      FormTypeSelectorPayment(
-                        hintText: "Select Limit of Request",
-                        titleText: "Please Choose The Limit of your Request *",
-                        onChanged: (String? newValue) {
-                          cubit.selectListLimit(newValue);
-                        },
-                        dropdownItems: cubit.limitList,
-                        selectedItem: cubit.selectedListLimit,
-                      ),
-                      FormTypeSelectorPayment(
-                        hintText: "Title of Request",
-                        titleText: "Please Choose The Title of your Request *",
-                        onChanged: (String? newValue) {
-                          cubit.selectedTitle(newValue);
-                        },
-                        dropdownItems: cubit.titleName,
-                        selectedItem: cubit.selectedtitleName,
-                      ),
-                    ],
-                  ),
+         Column(
+           crossAxisAlignment: CrossAxisAlignment.start,
+           children: [
+             Text("Please Choose The Title of your Request *",
+               style: TextStyle(fontSize: 12, color: Colors.grey),
+             ),
+             const SizedBox(height: 5),
+             Container(
+               margin: const EdgeInsets.symmetric(vertical: 10),
+               padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
+               width: MediaQuery.of(context).size.width*0.61,
+               decoration: BoxDecoration(
+                 color: Colors.white,
+                 border: Border.all(color: Colors.grey),
+                 borderRadius: BorderRadius.circular(4),
+               ),
+               child: DropdownButton<String>(
+                 underline: SizedBox(),
+                 value: cubit.selectedtitleName,
+                 hint:  Text("Title of Request"),
+                 style: const TextStyle(fontSize: 12),
+                 isExpanded: true,
+                 items: cubit.titleName.map((String item) {
+                   return DropdownMenuItem<String>(
+                     value: item,
+                     child: Text(item),
+                   );
+                 }).toList(),
+                 onChanged: (String? newValue) {
+                   cubit.selectedTitle(newValue);
+                 },
+               ),
+             ),
+           ],
+         ),
+                  // FormTypeSelectorPayment(
+                  //   hintText: "Title of Request",
+                  //   titleText: "Please Choose The Title of your Request *",
+                  //   onChanged: (String? newValue) {
+                  //     cubit.selectedTitle(newValue);
+                  //   },
+                  //   dropdownItems: cubit.titleName,
+                  //   selectedItem: cubit.selectedtitleName,
+                  // ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   spacing: 10,
+                  //   children: [
+                  //     // FormTypeSelectorPayment(
+                  //     //   hintText: "Select Limit of Request",
+                  //     //   titleText: "Please Choose The Limit of your Request *",
+                  //     //   onChanged: (String? newValue) {
+                  //     //     cubit.selectListLimit(newValue);
+                  //     //   },
+                  //     //   dropdownItems: cubit.limitList,
+                  //     //   selectedItem: cubit.selectedListLimit,
+                  //     // ),
+                  //     FormTypeSelectorPayment(
+                  //       hintText: "Title of Request",
+                  //       titleText: "Please Choose The Title of your Request *",
+                  //       onChanged: (String? newValue) {
+                  //         cubit.selectedTitle(newValue);
+                  //       },
+                  //       dropdownItems: cubit.titleName,
+                  //       selectedItem: cubit.selectedtitleName,
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               )
             : Column(
