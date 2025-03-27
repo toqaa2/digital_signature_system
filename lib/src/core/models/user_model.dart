@@ -30,7 +30,7 @@ class UserModel {
   UserModel.fromJson(Map<String, dynamic>? json) {
     userId = json!['userId'];
     department = json['department'];
-    isFirstLogin = json['isFirstLogin']??true;
+    isFirstLogin = json['isFirstLogin']??false;
     name = json['name'];
     role = json['role'];
     email = json['email'];
