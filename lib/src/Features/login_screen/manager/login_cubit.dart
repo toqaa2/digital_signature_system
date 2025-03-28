@@ -38,7 +38,7 @@ class LoginCubit extends Cubit<LoginState> {
         emit(NotLoading());
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-            builder: (context) => Constants.userModel!.isFirstLogin ?? false
+            builder: (context) => Constants.userModel!.isFirstLogin ?? true
                 ? ChangePasswordScreen()
                 : const LayoutScreen(),
           ),
