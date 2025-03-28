@@ -52,29 +52,41 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future changePassword(BuildContext context) async {
-    await FirebaseAuth.instance.currentUser!
-        .updatePassword(passwordController.text.trim())
-        .then((value) async {
-      print('Password updated successfully');
-      await FirebaseFirestore.instance.collection('users').doc(Constants.userModel?.email).set(
-        {
-          'isFirstLogin': false,
-          'password': passwordController.text.trim(),
-        },
-        SetOptions(merge: true),
-      );
-      Fluttertoast.showToast(msg: 'Password updated successfully');
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LayoutScreen(),
-          ));
-      passwordController.text = '';
-    }).catchError((onError) {
-      print('Failed to update password: ${onError}');
+    emit(ChangePasswordLoading());
+    try{
+      if (passwordController.text.trim().isEmpty) {
+        Fluttertoast.showToast(msg: 'Please enter your new password');
+        emit(NotLoading());
+        return;
+      }
+      await FirebaseAuth.instance.currentUser!
+          .updatePassword(passwordController.text.trim())
+          .then((value) async {
+        print('Password updated successfully');
+        await FirebaseFirestore.instance.collection('users').doc(Constants.userModel?.email).set(
+          {
+            'isFirstLogin': false,
+            'password': passwordController.text.trim(),
+          },
+          SetOptions(merge: true),
+        );
+        Fluttertoast.showToast(msg: 'Password updated successfully');
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const LayoutScreen(),
+            ));
+        passwordController.text = '';
+      }).catchError((onError) {
+        emit(Error(onError.toString()));
+        print('Failed to update password: ${onError}');
 
-      Fluttertoast.showToast(msg: 'Failed to update password');
-      Fluttertoast.showToast(msg: 'Failed to update password');
-    });
+        Fluttertoast.showToast(msg: 'Failed to update password');
+        Fluttertoast.showToast(msg: 'Failed to update password');
+      });
+    }catch(e){
+      emit(Error(e.toString()));
+      Fluttertoast.showToast(msg: 'Error: $e');
+    }
   }
 }

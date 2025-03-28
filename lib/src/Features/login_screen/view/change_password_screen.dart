@@ -15,17 +15,32 @@ class ChangePasswordScreen extends StatelessWidget {
         },
         builder: (context, state) {
           final cubit = LoginCubit.get(context);
-          return Scaffold(
-            body: Column(
-              children: [
-                const Text('Change Your Password'),
-                TextFormField(
-                  controller: cubit.passwordController,
-                  decoration: InputDecoration(hintText: 'Change Your Password'),
+          return BlocConsumer<LoginCubit, LoginState>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              return Scaffold(
+                body: Column(
+                  spacing: 20,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text('Change Your Password'),
+                    TextFormField(
+                      controller: cubit.passwordController,
+                      decoration: InputDecoration(hintText: 'Change Your Password'),
+                    ),
+                    state is ChangePasswordLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : MaterialButton(
+                            child: const Text('Change Password'),
+                            onPressed: () => cubit.changePassword(
+                              context,
+                            ),
+                          ),
+                  ],
                 ),
-                MaterialButton(onPressed:()=>cubit.changePassword(context))
-              ],
-            ),
+              );
+            },
           );
         },
       ),
