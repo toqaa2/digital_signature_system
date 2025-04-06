@@ -4,7 +4,7 @@ import 'package:signature_system/src/core/style/colors.dart';
 
 class Textfield extends StatelessWidget {
   final String labelText;
-  final Icon? trailingIcon;
+  final IconButton? trailingIcon;
   final bool? obscureText;
   final TextEditingController? controller;
 final Function(String)? onSubmitted;
@@ -21,7 +21,7 @@ final Function(String)? onSubmitted;
       child: TextField(
         textInputAction: TextInputAction.next,
         onSubmitted: onSubmitted,
-        obscureText: false,
+        obscureText: obscureText??false,
         controller: controller,
         style: const TextStyle(fontSize: 10),
         decoration: InputDecoration(
