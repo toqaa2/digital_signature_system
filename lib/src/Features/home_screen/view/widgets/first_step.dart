@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signature_system/src/Features/home_screen/view/widgets/dropdownmenu.dart';
+import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/helper/extension/distance.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 import 'package:signature_system/src/Features/home_screen/manager/home_cubit.dart';
@@ -78,7 +79,7 @@ class FirstStep extends StatelessWidget {
                  hint:  Text("Title of Request"),
                  style: const TextStyle(fontSize: 12),
                  isExpanded: true,
-                 items: cubit.titleName.map((String item) {
+                 items: Constants.titleName.map((String item) {
                    return DropdownMenuItem<String>(
                      value: item,
                      child: Text(item),
@@ -147,7 +148,7 @@ class FirstStep extends StatelessWidget {
                     onChanged: (String? newValue) {
                       cubit.selectedTitle(newValue);
                     },
-                    dropdownItems: cubit.titleName,
+                    dropdownItems: Constants.titleName,
                     selectedItem: cubit.selectedtitleName,
                   ),
                 ],

@@ -29,21 +29,6 @@ class HomeCubit extends Cubit<HomeState> {
     'Merchant Onboarding Memo',
     'Payment Request Memo'
   ];
-  final List<String> titleName = [
-    'Problematic Asset Committee',
-    'Procurement Committee',
-    'Product / Pricing Committee',
-    'Administrative Stuff',
-    'Board Authentication Fees',
-    'Board Expenses',
-    'HR Activity',
-    'MD Car Maintenance',
-    'Hospitality Fees',
-    'Call Center Invoice',
-    'Marketing Expenses',
-    'iScore Invoice',
-    'Information Technology Expenses'
-  ];
   final List<String> limitList = [
     'Less than 5K',
     'Above 5K',

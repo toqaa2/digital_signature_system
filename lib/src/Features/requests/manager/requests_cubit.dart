@@ -1,5 +1,3 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
@@ -24,17 +22,77 @@ class RequestsCubit extends Cubit<RequestsState> {
   static RequestsCubit get(context) => BlocProvider.of(context);
   List<FormModel> sentForms = [];
   List<FormModel> receivedForms = [];
+  List<FormModel> receivedFormsView = [];
 
+  List<FormModel> sentFormsView = [];
+  List<FormModel> fullySignedView = [];
 
+  dateQueryFullySigned(DateTimeRange? dateRange) {
+     if (dateRange != null) {
+      fullySignedView = fullySignedView.where((element) {
+        return (element.sentDate!.toDate().isAfter(dateRange.start) ||
+            element.sentDate!.toDate().isAtSameMomentAs(dateRange.start)) &&
+                (element.sentDate!.toDate().isBefore(dateRange.end) ||
+            element.sentDate!.toDate().isAtSameMomentAs(dateRange.end));
+      }).toList();
+      emit(Search());
+    }
+  }
+  dateQueryPending(DateTimeRange? dateRange) {
+     if (dateRange != null) {
+      sentFormsView = sentFormsView.where((element) {
+        return element.sentDate!.toDate().isAfter(dateRange.start) ||
+            element.sentDate!.toDate().isAtSameMomentAs(dateRange.start) &&
+                element.sentDate!.toDate().isBefore(dateRange.end) ||
+            element.sentDate!.toDate().isAtSameMomentAs(dateRange.end);
+      }).toList();
+      emit(Search());
+    }
+  }
 
-  Future signTheForm(List<GlobalKey> globalKeys, FormModel form,BuildContext context) async {
-    try{
-      showDialog(barrierDismissible: false,context: context, builder: (context) => AlertDialog(
+  searchPendingRequests(String? title) {
+    if (title == null || title.isEmpty) {
+      sentFormsView = sentForms.toList();
+      emit(Search());
+      return;
+    }
+    sentFormsView.clear();
+    sentFormsView =
+        sentForms.where((element) => element.formTitle == title).toList();
+    emit(Search());
+  }
 
-        content: Text('Loading',style: TextStyle(color: AppColors.mainColor),textAlign: TextAlign.center,),),);
+  searchFullySignedRequests(String? title) {
+    if (title == null || title.isEmpty) {
+      fullySignedView = fullSignedList.toList();
+      emit(Search());
+      return;
+    }
+    fullySignedView.clear();
+    fullySignedView =
+        fullSignedList.where((element) => element.formTitle == title).toList();
+    emit(Search());
+  }
+
+  Future signTheForm(
+      List<GlobalKey> globalKeys, FormModel form, BuildContext context) async {
+    try {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => AlertDialog(
+          content: Text(
+            'Loading',
+            style: TextStyle(color: AppColors.mainColor),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
       await Future.delayed(const Duration(seconds: 1));
+
       /// sign the form
-      Uint8List pdfBytes =   await AppFunctions.saveWidgetsAsPdf(globalKeys);
+      Uint8List pdfBytes = await AppFunctions.saveWidgetsAsPdf(globalKeys);
+
       /// upload form get link
       String downloadLink = form.formLink ?? '';
       await FirebaseStorage.instance
@@ -45,6 +103,7 @@ class RequestsCubit extends Cubit<RequestsState> {
           .then((onValue) async {
         downloadLink = await onValue.ref.getDownloadURL();
       });
+
       /// check if last required email
       /// change link
       /// add me to signed by and if last required email change isFullySigned
@@ -59,9 +118,13 @@ class RequestsCubit extends Cubit<RequestsState> {
         'signedBy': form.signedBy,
         'isFullySigned': isLastRequiredEmail,
       });
-      if (form.sentTo!.length != form.signedBy!.length) await AppFunctions.sendEmailTo( toEmail:  form.sentTo?[form.signedBy?.length??0]??'',fromEmail:  form.sentBy??'');
-      if(context.mounted)Navigator.pop(context);
-    }catch(e){
+      if (form.sentTo!.length != form.signedBy!.length) {
+        await AppFunctions.sendEmailTo(
+            toEmail: form.sentTo?[form.signedBy?.length ?? 0] ?? '',
+            fromEmail: form.sentBy ?? '');
+      }
+      if (context.mounted) Navigator.pop(context);
+    } catch (e) {
       print('Sign Error: $e');
     }
   }
@@ -84,9 +147,9 @@ class RequestsCubit extends Cubit<RequestsState> {
 
   List<FormModel> fullSignedList = [];
 
-
   void getSentForms(String userId) async {
     emit(LoadingSentForms());
+    print(userId);
     sentForms.clear();
     fullSignedList.clear();
     await FirebaseFirestore.instance
@@ -103,7 +166,9 @@ class RequestsCubit extends Cubit<RequestsState> {
           sentForms.add(form);
         }
       }
-      sentForms.sort((a, b) {
+      fullySignedView = fullSignedList.toList();
+      sentFormsView = sentForms.toList();
+      sentFormsView.sort((a, b) {
         return b.sentDate!.microsecondsSinceEpoch
             .compareTo(a.sentDate!.microsecondsSinceEpoch);
       });
@@ -111,14 +176,17 @@ class RequestsCubit extends Cubit<RequestsState> {
 
     emit(GetSentForms());
   }
+
   //if isFullySigned is true put form in Signedbyme List
 
   List<FormModel> signedByMe = [];
 
-  void getReceivedForms(String userId,) async {
+  void getReceivedForms(
+    String userId,
+  ) async {
     receivedForms.clear();
     signedByMe.clear();
-emit(LoadingReceivedForms());
+    emit(LoadingReceivedForms());
     await FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
@@ -148,8 +216,6 @@ emit(LoadingReceivedForms());
 
     emit(GetReceivedForms());
   }
-
-
 
   bool isLoading = false;
 

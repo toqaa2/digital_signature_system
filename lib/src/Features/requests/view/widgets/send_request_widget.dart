@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:signature_system/src/Features/home_screen/view/widgets/dropdownmenu.dart';
 import 'package:signature_system/src/Features/requests/manager/requests_cubit.dart';
 import 'package:signature_system/src/Features/requests/view/widgets/sent_document_view.dart';
 import 'package:signature_system/src/core/constants/constants.dart';
+import 'package:signature_system/src/core/shared_widgets/searchable_dropdown.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 import 'package:intl/intl.dart' as intl;
 
@@ -15,7 +17,8 @@ class SentRequestsWidget extends StatefulWidget {
   _SentRequestsWidgetState createState() => _SentRequestsWidgetState();
 }
 
-class _SentRequestsWidgetState extends State<SentRequestsWidget> with SingleTickerProviderStateMixin {
+class _SentRequestsWidgetState extends State<SentRequestsWidget>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -41,7 +44,8 @@ class _SentRequestsWidgetState extends State<SentRequestsWidget> with SingleTick
           : Center(
               child: Container(
                 decoration: BoxDecoration(
-                    color: Colors.white.withAlpha(150), borderRadius: BorderRadius.circular(8)),
+                    color: Colors.white.withAlpha(150),
+                    borderRadius: BorderRadius.circular(8)),
                 margin: EdgeInsets.symmetric(horizontal: 20.w),
                 constraints: BoxConstraints(
                   maxHeight: MediaQuery.of(context).size.height * 0.9,
@@ -50,6 +54,26 @@ class _SentRequestsWidgetState extends State<SentRequestsWidget> with SingleTick
                 padding: EdgeInsets.all(16.0),
                 child: Column(
                   children: [
+                    SearchableDropdown(
+                      onReset: (){
+                        print('ghdjk');
+                        widget.cubit.getSentForms(Constants.userModel?.userId??'');
+                      },
+                      onDateChanged: (p0) {
+                        if (_tabController.index == 0) {
+                          widget.cubit.dateQueryPending(p0);
+                        } else {
+                          widget.cubit.dateQueryFullySigned(p0);
+                         }
+                      },
+                      onSelected: (p0) {
+                        if (_tabController.index == 0) {
+                          widget.cubit.searchPendingRequests(p0);
+                        } else {
+                          widget.cubit.searchFullySignedRequests(p0);
+                        }
+                      },
+                    ),
                     TabBar(
                       controller: _tabController,
                       isScrollable: true,
@@ -91,9 +115,9 @@ class SentListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: cubit.sentForms.length,
+      itemCount: cubit.sentFormsView.length,
       itemBuilder: (context, index) {
-        final sentForm = cubit.sentForms[index];
+        final sentForm = cubit.sentFormsView[index];
         return ListTile(
           title: Text(
             sentForm.formTitle.toString(),
@@ -109,7 +133,8 @@ class SentListView extends StatelessWidget {
             children: [
               Container(
                 decoration: BoxDecoration(
-                    color: AppColors.mainColor.withAlpha(30), borderRadius: BorderRadius.circular(4)),
+                    color: AppColors.mainColor.withAlpha(30),
+                    borderRadius: BorderRadius.circular(4)),
                 height: 30,
                 width: 100,
                 child: Center(
@@ -124,7 +149,8 @@ class SentListView extends StatelessWidget {
               ),
               Text(
                 intl.DateFormat('yyy/MM/dd hh:mm a').format(
-                    DateTime.fromMicrosecondsSinceEpoch(sentForm.sentDate?.microsecondsSinceEpoch ?? 0)),
+                    DateTime.fromMicrosecondsSinceEpoch(
+                        sentForm.sentDate?.microsecondsSinceEpoch ?? 0)),
                 // "at 01/23/2025  03:25 PM",
                 style: TextStyle(fontSize: 10, color: Colors.grey),
               ),
@@ -155,9 +181,9 @@ class FullSignedListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: cubit.fullSignedList.length,
+      itemCount: cubit.fullySignedView.length,
       itemBuilder: (context, index) {
-        final fullSigned = cubit.fullSignedList[index];
+        final fullSigned = cubit.fullySignedView[index];
         return ListTile(
           title: Text(
             fullSigned.formTitle.toString(),
@@ -173,7 +199,8 @@ class FullSignedListView extends StatelessWidget {
             children: [
               Container(
                 decoration: BoxDecoration(
-                    color: Colors.greenAccent.withAlpha(30), borderRadius: BorderRadius.circular(4)),
+                    color: Colors.greenAccent.withAlpha(30),
+                    borderRadius: BorderRadius.circular(4)),
                 height: 30,
                 width: 100,
                 child: Center(
@@ -183,13 +210,16 @@ class FullSignedListView extends StatelessWidget {
                   ),
                 ),
               ),
-       SizedBox(height: 2,),
-        Text(
-        intl.DateFormat('yyy/MM/dd hh:mm a').format(
-        DateTime.fromMicrosecondsSinceEpoch(fullSigned.sentDate?.microsecondsSinceEpoch ?? 0)),
-        // "at 01/23/2025  03:25 PM",
-        style: TextStyle(fontSize: 10, color: Colors.grey),
-        ),
+              SizedBox(
+                height: 2,
+              ),
+              Text(
+                intl.DateFormat('yyy/MM/dd hh:mm a').format(
+                    DateTime.fromMicrosecondsSinceEpoch(
+                        fullSigned.sentDate?.microsecondsSinceEpoch ?? 0)),
+                // "at 01/23/2025  03:25 PM",
+                style: TextStyle(fontSize: 10, color: Colors.grey),
+              ),
             ],
           ),
           onTap: () {

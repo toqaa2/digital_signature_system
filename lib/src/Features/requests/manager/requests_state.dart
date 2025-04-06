@@ -4,6 +4,7 @@ part of 'requests_cubit.dart';
 sealed class RequestsState {}
 
 final class RequestsInitial extends RequestsState {}
+final class Search extends RequestsState {}
 final class LoadingSentForms extends RequestsState {}
 final class LoadingReceivedForms extends RequestsState {}
 final class GetSentForms extends RequestsState {}
