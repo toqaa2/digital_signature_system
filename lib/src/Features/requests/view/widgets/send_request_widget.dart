@@ -96,26 +96,39 @@ class SentListView extends StatelessWidget {
         final sentForm = cubit.sentForms[index];
         return ListTile(
           title: Text(
-            sentForm.formName.toString(),
+            sentForm.formTitle.toString(),
             style: TextStyle(fontSize: 14),
           ),
           subtitle: Text(
-            intl.DateFormat('yyy/MM/dd hh:mm a').format(
-                DateTime.fromMicrosecondsSinceEpoch(sentForm.sentDate?.microsecondsSinceEpoch ?? 0)),
-            // "at 01/23/2025  03:25 PM",
-            style: TextStyle(fontSize: 12, color: Colors.grey),
+            sentForm.formName.toString(),
+            style: TextStyle(fontSize: 12),
           ),
-          trailing: Container(
-            decoration: BoxDecoration(
-                color: AppColors.mainColor.withAlpha(30), borderRadius: BorderRadius.circular(4)),
-            height: 30,
-            width: 100,
-            child: Center(
-              child: Text(
-                "Pending",
-                style: TextStyle(color: AppColors.mainColor, fontSize: 12),
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    color: AppColors.mainColor.withAlpha(30), borderRadius: BorderRadius.circular(4)),
+                height: 30,
+                width: 100,
+                child: Center(
+                  child: Text(
+                    "Pending",
+                    style: TextStyle(color: AppColors.mainColor, fontSize: 12),
+                  ),
+                ),
               ),
-            ),
+              SizedBox(
+                height: 2,
+              ),
+              Text(
+                intl.DateFormat('yyy/MM/dd hh:mm a').format(
+                    DateTime.fromMicrosecondsSinceEpoch(sentForm.sentDate?.microsecondsSinceEpoch ?? 0)),
+                // "at 01/23/2025  03:25 PM",
+                style: TextStyle(fontSize: 10, color: Colors.grey),
+              ),
+            ],
           ),
           onTap: () {
             print(sentForm.sentTo);
@@ -147,26 +160,37 @@ class FullSignedListView extends StatelessWidget {
         final fullSigned = cubit.fullSignedList[index];
         return ListTile(
           title: Text(
-            fullSigned.formName.toString(),
+            fullSigned.formTitle.toString(),
             style: TextStyle(fontSize: 14),
           ),
           subtitle: Text(
-            intl.DateFormat('yyy/MM/dd hh:mm a').format(
-                DateTime.fromMicrosecondsSinceEpoch(fullSigned.sentDate?.microsecondsSinceEpoch ?? 0)),
-            // "at 01/23/2025  03:25 PM",
-            style: TextStyle(fontSize: 12, color: Colors.grey),
+            fullSigned.formName.toString(),
+            style: TextStyle(fontSize: 12),
           ),
-          trailing: Container(
-            decoration: BoxDecoration(
-                color: Colors.greenAccent.withAlpha(30), borderRadius: BorderRadius.circular(4)),
-            height: 30,
-            width: 100,
-            child: Center(
-              child: Text(
-                "Signed",
-                style: TextStyle(color: Colors.green, fontSize: 12),
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.greenAccent.withAlpha(30), borderRadius: BorderRadius.circular(4)),
+                height: 30,
+                width: 100,
+                child: Center(
+                  child: Text(
+                    "Signed",
+                    style: TextStyle(color: Colors.green, fontSize: 12),
+                  ),
+                ),
               ),
-            ),
+       SizedBox(height: 2,),
+        Text(
+        intl.DateFormat('yyy/MM/dd hh:mm a').format(
+        DateTime.fromMicrosecondsSinceEpoch(fullSigned.sentDate?.microsecondsSinceEpoch ?? 0)),
+        // "at 01/23/2025  03:25 PM",
+        style: TextStyle(fontSize: 10, color: Colors.grey),
+        ),
+            ],
           ),
           onTap: () {
             print(fullSigned.sentTo);

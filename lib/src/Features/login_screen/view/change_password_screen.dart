@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:signature_system/src/Features/login_screen/manager/login_cubit.dart';
+import 'package:signature_system/src/Features/login_screen/view/widgets/custom_text_field.dart';
+
+import '../../../core/shared_widgets/custom_button.dart';
 
 class ChangePasswordScreen extends StatelessWidget {
   const ChangePasswordScreen({super.key});
@@ -19,25 +23,37 @@ class ChangePasswordScreen extends StatelessWidget {
             listener: (context, state) {},
             builder: (context, state) {
               return Scaffold(
-                body: Column(
-                  spacing: 20,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Text('Change Your Password'),
-                    TextFormField(
-                      controller: cubit.passwordController,
-                      decoration: InputDecoration(hintText: 'Change Your Password'),
-                    ),
-                    state is ChangePasswordLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : MaterialButton(
-                            child: const Text('Change Password'),
-                            onPressed: () => cubit.changePassword(
-                              context,
+                backgroundColor: Colors.white,
+                body: Center(
+                  child: Column(
+                    spacing: 20,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/Logo.svg',
+                        height: 100,
+                      ),
+                      const Text('Change Your Password'),
+                      Textfield(
+                        controller: cubit.passwordController,
+                        labelText: "Change Your Password",
+                      ),
+                      state is ChangePasswordLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : ButtonWidget(
+                              onTap: () {
+                                cubit.changePassword(
+                                  context,
+                                );
+                              },
+                              minWidth: 500,
+                              textStyle:
+                                  TextStyle(fontSize: 14, color: Colors.white),
+                              text: "Change Password",
                             ),
-                          ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
