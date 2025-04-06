@@ -92,17 +92,13 @@ class ConditionalStepWidget extends StatelessWidget {
                                       cubit.selectedItem == null
                               ? () {}
                               : () {
-                                  if (cubit.currentStep < 3 ||
-                                      (cubit.selectedItem != null &&
-                                          cubit.selectedItem!
-                                              .contains('PaymentRequest') &&
-                                          cubit.currentStep < 4)) {
-                                    cubit.changeStepNext();
-                                  }
+                            print(cubit.currentStep);
+
 
                                   if (cubit.currentStep == 2 &&
                                       !cubit.selectedItem!
                                           .contains('PaymentRequest')) {
+                                    print('here1');
                                     cubit
                                         .sendForm(
                                             userId:
@@ -126,7 +122,8 @@ class ConditionalStepWidget extends StatelessWidget {
                                   if (cubit.selectedItem != null &&
                                       cubit.selectedItem!
                                           .contains('PaymentRequest') &&
-                                      cubit.currentStep == 4) {
+                                      cubit.currentStep == 3) {
+                                    print('here2');
                                     cubit
                                         .sendPaymentForm(
                                             formLink: cubit
@@ -161,6 +158,14 @@ class ConditionalStepWidget extends StatelessWidget {
                                           ),
                                         );
                                   }
+
+                            if (cubit.currentStep < 3 ||
+                                (cubit.selectedItem != null &&
+                                    cubit.selectedItem!
+                                        .contains('PaymentRequest') &&
+                                    cubit.currentStep < 4)) {
+                              cubit.changeStepNext();
+                            }
                                 },
                           label: 'Next',
                           textColor: Colors.white,

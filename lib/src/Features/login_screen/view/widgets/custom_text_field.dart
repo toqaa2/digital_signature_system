@@ -43,7 +43,6 @@ final Function(String)? onSubmitted;
             borderSide: const BorderSide(color: Colors.grey),
             borderRadius: BorderRadius.circular(4),
           ),
-
           suffixIcon: trailingIcon,
         ),
       ),
