@@ -50,7 +50,12 @@ class LoginCubit extends Cubit<LoginState> {
     });
     emit(NotLoading());
   }
+  bool isPasswordVisible = true;
 
+  void togglePasswordVisibility() {
+      isPasswordVisible = !isPasswordVisible;
+   emit(ChangeVisibility());
+  }
   Future changePassword(BuildContext context) async {
     emit(ChangePasswordLoading());
     try{

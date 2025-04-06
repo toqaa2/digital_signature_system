@@ -90,23 +90,29 @@ class LoginScreen extends StatelessWidget {
                           ),
                           20.isHeight,
                           Textfield(
-                            onSubmitted: (p0) {
-
-                            },
+                            onSubmitted: (p0) {},
                             controller: cubit.emailController,
                             labelText: "Enter Your Email Address",
                           ),
                           10.isHeight,
                           Textfield(
+                            obscureText: cubit.isPasswordVisible ,
                             onSubmitted: (p0) {
                               cubit.login(context: context);
                             },
                             controller: cubit.passwordController,
                             labelText: "Enter Your Password",
-                            trailingIcon: Icon(
-                              Icons.visibility_off_sharp,
-                              color: Colors.grey,
-                              size: 18,
+                            trailingIcon: IconButton(
+                              onPressed: () {
+                                cubit.togglePasswordVisibility();
+                              },
+                              icon: Icon(
+                                cubit.isPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off_sharp,
+                                color: Colors.grey,
+                                size: 18,
+                              ),
                             ),
                           ),
                           5.isHeight,
@@ -114,12 +120,10 @@ class LoginScreen extends StatelessWidget {
                               ? Column(
                                   children: [
                                     20.isHeight,
-                                     Center(
+                                    Center(
                                         child: CircularProgressIndicator(
-                                          color: AppColors.mainColor,
-
-
-                                        )),
+                                      color: AppColors.mainColor,
+                                    )),
                                   ],
                                 )
                               : ButtonWidget(
