@@ -12,6 +12,8 @@ import 'package:pdf/widgets.dart' as pw;
 
 class AppFunctions {
   static sendEmailTo({required String toEmail, required String fromEmail})async{
+    print(toEmail);
+    print(fromEmail);
      var response = await http.post(
       Uri.parse('https://api.emailjs.com/api/v1.0/email/send'),
       headers: {

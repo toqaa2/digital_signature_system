@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:signature_system/src/core/functions/app_functions.dart';
 
@@ -273,7 +274,7 @@ class HomeCubit extends Cubit<HomeState> {
     currentStep++;
     emit(ChangeStepNext());
   }
-
+  DocumentReference<Map<String, dynamic>>? formReference;
   Future<void> sendForm({
     required String userId,
     required String formName,
@@ -283,9 +284,9 @@ class HomeCubit extends Cubit<HomeState> {
     required List<String> selectedEmails,
   }) async {
     // String formIDWithDate =formName+DateTime.now().toString();
-    DocumentReference<Map<String, dynamic>> formReference =
+    formReference =
         FirebaseFirestore.instance.collection('users').doc(userId).collection('sent_forms').doc(formID);
-    await formReference.set({
+    await formReference!.set({
       'form_reference': formReference,
       'formID': formID,
       'formName': formName,
@@ -306,6 +307,29 @@ class HomeCubit extends Cubit<HomeState> {
     formSent=true;
   }
 
+  List<String> userEmails = [];
+  String? selectedEmail;
+  Future<void> fetchUserEmails() async {
+    final snapshot = await FirebaseFirestore.instance.collection('users').get();
+
+      userEmails = snapshot.docs.map((doc) => doc['email'] as String).toList();
+    emit(FetchEmails());
+  }
+
+  Future<void> addToRequiredToSign(
+      String email,
+      BuildContext context,
+
+      ) async {
+      requiredEmails.insert(0, email);
+      print(requiredEmails);
+   emit(AddToList());
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('$email added to requiredToSign')),
+    );
+  }
+
+
   TextEditingController commercialRegistrationController = TextEditingController();
   TextEditingController electronicInvoiceController = TextEditingController();
   TextEditingController advancePaymentController = TextEditingController();
@@ -316,7 +340,9 @@ class HomeCubit extends Cubit<HomeState> {
   TextEditingController serviceTypeController = TextEditingController();
   final List<String> typeOfService = ['Service', 'Product'];
   String? selectedItemTypeofService;
-bool formSent=false;
+
+  DocumentReference<Map<String, dynamic>>? formPaymentReference ;
+  bool formSent=false;
   Future<void> sendPaymentForm({
     required String userId,
     required String formName,
@@ -332,10 +358,10 @@ bool formSent=false;
     required String serviceType,
     required List<String> selectedEmails,
   }) async {
-    DocumentReference<Map<String, dynamic>> formReference =
+    formPaymentReference =
         FirebaseFirestore.instance.collection('users').doc(userId).collection('sent_forms').doc(formID);
-    await formReference.set({
-      'form_reference': formReference,
+    await formPaymentReference!.set({
+      'form_reference': formPaymentReference,
       'formID': formID,
       'pathURL': pathURL,
       'downloadLink': downloadLink,

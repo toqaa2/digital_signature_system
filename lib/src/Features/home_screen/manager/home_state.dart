@@ -18,6 +18,8 @@ final class UploadfileSuccess extends HomeState {}
 final class UploadAdvancePaymentLoading extends HomeState {}
 final class UploadElectronicInvoiceLoading extends HomeState {}
 final class UploadCommertialRegestrationLoading extends HomeState {}
+final class FetchEmails extends HomeState {}
+final class AddToList extends HomeState {}
 final class UploadAdvancePaymentSuccess extends HomeState {}
 final class UploadElectronicInvoiceSuccess extends HomeState {}
 final class UploadCommertialRegestrationSuccess extends HomeState {}

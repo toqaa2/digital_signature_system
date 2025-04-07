@@ -95,7 +95,7 @@ class ConditionalStepWidget extends StatelessWidget {
                             print(cubit.currentStep);
 
 
-                                  if (cubit.currentStep == 2 &&
+                                  if (cubit.currentStep == 3 &&
                                       !cubit.selectedItem!
                                           .contains('PaymentRequest')) {
                                     print('here1');
@@ -110,8 +110,7 @@ class ConditionalStepWidget extends StatelessWidget {
                                                 .selectedFormModel!.formName!,
                                             sentBy: Constants.userModel!.email!,
                                             selectedEmails: cubit
-                                                .selectedFormModel!
-                                                .requiredToSign!)
+                                                .requiredEmails)
                                         .then(
                                           (value) => cubit.sendToRequiredEmails(
                                             sentBy: Constants.userModel!.email!,
@@ -149,8 +148,7 @@ class ConditionalStepWidget extends StatelessWidget {
                                                 .selectedFormModel!.formName!,
                                             sentBy: Constants.userModel!.email!,
                                             selectedEmails: cubit
-                                                .selectedFormModel!
-                                                .requiredToSign!)
+                                                .requiredEmails)
                                         .then(
                                           (value) => cubit.sendToRequiredEmails(
                                             sentBy: Constants.userModel!.email!,

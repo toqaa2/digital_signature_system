@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/helper/extension/distance.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 
+import '../../../../core/shared_widgets/custom_button.dart';
+import '../../../../core/shared_widgets/searchable_dropdown.dart';
 import '../../manager/home_cubit.dart';
 
-class SendRequestEmails extends StatelessWidget {
+class SendRequestEmails extends StatefulWidget {
   final HomeCubit cubit;
 
   const SendRequestEmails({super.key, required this.cubit});
 
+  @override
+  State<SendRequestEmails> createState() => _SendRequestEmailsState();
+}
+
+class _SendRequestEmailsState extends State<SendRequestEmails> {
   @override
   Widget build(BuildContext context) {
     return Padding(padding:
@@ -21,6 +29,50 @@ class SendRequestEmails extends StatelessWidget {
           Text("Send Signature Request",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color:AppColors.mainColor ),),
           2.isHeight,
           Text("By Sending this Request it Will Automatic Send to these Officials",style: TextStyle(fontSize: 10,color:Colors.grey ),),
+          2.isHeight,
+          Text("Select your Manager",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12,color:AppColors.mainColor ),),
+          10.isHeight,
+          Autocomplete<String>(
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              if (textEditingValue.text.isEmpty) return const Iterable<String>.empty();
+              return widget.cubit.userEmails.where((email) =>
+                  email.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+            },
+            onSelected: (String email) {
+              setState(() {
+                widget.cubit.selectedEmail = email;
+              });
+            },
+            fieldViewBuilder: (context, controller, focusNode, onEditingComplete) {
+              return TextField(
+                controller: controller,
+                focusNode: focusNode,
+                decoration: InputDecoration(
+                  hintText: 'Search and select email',
+                  hintStyle: TextStyle(fontSize: 12),
+                  border: OutlineInputBorder(),
+                ),
+              );
+            },
+          ),
+          10.isHeight,
+          ButtonWidget(
+              verticalMargin: 2,
+              minWidth: 120,
+              height: 35,
+              textStyle: TextStyle(
+                  fontSize: 12, color: Colors.white),
+              text: "Add Email",
+              onTap: widget.cubit.selectedEmail == null
+                  ? (){}
+                  : () => widget.cubit.addToRequiredToSign(widget.cubit.selectedEmail!,context),
+          ),
+          // ElevatedButton(
+          //   onPressed: widget.cubit.selectedEmail == null
+          //       ? null
+          //       : () => widget.cubit.addToRequiredToSign(widget.cubit.selectedEmail!,context),
+          //   child: Text('Add to Required To Sign'),
+          // ),
           15.isHeight,
           BlocBuilder<HomeCubit, HomeState>(
             builder: (context, state) {
