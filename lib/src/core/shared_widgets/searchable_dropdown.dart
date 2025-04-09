@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:signature_system/src/core/constants/constants.dart';
 
+import 'custom_button.dart';
+
 class SearchableDropdown extends StatefulWidget {
   const SearchableDropdown({
     super.key,
@@ -22,14 +24,16 @@ class SearchableDropdown extends StatefulWidget {
 class _SearchableDropdownState extends State<SearchableDropdown> {
   String fromDate = '';
   String toDate = '';
-  String value = '';
+  String value = 'Search by Form Title';
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      spacing: 10,
       children: [
         Expanded(
           child: DropdownSearch<String>(
+
             selectedItem: value,
             items: (filter, loadProps) => Constants.titleName,
             enabled: true,
@@ -40,12 +44,19 @@ class _SearchableDropdownState extends State<SearchableDropdown> {
             popupProps: PopupProps.menu(
               showSearchBox: true,
               searchDelay: const Duration(microseconds: 1),
-              searchFieldProps: TextFieldProps(),
+              searchFieldProps: TextFieldProps(
+                
+              ),
             ),
           ),
         ),
         Expanded(
           child: MaterialButton(
+            shape: OutlineInputBorder(
+              borderSide: BorderSide(
+
+              )
+            ),
               height: 48.h,
               padding: EdgeInsets.zero,
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -67,18 +78,25 @@ class _SearchableDropdownState extends State<SearchableDropdown> {
                   },
                 );
               },
-              child: Text('From $fromDate To $toDate')),
+              child: fromDate.isEmpty?Text("Filter By Date") : Text('From $fromDate To $toDate')),
         ),
-        TextButton(
-            onPressed: () {
+
+        ButtonWidget(
+            verticalMargin: 2,
+            minWidth: 120,
+            height: 35,
+            textStyle: TextStyle(
+                fontSize: 12, color: Colors.white),
+            text: 'Reset Filter',
+            onTap: ()  {
               setState(() {
                 fromDate = '';
                 toDate = '';
                 value = '';
               });
               widget.onReset();
-            },
-            child: Text('Reset Filter')),
+            }),
+
       ],
     );
   }
