@@ -44,19 +44,13 @@ class _SearchableDropdownState extends State<SearchableDropdown> {
             popupProps: PopupProps.menu(
               showSearchBox: true,
               searchDelay: const Duration(microseconds: 1),
-              searchFieldProps: TextFieldProps(
-                
-              ),
+              searchFieldProps: TextFieldProps(),
             ),
           ),
         ),
         Expanded(
           child: MaterialButton(
-            shape: OutlineInputBorder(
-              borderSide: BorderSide(
-
-              )
-            ),
+              shape: OutlineInputBorder(borderSide: BorderSide()),
               height: 48.h,
               padding: EdgeInsets.zero,
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -65,30 +59,36 @@ class _SearchableDropdownState extends State<SearchableDropdown> {
                   context: context,
                   firstDate: DateTime(2025, 1, 1),
                   lastDate: DateTime.now(),
-                  initialEntryMode: DatePickerEntryMode.calendarOnly,
                 ).then(
                   (value) {
                     if (value != null) {
                       setState(() {
                         fromDate = value.start.toString().split(' ').first;
                         toDate = value.end.toString().split(' ').first;
-                      });
-                      widget.onDateChanged(value);
+                      });;
+                      widget.onDateChanged(DateTimeRange(
+                          start: value.start,
+                          end: value.end.add(const Duration(
+                            hours: 23,
+                            minutes: 59,
+                            seconds: 59,
+                            milliseconds: 999,
+                          ))));
                     }
                   },
                 );
               },
-              child: fromDate.isEmpty?Text("Filter By Date") : Text('From $fromDate To $toDate')),
+              child: fromDate.isEmpty
+                  ? Text("Filter By Date")
+                  : Text('From $fromDate To $toDate')),
         ),
-
         ButtonWidget(
             verticalMargin: 2,
             minWidth: 120,
             height: 35,
-            textStyle: TextStyle(
-                fontSize: 12, color: Colors.white),
+            textStyle: TextStyle(fontSize: 12, color: Colors.white),
             text: 'Reset Filter',
-            onTap: ()  {
+            onTap: () {
               setState(() {
                 fromDate = '';
                 toDate = '';
@@ -96,7 +96,6 @@ class _SearchableDropdownState extends State<SearchableDropdown> {
               });
               widget.onReset();
             }),
-
       ],
     );
   }
