@@ -92,10 +92,9 @@ class ConditionalStepWidget extends StatelessWidget {
                                       cubit.selectedItem == null
                               ? () {}
                               : () {
-                            print(cubit.currentStep);
 
 
-                                  if (cubit.currentStep == 3 &&
+                                  if (cubit.currentStep == 2 &&
                                       !cubit.selectedItem!
                                           .contains('PaymentRequest')) {
                                     print('here1');
@@ -157,13 +156,13 @@ class ConditionalStepWidget extends StatelessWidget {
                                         );
                                   }
 
-                            if (cubit.currentStep < 3 ||
-                                (cubit.selectedItem != null &&
-                                    cubit.selectedItem!
-                                        .contains('PaymentRequest') &&
-                                    cubit.currentStep < 4)) {
-                              cubit.changeStepNext();
-                            }
+                                  if (cubit.currentStep < 3 ||
+                                      (cubit.selectedItem != null &&
+                                          cubit.selectedItem!
+                                              .contains('PaymentRequest') &&
+                                          cubit.currentStep < 4)) {
+                                    cubit.changeStepNext();
+                                  }
                                 },
                           label: 'Next',
                           textColor: Colors.white,

@@ -22,7 +22,12 @@ class HomeCubit extends Cubit<HomeState> {
 
   static HomeCubit get(context) => BlocProvider.of(context);
   final List<String> stepNames = ['Choose From', 'Fill From', 'Send Request'];
-  final List<String> stepNames4 = ['Choose From', 'Fill From', "Upload Documents", 'Send Request'];
+  final List<String> stepNames4 = [
+    'Choose From',
+    'Fill From',
+    "Upload Documents",
+    'Send Request'
+  ];
   final List<String> dropdownItems = [
     'Program Lunch Memo',
     'Campaign Memo',
@@ -73,8 +78,8 @@ class HomeCubit extends Cubit<HomeState> {
         Reference pdfRef = storageRef.child(
             'sent_forms/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
 
-        UploadTask uploadTask =
-            pdfRef.putData(docFile!, SettableMetadata(contentType: 'application/pdf'));
+        UploadTask uploadTask = pdfRef.putData(
+            docFile!, SettableMetadata(contentType: 'application/pdf'));
         await uploadTask;
 
         downloadURLOFUploadedDocument = await pdfRef.getDownloadURL();
@@ -88,9 +93,11 @@ class HomeCubit extends Cubit<HomeState> {
 // Fetch forms from Firestore
   Future<void> fetchForms() async {
     try {
-      QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('forms').get();
-      forms =
-          snapshot.docs.map((doc) => FormModel.fromJson(doc.data() as Map<String, dynamic>)).toList();
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection('forms').get();
+      forms = snapshot.docs
+          .map((doc) => FormModel.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
       emit(FormsFetched());
     } catch (error) {
       print("Error fetching forms: $error");
@@ -137,12 +144,13 @@ class HomeCubit extends Cubit<HomeState> {
         Reference pdfRef = storageRef.child(
             'uploadCommertialRegestration/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
 
-        UploadTask uploadTask =
-            pdfRef.putData(docFile!, SettableMetadata(contentType: 'application/pdf'));
+        UploadTask uploadTask = pdfRef.putData(
+            docFile!, SettableMetadata(contentType: 'application/pdf'));
         await uploadTask;
 
         uploadedCommertialRegestration = await pdfRef.getDownloadURL();
-        commercialRegistrationController.text = uploadedCommertialRegestration ?? "";
+        commercialRegistrationController.text =
+            uploadedCommertialRegestration ?? "";
         print('Download URL: $uploadedCommertialRegestration');
 
         emit(UploadCommertialRegestrationSuccess());
@@ -168,8 +176,8 @@ class HomeCubit extends Cubit<HomeState> {
         Reference pdfRef = storageRef.child(
             'uploadAdvancePaymentCertificate/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
 
-        UploadTask uploadTask =
-            pdfRef.putData(docFile!, SettableMetadata(contentType: 'application/pdf'));
+        UploadTask uploadTask = pdfRef.putData(
+            docFile!, SettableMetadata(contentType: 'application/pdf'));
         await uploadTask;
 
         uploadedAdvancePaymentCertificate = await pdfRef.getDownloadURL();
@@ -199,8 +207,8 @@ class HomeCubit extends Cubit<HomeState> {
         Reference pdfRef = storageRef.child(
             'uploadElectronicInvoice/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
 
-        UploadTask uploadTask =
-            pdfRef.putData(docFile!, SettableMetadata(contentType: 'application/pdf'));
+        UploadTask uploadTask = pdfRef.putData(
+            docFile!, SettableMetadata(contentType: 'application/pdf'));
         await uploadTask;
 
         uploadedElectronicInvoice = await pdfRef.getDownloadURL();
@@ -222,8 +230,11 @@ class HomeCubit extends Cubit<HomeState> {
       return;
     }
     List<String> selectedEmails = List.from(requiredEmails);
-    DocumentReference formReference =
-        FirebaseFirestore.instance.collection('users').doc(userID).collection("sent_forms").doc(formID);
+    DocumentReference formReference = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userID)
+        .collection("sent_forms")
+        .doc(formID);
 
     for (String email in selectedEmails) {
       await FirebaseFirestore.instance
@@ -274,7 +285,9 @@ class HomeCubit extends Cubit<HomeState> {
     currentStep++;
     emit(ChangeStepNext());
   }
+
   DocumentReference<Map<String, dynamic>>? formReference;
+
   Future<void> sendForm({
     required String userId,
     required String formName,
@@ -283,9 +296,13 @@ class HomeCubit extends Cubit<HomeState> {
     required String sentBy,
     required List<String> selectedEmails,
   }) async {
+    print("form send");
     // String formIDWithDate =formName+DateTime.now().toString();
-    formReference =
-        FirebaseFirestore.instance.collection('users').doc(userId).collection('sent_forms').doc(formID);
+    formReference = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('sent_forms')
+        .doc(formID);
     await formReference!.set({
       'form_reference': formReference,
       'formID': formID,
@@ -299,38 +316,42 @@ class HomeCubit extends Cubit<HomeState> {
       'isFullySigned': false,
       'formTitle': selectedtitleName ?? ""
     }).then((_) async {
-      await AppFunctions.sendEmailTo(toEmail: selectedEmails[0],fromEmail: sentBy);
+     await  FirebaseFirestore.instance
+          .collection('sentForms')
+          .add({'ref': formReference});
+      await AppFunctions.sendEmailTo(
+          toEmail: selectedEmails[0], fromEmail: sentBy);
       emit(SendForm());
 
       print("Form sent successfully!");
     });
-    formSent=true;
+    formSent = true;
   }
 
   List<String> userEmails = [];
   String? selectedEmail;
+
   Future<void> fetchUserEmails() async {
     final snapshot = await FirebaseFirestore.instance.collection('users').get();
 
-      userEmails = snapshot.docs.map((doc) => doc['email'] as String).toList();
+    userEmails = snapshot.docs.map((doc) => doc['email'] as String).toList();
     emit(FetchEmails());
   }
 
   Future<void> addToRequiredToSign(
-      String email,
-      BuildContext context,
-
-      ) async {
-      requiredEmails.insert(0, email);
-      print(requiredEmails);
-   emit(AddToList());
+    String email,
+    BuildContext context,
+  ) async {
+    requiredEmails.insert(0, email);
+    print(requiredEmails);
+    emit(AddToList());
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('$email added to requiredToSign')),
     );
   }
 
-
-  TextEditingController commercialRegistrationController = TextEditingController();
+  TextEditingController commercialRegistrationController =
+      TextEditingController();
   TextEditingController electronicInvoiceController = TextEditingController();
   TextEditingController advancePaymentController = TextEditingController();
   TextEditingController taxIDController = TextEditingController();
@@ -341,8 +362,10 @@ class HomeCubit extends Cubit<HomeState> {
   final List<String> typeOfService = ['Service', 'Product'];
   String? selectedItemTypeofService;
 
-  DocumentReference<Map<String, dynamic>>? formPaymentReference ;
-  bool formSent=false;
+  DocumentReference<Map<String, dynamic>>? formPaymentReference;
+
+  bool formSent = false;
+
   Future<void> sendPaymentForm({
     required String userId,
     required String formName,
@@ -358,8 +381,11 @@ class HomeCubit extends Cubit<HomeState> {
     required String serviceType,
     required List<String> selectedEmails,
   }) async {
-    formPaymentReference =
-        FirebaseFirestore.instance.collection('users').doc(userId).collection('sent_forms').doc(formID);
+    formPaymentReference = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('sent_forms')
+        .doc(formID);
     await formPaymentReference!.set({
       'form_reference': formPaymentReference,
       'formID': formID,
@@ -381,12 +407,16 @@ class HomeCubit extends Cubit<HomeState> {
       'invoiceNumber': invoiceNumber,
       'bankAccountNumber': bankAccountNumber,
       'serviceType': serviceType,
-    }).then((_) async{
-      await AppFunctions.sendEmailTo(toEmail: selectedEmails[0],fromEmail: sentBy);
+    }).then((_) async {
+      await FirebaseFirestore.instance
+          .collection('sentForms')
+          .add({'ref': formPaymentReference});
+      await AppFunctions.sendEmailTo(
+          toEmail: selectedEmails[0], fromEmail: sentBy);
 
       emit(SendPaymentForm());
       print("Form sent successfully!");
     });
-    formSent=true;
+    formSent = true;
   }
 }
