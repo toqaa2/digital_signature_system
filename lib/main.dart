@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: ScreenUtilInit(child:   LayoutScreen()),
+      home: ScreenUtilInit(child:   LoginScreen()),
     );
   }
 }
