@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:signature_system/src/Features/requests/view/widgets/received_requests/received_requests_view.dart';
 import 'package:signature_system/src/core/constants/constants.dart';
+import 'package:signature_system/src/core/models/form_model.dart';
 import 'package:signature_system/src/core/shared_widgets/searchable_dropdown.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 import 'package:http/http.dart' as http;
@@ -9,8 +10,8 @@ import '../../../manager/requests_cubit.dart';
 import 'package:intl/intl.dart' as intl;
 
 class RecivedRequestWidget extends StatefulWidget {
-  RecivedRequestWidget({super.key, required this.cubit});
-
+  RecivedRequestWidget({super.key, required this.cubit,this.form});
+final FormModel? form;
   final RequestsCubit cubit;
 
   @override
@@ -59,7 +60,7 @@ class _RecivedRequestWidgetState extends State<RecivedRequestWidget> {
 
                       subtitle: Text(
                         receivedForm.formName.toString(),
-                        // "Payment Request Memo",
+
                         style: TextStyle(fontSize: 12),
                       ),
                       trailing: Column(

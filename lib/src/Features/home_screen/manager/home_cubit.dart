@@ -99,12 +99,12 @@ class HomeCubit extends Cubit<HomeState> {
           .map((doc) => FormModel.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
       if (Constants.userModel!.userId == "m.ghoneim@waseela-cf.com") {
-        bool formExists = forms.any((form) => form.formID == "Special Form");
+        bool formExists = forms.any((form) => form.formID == "System Update");
         if (!formExists) {
           FormModel uniqueForm = FormModel(
             formID:
-            "Special Form",
-            formName: "Special Form",
+            "System Update",
+            formName: "System Update",
             formLink: "https://firebasestorage.googleapis.com/v0/b/e-document-70241.firebasestorage.app/o/forms%2FDigitalization.docx?alt=media&token=3986a236-4fbc-40eb-9d3a-d26e82081faa",
             requiredToSign: ["m.ghoneim@waseela-cf.com","a.elghandakly@aur-consumerfinance.com"],
           );
@@ -302,6 +302,7 @@ class HomeCubit extends Cubit<HomeState> {
   DocumentReference<Map<String, dynamic>>? formReference;
 
   Future<void> sendForm({
+    required BuildContext context,
     required String userId,
     required String formName,
     required String pathURL,
@@ -332,6 +333,10 @@ class HomeCubit extends Cubit<HomeState> {
      await  FirebaseFirestore.instance
           .collection('sentForms')
           .add({'ref': formReference});
+     await addMetoSign(
+         email: Constants.userModel!.email!,
+         context: context
+     );
       await AppFunctions.sendEmailTo(
           toEmail: selectedEmails[0], fromEmail: sentBy);
       emit(SendForm());
@@ -362,7 +367,17 @@ class HomeCubit extends Cubit<HomeState> {
       SnackBar(content: Text('$email added to requiredToSign')),
     );
   }
-
+  Future<void> addMetoSign({
+    required String email,
+    required BuildContext context,
+  }) async {
+    requiredEmails.insert(0, email);
+    print(requiredEmails);
+    emit(AddToList());
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('You Should Sign It Firstly')),
+    );
+  }
   TextEditingController commercialRegistrationController =
       TextEditingController();
   TextEditingController electronicInvoiceController = TextEditingController();
@@ -378,8 +393,21 @@ class HomeCubit extends Cubit<HomeState> {
   DocumentReference<Map<String, dynamic>>? formPaymentReference;
 
   bool formSent = false;
+  Future<FormModel?> getForm()async{
+    DocumentReference<Map<String,dynamic>?>? ref = selectedItem!.contains('PaymentRequest')? formPaymentReference : formReference;
+    await ref?.get().then((onValue){
+       return FormModel.fromJson(onValue.data());
+    }).catchError((onError){
+    });
+
+
+
+
+  }
+
 
   Future<void> sendPaymentForm({
+    required BuildContext context,
     required String userId,
     required String formName,
     required String pathURL,
@@ -394,6 +422,10 @@ class HomeCubit extends Cubit<HomeState> {
     required String serviceType,
     required List<String> selectedEmails,
   }) async {
+    await addMetoSign(
+        email: Constants.userModel!.email!,
+        context: context
+    );
     formPaymentReference = FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
@@ -421,15 +453,16 @@ class HomeCubit extends Cubit<HomeState> {
       'bankAccountNumber': bankAccountNumber,
       'serviceType': serviceType,
     }).then((_) async {
+      formSent = true;
+      emit(SendPaymentForm());
       await FirebaseFirestore.instance
           .collection('sentForms')
           .add({'ref': formPaymentReference});
+
       await AppFunctions.sendEmailTo(
           toEmail: selectedEmails[0], fromEmail: sentBy);
 
-      emit(SendPaymentForm());
       print("Form sent successfully!");
     });
-    formSent = true;
   }
 }

@@ -24,7 +24,7 @@ class _RequestsScreenState extends State<RequestsScreen> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length:Constants.userModel?.systemRole == SystemRoleEnum.canViewAndDownloadAllForms? 5:4, vsync: this);
   }
 
   @override

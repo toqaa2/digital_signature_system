@@ -32,9 +32,17 @@ class SuccessMessage extends StatelessWidget {
           Text("Follow up it’s Status at Your Requests",style: TextStyle(color: Colors.grey,fontSize: 10)),
           ButtonWidget(
             onTap: (){
-              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LayoutScreen(),));
+              // FormModel? formModel = await homeCubit.getForm();
+              // if (formModel != null && context.mounted) {
+              //   Navigator.of(context).push(MaterialPageRoute(
+              //     builder: (context) => RecivedRequestWidget(
+              //       form: formModel,
+              //       cubit: cubit,
+              //     ),
+              //   ));
+              // }
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => LayoutScreen(),));
             },
-
             minWidth: 350,
             height: 45,
             textStyle: TextStyle(fontSize: 14,color: Colors.white),

@@ -100,6 +100,7 @@ class ConditionalStepWidget extends StatelessWidget {
                                     print('here1');
                                     cubit
                                         .sendForm(
+                                      context: context,
                                             userId:
                                                 Constants.userModel!.userId!,
                                             downloadLink: "بجرب",
@@ -124,6 +125,7 @@ class ConditionalStepWidget extends StatelessWidget {
                                     print('here2');
                                     cubit
                                         .sendPaymentForm(
+                                      context: context,
                                             formLink: cubit
                                                 .selectedFormModel!.formLink!,
                                             taxID: cubit.taxIDController.text,
