@@ -49,99 +49,107 @@ class LoginScreen extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(35.0),
                     child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SvgPicture.asset(
-                                'assets/Signup-logo.svg',
-                              ),
-                              5.isWidth,
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Sign In",
-                                        style: TextStyle(
-                                            color: AppColors.mainColor,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        " to your Account ",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                  Text(
-                                    "Sign your Form Now, With Waseela’s Digital Signature System",
-                                    style: TextStyle(
-                                        fontSize: 10, color: Colors.grey),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          20.isHeight,
-                          Textfield(
-                            onSubmitted: (p0) {},
-                            controller: cubit.emailController,
-                            labelText: "Enter Your Email Address",
-                          ),
-                          10.isHeight,
-                          Textfield(
-                            obscureText: cubit.isPasswordVisible ,
-                            onSubmitted: (p0) {
-                              cubit.login(context: context);
-                            },
-                            controller: cubit.passwordController,
-                            labelText: "Enter Your Password",
-                            trailingIcon: IconButton(
-                              onPressed: () {
-                                cubit.togglePasswordVisibility();
+                      child: AutofillGroup(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/Signup-logo.svg',
+                                ),
+                                5.isWidth,
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Sign In",
+                                          style: TextStyle(
+                                              color: AppColors.mainColor,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          " to your Account ",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      "Sign your Form Now, With Waseela’s Digital Signature System",
+                                      style: TextStyle(
+                                          fontSize: 10, color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            20.isHeight,
+                            TextFieldWidget(
+                              autoFillHints: [AutofillHints.newUsername, AutofillHints.username],
+
+                              keyboardType: TextInputType.emailAddress,
+                              onSubmitted: (p0) {},
+                              controller: cubit.emailController,
+                              labelText: "Enter Your Email Address",
+                            ),
+                            10.isHeight,
+                            TextFieldWidget(
+                              autoFillHints: [AutofillHints.password],
+
+                              keyboardType: TextInputType.visiblePassword,
+                              obscureText: cubit.isPasswordVisible ,
+                              onSubmitted: (p0) {
+                                cubit.login(context: context);
                               },
-                              icon: Icon(
-                                cubit.isPasswordVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off_sharp,
-                                color: Colors.grey,
-                                size: 18,
+                              controller: cubit.passwordController,
+                              labelText: "Enter Your Password",
+                              trailingIcon: IconButton(
+                                onPressed: () {
+                                  cubit.togglePasswordVisibility();
+                                },
+                                icon: Icon(
+                                  cubit.isPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off_sharp,
+                                  color: Colors.grey,
+                                  size: 18,
+                                ),
                               ),
                             ),
-                          ),
-                          5.isHeight,
-                          state is Loading
-                              ? Column(
-                                  children: [
-                                    20.isHeight,
-                                    Center(
-                                        child: CircularProgressIndicator(
-                                      color: AppColors.mainColor,
-                                    )),
-                                  ],
-                                )
-                              : ButtonWidget(
-                                  onTap: () {
-                                    cubit.login(context: context);
-                                    // Navigator.of(context).pushAndRemoveUntil(
-                                    //   MaterialPageRoute(
-                                    //     builder: (context) => const LayoutScreen(),
-                                    //   ),
-                                    //       (route) => false,
-                                    // );
-                                  },
-                                  minWidth: 500,
-                                  textStyle: TextStyle(
-                                      fontSize: 14, color: Colors.white),
-                                  text: "Login",
-                                ),
-                        ],
+                            5.isHeight,
+                            state is Loading
+                                ? Column(
+                                    children: [
+                                      20.isHeight,
+                                      Center(
+                                          child: CircularProgressIndicator(
+                                        color: AppColors.mainColor,
+                                      )),
+                                    ],
+                                  )
+                                : ButtonWidget(
+                                    onTap: () {
+                                      cubit.login(context: context);
+                                      // Navigator.of(context).pushAndRemoveUntil(
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) => const LayoutScreen(),
+                                      //   ),
+                                      //       (route) => false,
+                                      // );
+                                    },
+                                    minWidth: 500,
+                                    textStyle: TextStyle(
+                                        fontSize: 14, color: Colors.white),
+                                    text: "Login",
+                                  ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

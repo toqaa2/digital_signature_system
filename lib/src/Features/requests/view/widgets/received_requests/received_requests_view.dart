@@ -429,7 +429,7 @@ void _showDialog(BuildContext context) {
               SizedBox(
                 height: 10,
               ),
-              Textfield(
+              TextFieldWidget(
                 controller: _textFieldController,
                 labelText: "Type here..",
               ),

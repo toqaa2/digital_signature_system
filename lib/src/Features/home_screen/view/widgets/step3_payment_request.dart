@@ -125,7 +125,7 @@ class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
               ),
               5.isWidth,
               Expanded(
-                  child: Textfield(
+                  child: TextFieldWidget(
                 controller: widget.cubit.taxIDController,
                 labelText: "Enter Tax ID",
               )),
@@ -169,7 +169,7 @@ class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
               ),
               5.isWidth,
               Expanded(
-                  child: Textfield(
+                  child: TextFieldWidget(
                 controller: widget.cubit.bankNameController,
                 labelText: "Enter Bank Name",
               )),
@@ -180,13 +180,13 @@ class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
           Row(
             children: [
               Expanded(
-                  child: Textfield(
+                  child: TextFieldWidget(
                 controller: widget.cubit.bankAccountNumberController,
                 labelText: "Enter Bank Account Number",
               )),
               5.isWidth,
               Expanded(
-                  child: Textfield(
+                  child: TextFieldWidget(
                 controller: widget.cubit.invoiceNumberController,
                 labelText: "Enter Invoice Number",
               )),

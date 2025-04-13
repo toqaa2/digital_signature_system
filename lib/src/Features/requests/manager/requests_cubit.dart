@@ -30,8 +30,8 @@ class RequestsCubit extends Cubit<RequestsState> {
   List<FormModel> fullySignedView = [];
 
   getAllForms() async {
-    sentForms.clear();
-    sentFormsView.clear();
+    allForms.clear();
+    allFormsView.clear();
     emit(GetAllFormsLoading());
     await FirebaseFirestore.instance
         .collection('sentForms')
@@ -42,13 +42,13 @@ class RequestsCubit extends Cubit<RequestsState> {
         ref = await element.data()['ref'];
         await ref.get().then((onValue) async {
           if ((await onValue.data()?['isFullySigned']) ?? false) {
-            sentForms.add(FormModel.fromJson(onValue.data()));
+            allForms.add(FormModel.fromJson(onValue.data()));
           }
         });
       }
     });
-    sentFormsView = sentForms.toList();
-    sentFormsView.sort((a, b) {
+    allFormsView = allForms.toList();
+    allFormsView.sort((a, b) {
       return b.sentDate!.microsecondsSinceEpoch
           .compareTo(a.sentDate!.microsecondsSinceEpoch);
     });
@@ -58,6 +58,17 @@ class RequestsCubit extends Cubit<RequestsState> {
   dateQueryFullySigned(DateTimeRange? dateRange) {
     if (dateRange != null) {
       fullySignedView = fullySignedView.where((element) {
+        return (element.sentDate!.toDate().isAfter(dateRange.start) ||
+                element.sentDate!.toDate().isAtSameMomentAs(dateRange.start)) &&
+            (element.sentDate!.toDate().isBefore(dateRange.end) ||
+                element.sentDate!.toDate().isAtSameMomentAs(dateRange.end));
+      }).toList();
+      emit(Search());
+    }
+  }
+  dateQueryAllForms(DateTimeRange? dateRange) {
+    if (dateRange != null) {
+      allFormsView = allFormsView.where((element) {
         return (element.sentDate!.toDate().isAfter(dateRange.start) ||
                 element.sentDate!.toDate().isAtSameMomentAs(dateRange.start)) &&
             (element.sentDate!.toDate().isBefore(dateRange.end) ||
@@ -112,6 +123,17 @@ class RequestsCubit extends Cubit<RequestsState> {
     sentFormsView.clear();
     sentFormsView =
         sentForms.where((element) => element.formTitle == title).toList();
+    emit(Search());
+  }
+  searchAllForms(String? title) {
+    if (title == null || title.isEmpty) {
+      allFormsView = allForms.toList();
+      emit(Search());
+      return;
+    }
+    allFormsView.clear();
+    allFormsView =
+        allForms.where((element) => element.formTitle == title).toList();
     emit(Search());
   }
 

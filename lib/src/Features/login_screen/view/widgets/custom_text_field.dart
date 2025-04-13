@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 
 
-class Textfield extends StatelessWidget {
+class TextFieldWidget extends StatelessWidget {
   final String labelText;
   final IconButton? trailingIcon;
   final bool? obscureText;
   final TextEditingController? controller;
+  final TextInputType? keyboardType;
+  final  Iterable<String>? autoFillHints;
 final Function(String)? onSubmitted;
-  const Textfield({
+  const TextFieldWidget({
     super.key,
     required this.labelText,
+    this.autoFillHints,
+    this.keyboardType,
     this.trailingIcon,  this.obscureText,  this.controller,this.onSubmitted
   });
 
@@ -24,6 +28,8 @@ final Function(String)? onSubmitted;
         obscureText: obscureText??false,
         controller: controller,
         style: const TextStyle(fontSize: 10),
+        keyboardType: keyboardType,
+        autofillHints: autoFillHints,
         decoration: InputDecoration(
 
           labelText: labelText,

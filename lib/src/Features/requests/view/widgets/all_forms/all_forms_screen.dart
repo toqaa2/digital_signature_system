@@ -30,20 +30,20 @@ class _AllFormsScreenState extends State<AllFormsScreen> {
             children: [
               SearchableDropdown(
                 onReset: () {
-                  // widget.cubit.getReceivedForms(Constants.userModel?.userId??'');
+                  widget.cubit.getAllForms();
                 },
                 onDateChanged: (p0) {
-                  // widget.cubit.dateQueryReceivedForms(p0);
+                  widget.cubit.dateQueryAllForms(p0);
                 },
                 onSelected: (p0) {
-                  // widget.cubit.searchReceivedForms(p0);
+                  widget.cubit.searchAllForms(p0);
                 },
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: widget.cubit.sentFormsView.length,
+                  itemCount: widget.cubit.allFormsView.length,
                   itemBuilder: (context, index) {
-                    final receivedForm = widget.cubit.sentFormsView[index];
+                    final receivedForm = widget.cubit.allFormsView[index];
                     return ListTile(
                       title: Text(
                         receivedForm.formTitle.toString(),

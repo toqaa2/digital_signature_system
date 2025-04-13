@@ -35,7 +35,7 @@ class ChangePasswordScreen extends StatelessWidget {
                         height: 100,
                       ),
                       const Text('Change Your Password'),
-                      Textfield(
+                      TextFieldWidget(
                         controller: cubit.passwordController,
                         labelText: "Change Your Password",
                       ),
