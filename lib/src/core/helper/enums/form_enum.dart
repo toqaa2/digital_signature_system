@@ -6,3 +6,8 @@ enum FormType{
   internalCommitteeMemo,
   merchantOnboardingMemo,
 }
+
+enum SystemRoleEnum{
+  canViewAndDownloadAllForms,
+  none,
+}

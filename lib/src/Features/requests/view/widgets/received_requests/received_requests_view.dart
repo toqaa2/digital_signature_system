@@ -9,9 +9,9 @@ import 'package:signature_system/src/core/style/colors.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-import '../../../../core/shared_widgets/custom_button.dart';
-import '../../../login_screen/view/widgets/custom_text_field.dart';
-import '../../manager/requests_cubit.dart';
+import '../../../../../core/shared_widgets/custom_button.dart';
+import '../../../../login_screen/view/widgets/custom_text_field.dart';
+import '../../../manager/requests_cubit.dart';
 
 class ReceivedFormsView extends StatefulWidget {
   const ReceivedFormsView({

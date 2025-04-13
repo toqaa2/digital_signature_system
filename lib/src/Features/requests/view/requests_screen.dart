@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:signature_system/src/Features/requests/view/widgets/signed_by_me_widget.dart';
+import 'package:signature_system/src/Features/requests/view/widgets/all_forms/all_forms_screen.dart';
+import 'package:signature_system/src/Features/requests/view/widgets/signed_by_me/signed_by_me_widget.dart';
 import 'package:signature_system/src/core/constants/constants.dart';
+import 'package:signature_system/src/core/helper/enums/form_enum.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 
 import '../manager/requests_cubit.dart';
-import 'widgets/recived_request_widget.dart';
-import 'widgets/send_request_widget.dart';
+import 'widgets/received_requests/recived_request_widget.dart';
+import 'widgets/sent_requests/send_request_widget.dart';
 
 class RequestsScreen extends StatefulWidget {
   const RequestsScreen({super.key});
@@ -22,7 +24,7 @@ class _RequestsScreenState extends State<RequestsScreen> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
   }
 
   @override
@@ -67,6 +69,9 @@ class _RequestsScreenState extends State<RequestsScreen> with SingleTickerProvid
                           Tab(text: 'Received Requests'),
                           Tab(text: 'Signed By Me'),
                           Tab(text: 'Reversed'),
+                          if(Constants.userModel?.systemRole == SystemRoleEnum.canViewAndDownloadAllForms)
+                          Tab(text: 'All Forms'),
+                            
                         ],
                         labelColor: AppColors.mainColor,
                         indicatorColor: AppColors.mainColor,
@@ -87,6 +92,8 @@ class _RequestsScreenState extends State<RequestsScreen> with SingleTickerProvid
                               cubit: cubit,
                             ),
                             Container(),
+                            if(Constants.userModel?.systemRole == SystemRoleEnum.canViewAndDownloadAllForms)
+                              AllFormsScreen(cubit: cubit),
                           ],
                         ),
                       ),

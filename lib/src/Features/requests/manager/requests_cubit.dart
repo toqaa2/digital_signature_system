@@ -21,52 +21,83 @@ class RequestsCubit extends Cubit<RequestsState> {
 
   static RequestsCubit get(context) => BlocProvider.of(context);
   List<FormModel> sentForms = [];
+  List<FormModel> allForms = [];
+  List<FormModel> allFormsView = [];
   List<FormModel> receivedForms = [];
   List<FormModel> receivedFormsView = [];
 
   List<FormModel> sentFormsView = [];
   List<FormModel> fullySignedView = [];
 
+  getAllForms() async {
+    sentForms.clear();
+    sentFormsView.clear();
+    emit(GetAllFormsLoading());
+    await FirebaseFirestore.instance
+        .collection('sentForms')
+        .get()
+        .then((onValue) async {
+      for (var element in onValue.docs) {
+        DocumentReference<Map<String, dynamic>> ref;
+        ref = await element.data()['ref'];
+        await ref.get().then((onValue) async {
+          if ((await onValue.data()?['isFullySigned']) ?? false) {
+            sentForms.add(FormModel.fromJson(onValue.data()));
+          }
+        });
+      }
+    });
+    sentFormsView = sentForms.toList();
+    sentFormsView.sort((a, b) {
+      return b.sentDate!.microsecondsSinceEpoch
+          .compareTo(a.sentDate!.microsecondsSinceEpoch);
+    });
+    emit(GetAllFormsDone());
+  }
+
   dateQueryFullySigned(DateTimeRange? dateRange) {
-     if (dateRange != null) {
+    if (dateRange != null) {
       fullySignedView = fullySignedView.where((element) {
         return (element.sentDate!.toDate().isAfter(dateRange.start) ||
-            element.sentDate!.toDate().isAtSameMomentAs(dateRange.start)) &&
-                (element.sentDate!.toDate().isBefore(dateRange.end) ||
-            element.sentDate!.toDate().isAtSameMomentAs(dateRange.end));
+                element.sentDate!.toDate().isAtSameMomentAs(dateRange.start)) &&
+            (element.sentDate!.toDate().isBefore(dateRange.end) ||
+                element.sentDate!.toDate().isAtSameMomentAs(dateRange.end));
       }).toList();
       emit(Search());
     }
   }
+
   dateQueryPending(DateTimeRange? dateRange) {
-     if (dateRange != null) {
+    if (dateRange != null) {
       sentFormsView = sentFormsView.where((element) {
         return (element.sentDate!.toDate().isAfter(dateRange.start) ||
-            element.sentDate!.toDate().isAtSameMomentAs(dateRange.start)) &&
-                (element.sentDate!.toDate().isBefore(dateRange.end) ||
-            element.sentDate!.toDate().isAtSameMomentAs(dateRange.end));
+                element.sentDate!.toDate().isAtSameMomentAs(dateRange.start)) &&
+            (element.sentDate!.toDate().isBefore(dateRange.end) ||
+                element.sentDate!.toDate().isAtSameMomentAs(dateRange.end));
       }).toList();
       emit(Search());
     }
   }
+
   dateQueryReceivedForms(DateTimeRange? dateRange) {
-     if (dateRange != null) {
+    if (dateRange != null) {
       receivedFormsView = receivedFormsView.where((element) {
         return (element.sentDate!.toDate().isAfter(dateRange.start) ||
-            element.sentDate!.toDate().isAtSameMomentAs(dateRange.start)) &&
-               ( element.sentDate!.toDate().isBefore(dateRange.end) ||
-            element.sentDate!.toDate().isAtSameMomentAs(dateRange.end));
+                element.sentDate!.toDate().isAtSameMomentAs(dateRange.start)) &&
+            (element.sentDate!.toDate().isBefore(dateRange.end) ||
+                element.sentDate!.toDate().isAtSameMomentAs(dateRange.end));
       }).toList();
       emit(Search());
     }
   }
+
   dateQuerySignedByMe(DateTimeRange? dateRange) {
-     if (dateRange != null) {
+    if (dateRange != null) {
       signedByMeView = signedByMeView.where((element) {
         return (element.sentDate!.toDate().isAfter(dateRange.start) ||
-            element.sentDate!.toDate().isAtSameMomentAs(dateRange.start)) &&
-              (  element.sentDate!.toDate().isBefore(dateRange.end) ||
-            element.sentDate!.toDate().isAtSameMomentAs(dateRange.end));
+                element.sentDate!.toDate().isAtSameMomentAs(dateRange.start)) &&
+            (element.sentDate!.toDate().isBefore(dateRange.end) ||
+                element.sentDate!.toDate().isAtSameMomentAs(dateRange.end));
       }).toList();
       emit(Search());
     }
@@ -83,6 +114,7 @@ class RequestsCubit extends Cubit<RequestsState> {
         sentForms.where((element) => element.formTitle == title).toList();
     emit(Search());
   }
+
   searchSignedByMe(String? title) {
     if (title == null || title.isEmpty) {
       signedByMeView = signedByMe.toList();
@@ -90,10 +122,11 @@ class RequestsCubit extends Cubit<RequestsState> {
       return;
     }
     signedByMeView.clear();
-    signedByMeView=
+    signedByMeView =
         signedByMe.where((element) => element.formTitle == title).toList();
     emit(Search());
   }
+
   searchReceivedForms(String? title) {
     if (title == null || title.isEmpty) {
       receivedFormsView = receivedForms.toList();
@@ -229,10 +262,7 @@ class RequestsCubit extends Cubit<RequestsState> {
   void getReceivedForms(
     String userId,
   ) async {
-    print('1');
     receivedForms.clear();
-    print('2');
-    print(receivedForms);
     signedByMe.clear();
     emit(LoadingReceivedForms());
     await FirebaseFirestore.instance
@@ -255,7 +285,7 @@ class RequestsCubit extends Cubit<RequestsState> {
         });
       }
       print(signedByMe);
-      signedByMeView=signedByMe.toList();
+      signedByMeView = signedByMe.toList();
       receivedFormsView = receivedForms.toList();
       receivedFormsView.sort((a, b) {
         return b.sentDate!.microsecondsSinceEpoch

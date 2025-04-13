@@ -1,14 +1,17 @@
+import 'package:signature_system/src/core/functions/app_functions.dart';
+
 import '../models/user_model.dart';
 
 abstract class Constants {
   static UserModel? userModel = UserModel(
-    'i.medhat@waseela-cf.com',
-    'department',
-    false,
-    'name',
-    ' role',
-    'i.medhat@waseela-cf.com',
-    ' mainSignature',
+    email: 'i.medhat@waseela-cf.com',
+    department: 'department',
+   isFirstLogin:  false,
+    name:  'name',
+    role: ' role ',
+    userId: 'i.medhat@waseela-cf.com',
+    mainSignature: ' mainSignature',
+    systemRole: AppFunctions.getSystemRole('view_download_all'),
   );
   static final List<String> titleName = [
     'Other'

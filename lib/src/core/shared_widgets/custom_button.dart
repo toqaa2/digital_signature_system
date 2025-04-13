@@ -56,7 +56,7 @@ class ButtonWidget extends StatelessWidget {
     return Container(
 
       color: verticalMargin==0?Colors.transparent: Colors.transparent,
-      padding: EdgeInsets.symmetric(vertical:verticalMargin?? 18.h),
+      // padding: EdgeInsets.symmetric(vertical:verticalMargin?? 18.h),
       child: SizedBox(
         height: 40,
         child: MaterialButton(
@@ -108,7 +108,7 @@ class ButtonWidget extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: textStyle ??
                         TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: 12,
                           color: isHollow
                               ? AppColors.mainColor
                               : enabled

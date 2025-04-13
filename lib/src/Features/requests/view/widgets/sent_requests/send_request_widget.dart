@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:signature_system/src/Features/home_screen/view/widgets/dropdownmenu.dart';
 import 'package:signature_system/src/Features/requests/manager/requests_cubit.dart';
-import 'package:signature_system/src/Features/requests/view/widgets/sent_document_view.dart';
+import 'package:signature_system/src/Features/requests/view/widgets/sent_requests/sent_document_view.dart';
 import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/shared_widgets/searchable_dropdown.dart';
 import 'package:signature_system/src/core/style/colors.dart';
@@ -162,7 +162,6 @@ class SentListView extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => SentDocumentView(
                   form: sentForm,
-                  requiredToSign: sentForm.sentTo!,
                 ),
               ),
             );
@@ -227,7 +226,6 @@ class FullSignedListView extends StatelessWidget {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => SentDocumentView(
                 form: fullSigned,
-                requiredToSign: fullSigned.sentTo!,
               ),
             ));
           },

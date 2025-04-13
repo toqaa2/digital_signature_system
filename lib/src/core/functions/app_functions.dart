@@ -5,16 +5,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pdf/pdf.dart';
 import 'package:signature_system/src/core/constants/constants.dart';
+import 'package:signature_system/src/core/helper/enums/form_enum.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 import 'package:pdf/widgets.dart' as pw;
 
 class AppFunctions {
-  static sendEmailTo({required String toEmail, required String fromEmail})async{
+  static SystemRoleEnum getSystemRole(String systemRole) {
+    switch (systemRole) {
+      case 'view_download_all':
+        return SystemRoleEnum.canViewAndDownloadAllForms;
+      default:
+        return SystemRoleEnum.none;
+    }
+  }
+
+  static sendEmailTo(
+      {required String toEmail, required String fromEmail}) async {
     print(toEmail);
     print(fromEmail);
-     var response = await http.post(
+    var response = await http.post(
       Uri.parse('https://api.emailjs.com/api/v1.0/email/send'),
       headers: {
         'Content-Type': "application/json",
@@ -30,15 +41,17 @@ class AppFunctions {
         },
       }),
     );
-     print(response.body);
+    print(response.body);
   }
+
   static img.Image imageDecode(Uint8List imageData) {
     return img.decodeImage(imageData)!;
   }
 
   static Future<Uint8List> saveWidgetsAsPdf(List<GlobalKey> globalKeys) async {
     if (globalKeys.isEmpty) {
-      throw ArgumentError('The number of global keys must match the number of image names.');
+      throw ArgumentError(
+          'The number of global keys must match the number of image names.');
     }
 
     try {
@@ -54,37 +67,35 @@ class AppFunctions {
         }
 
         // Capture the widget as an image
-        RenderRepaintBoundary boundary =
-            globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+        RenderRepaintBoundary boundary = globalKey.currentContext!
+            .findRenderObject() as RenderRepaintBoundary;
         // Get the original size of the widget
         double originalWidth = boundary.size.width;
         double originalHeight = boundary.size.height;
         print(originalWidth);
         print(originalHeight);
 
-        ui.Image image =
-            await boundary.toImage(pixelRatio: 3.0); // Increase pixel ratio for better quality
-        ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+        ui.Image image = await boundary.toImage(
+            pixelRatio: 3.0); // Increase pixel ratio for better quality
+        ByteData? byteData =
+            await image.toByteData(format: ui.ImageByteFormat.png);
         Uint8List pngBytes = byteData!.buffer.asUint8List();
         // Calculate the aspect ratio of the original image
         final double aspectRatio = originalWidth / originalHeight;
 
         // Define the page format and size. Match the image's aspect ratio for best results
-        PdfPageFormat pageFormat = PdfPageFormat(originalWidth, originalHeight, marginAll: 0);
+        PdfPageFormat pageFormat =
+            PdfPageFormat(originalWidth, originalHeight, marginAll: 0);
         // Add a page with the image
         pdf.addPage(
           pw.Page(
             pageFormat: pageFormat,
             build: (pw.Context context) {
-              return
-
-                pw.Center(
+              return pw.Center(
                   child: pw.Image(
-                    fit: pw.BoxFit.fill,
-                    pw.MemoryImage(pngBytes),
-                  )
-                )
-              ;
+                fit: pw.BoxFit.fill,
+                pw.MemoryImage(pngBytes),
+              ));
             },
           ),
         );
@@ -101,10 +112,9 @@ class AppFunctions {
     }
   }
 
-  static downloadPdf(Uint8List bytes) {
+  static downloadPdf(String link) {
     try {
-      final blob = html.Blob([bytes]);
-      final url = html.Url.createObjectUrlFromBlob(blob);
+      final url = link;
       final anchor = html.document.createElement('a') as html.AnchorElement
         ..href = url
         ..style.display = 'none'
@@ -113,10 +123,8 @@ class AppFunctions {
       anchor.click();
       html.document.body!.children.remove(anchor);
       html.Url.revokeObjectUrl(url);
-      return bytes;
-    } catch (e) {
+     } catch (e) {
       print('Error saving widgets as PDF: $e');
-      return [] as Uint8List;
-    }
+     }
   }
 }

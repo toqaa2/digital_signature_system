@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-import '../../../../core/models/form_model.dart';
+import '../../../../../core/models/form_model.dart';
 import 'package:intl/intl.dart' as intl;
 
 
