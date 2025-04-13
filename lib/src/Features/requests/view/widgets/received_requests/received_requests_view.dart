@@ -24,7 +24,7 @@ class ReceivedFormsView extends StatefulWidget {
   });
 
   final RequestsCubit cubit;
-final FormModel formModel;
+  final FormModel formModel;
   final String formName;
   final String sentDate;
   final String formLink;
@@ -47,7 +47,6 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
     setState(() {
       isVisible = !isVisible;
     });
-
   }
 
   @override
@@ -85,9 +84,11 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                     children: <Widget>[
                       Stack(
                         children: [
-                          IconButton(onPressed: (){
-                            toggleVisibility();
-                          }, icon: Icon(Icons.remove_circle_outline)),
+                          IconButton(
+                              onPressed: () {
+                                toggleVisibility();
+                              },
+                              icon: Icon(Icons.remove_circle_outline)),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -102,7 +103,8 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                               Row(
                                 spacing: 5,
                                 children: [
-                                  if(widget.cubit.checkIfValidToSign(widget.formModel))
+                                  if (widget.cubit
+                                      .checkIfValidToSign(widget.formModel))
                                     ButtonWidget(
                                         verticalMargin: 2,
                                         minWidth: 120,
@@ -114,8 +116,11 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                           if (paintKeys.isNotEmpty) {
                                             /// save to DB
                                             widget.cubit
-                                                .signTheForm(paintKeys, widget.formModel,context).then((onValue){
-                                                  if(context.mounted)Navigator.pop(context);
+                                                .signTheForm(paintKeys,
+                                                    widget.formModel, context)
+                                                .then((onValue) {
+                                              if (context.mounted)
+                                                Navigator.pop(context);
                                             });
                                           }
                                         }),
@@ -142,38 +147,55 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                           ),
                         ],
                       ),
-
-                      if (widget.formModel.formName!.contains("PaymentRequest")&& isVisible)
+                      if (widget.formModel.formName!
+                              .contains("PaymentRequest") &&
+                          isVisible)
                         Container(
                           color: Colors.blue.shade50,
-                          margin: EdgeInsets.symmetric(vertical: 20,horizontal: 50),
-                          padding: EdgeInsets.symmetric(vertical: 20,horizontal: 25),
+                          margin: EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 50),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 25),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: [
                                   Column(
                                     spacing: 10,
                                     mainAxisAlignment: MainAxisAlignment.start,
-
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      if ( widget.formModel.taxID!.isNotEmpty) Text("TaxID:${ widget.formModel.taxID!} "),
-                                      if ( widget.formModel.serviceType!.isNotEmpty) Text("Service Type:${widget.formModel.serviceType!}"),
-                                      if ( widget.formModel.bankName!.isNotEmpty)  Text("Bank Name: ${widget.formModel.bankName!}"),
+                                      if (widget.formModel.taxID!.isNotEmpty)
+                                        Text(
+                                            "TaxID:${widget.formModel.taxID!} "),
+                                      if (widget
+                                          .formModel.serviceType!.isNotEmpty)
+                                        Text(
+                                            "Service Type:${widget.formModel.serviceType!}"),
+                                      if (widget.formModel.bankName!.isNotEmpty)
+                                        Text(
+                                            "Bank Name: ${widget.formModel.bankName!}"),
                                     ],
                                   ),
                                   Column(
                                     spacing: 10,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.start,
-
                                     children: [
-                                      if ( widget.formModel.bankAccountNumber!.isNotEmpty)  Text("Bank Account No.: ${widget.formModel.bankAccountNumber!}"),
-                                      if ( widget.formModel.invoiceNumber!.isNotEmpty) Text("Invoice Number: ${widget.formModel.invoiceNumber!}"),
+                                      if (widget.formModel.bankAccountNumber!
+                                          .isNotEmpty)
+                                        Text(
+                                            "Bank Account No.: ${widget.formModel.bankAccountNumber!}"),
+                                      if (widget
+                                          .formModel.invoiceNumber!.isNotEmpty)
+                                        Text(
+                                            "Invoice Number: ${widget.formModel.invoiceNumber!}"),
                                     ],
                                   ),
                                 ],
@@ -183,48 +205,45 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                 spacing: 20,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-
-                                  if ( widget.formModel.commercialRegistration!.isNotEmpty)  ButtonWidget(
-                                      verticalMargin: 2,
-                                      buttonColor: Colors.green,
-                                      minWidth: 230,
-                                      height: 35,
-                                      textStyle: TextStyle(
-                                          fontSize: 12, color: Colors.white),
-                                      text: "Download Commercial Reqistration",
-                                      onTap: () async {
-
-                                      }),
-                                  if ( widget.formModel.advancePayment!.isNotEmpty) ButtonWidget(
-                                      verticalMargin: 2,
-                                      minWidth: 230,
-                                      buttonColor: Colors.green,
-
-                                      height: 35,
-                                      textStyle: TextStyle(
-                                          fontSize: 12, color: Colors.white),
-                                      text: "Download Advance Payment",
-                                      onTap: () async {
-
-                                      }),
-                                  if ( widget.formModel.electronicInvoice!.isNotEmpty) ButtonWidget(
-                                      verticalMargin: 2,
-                                      minWidth: 230,
-                                      buttonColor: Colors.green,
-
-                                      height: 35,
-                                      textStyle: TextStyle(
-                                          fontSize: 12, color: Colors.white),
-                                      text: "Download Electronic Invoice",
-                                      onTap: () async {
-
-                                      }),
+                                  if (widget.formModel.commercialRegistration!
+                                      .isNotEmpty)
+                                    ButtonWidget(
+                                        verticalMargin: 2,
+                                        buttonColor: Colors.green,
+                                        minWidth: 230,
+                                        height: 35,
+                                        textStyle: TextStyle(
+                                            fontSize: 12, color: Colors.white),
+                                        text:
+                                            "Download Commercial Reqistration",
+                                        onTap: () async {}),
+                                  if (widget
+                                      .formModel.advancePayment!.isNotEmpty)
+                                    ButtonWidget(
+                                        verticalMargin: 2,
+                                        minWidth: 230,
+                                        buttonColor: Colors.green,
+                                        height: 35,
+                                        textStyle: TextStyle(
+                                            fontSize: 12, color: Colors.white),
+                                        text: "Download Advance Payment",
+                                        onTap: () async {}),
+                                  if (widget
+                                      .formModel.electronicInvoice!.isNotEmpty)
+                                    ButtonWidget(
+                                        verticalMargin: 2,
+                                        minWidth: 230,
+                                        buttonColor: Colors.green,
+                                        height: 35,
+                                        textStyle: TextStyle(
+                                            fontSize: 12, color: Colors.white),
+                                        text: "Download Electronic Invoice",
+                                        onTap: () async {}),
                                 ],
                               ),
                             ],
                           ),
                         ),
-
                       SizedBox(height: 20),
                       Expanded(
                           child: Center(
@@ -317,6 +336,9 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
     signatureY = widget.signatureY;
   }
 
+  double scale = 100;
+  bool rescale = false;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -373,21 +395,48 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
                 height: 1410,
                 color: Colors.transparent,
               ),
+
               if (showSignature)
                 Positioned(
                   left: signatureX,
                   top: signatureY,
                   child: GestureDetector(
+                    onDoubleTap: () {
+                      setState(() {
+                        rescale = !rescale;
+                      });
+                    },
                     onPanUpdate: (details) {
                       setState(() {
                         signatureX += details.delta.dx;
                         signatureY += details.delta.dy;
                       });
                     },
-                    child: Image.network(
-                      Constants.userModel?.mainSignature??'',
-                      width: 200,
-                      height: 200,
+                    child: Column(
+                      children: [
+                        if (rescale)
+                          Slider(
+                            value: scale,
+                            min: 1,
+                            max: 400,
+                            onChangeEnd: (value) {
+                              setState(() {
+                                rescale=false;
+                              });
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                scale = value;
+                              });
+                            },
+                          ),
+                        Image.network(
+                          Constants.userModel?.mainSignature ?? '',
+                          fit: BoxFit.contain,
+                          width: scale,
+                          height: scale/2,
+                        ),
+                      ],
                     ),
                   ),
                 ),
