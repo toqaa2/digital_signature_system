@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:signature_system/src/core/functions/app_functions.dart';
 
+import '../../../core/constants/constants.dart';
 import '../../../core/helper/enums/form_enum.dart';
 
 import '../../../core/models/form_model.dart';
@@ -90,7 +91,6 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-// Fetch forms from Firestore
   Future<void> fetchForms() async {
     try {
       QuerySnapshot snapshot =
@@ -98,6 +98,19 @@ class HomeCubit extends Cubit<HomeState> {
       forms = snapshot.docs
           .map((doc) => FormModel.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
+      if (Constants.userModel!.userId == "m.ghoneim@waseela-cf.com") {
+        bool formExists = forms.any((form) => form.formID == "Special Form");
+        if (!formExists) {
+          FormModel uniqueForm = FormModel(
+            formID:
+            "Special Form",
+            formName: "Special Form",
+            formLink: "https://firebasestorage.googleapis.com/v0/b/e-document-70241.firebasestorage.app/o/forms%2FDigitalization.docx?alt=media&token=3986a236-4fbc-40eb-9d3a-d26e82081faa",
+            requiredToSign: ["m.ghoneim@waseela-cf.com","a.elghandakly@aur-consumerfinance.com"],
+          );
+          forms.add(uniqueForm);
+        }}
+
       emit(FormsFetched());
     } catch (error) {
       print("Error fetching forms: $error");

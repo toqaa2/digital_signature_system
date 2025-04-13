@@ -11,6 +11,7 @@ abstract class Constants {
     ' mainSignature',
   );
   static final List<String> titleName = [
+    'Other'
     'Problematic Asset Committee',
     'Procurement Committee',
     'Product / Pricing Committee',
@@ -23,6 +24,7 @@ abstract class Constants {
     'Call Center Invoice',
     'Marketing Expenses',
     'iScore Invoice',
-    'Information Technology Expenses'
+    'Information Technology Expenses',
+
   ];
 }
