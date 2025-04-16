@@ -30,7 +30,7 @@ class LayoutScreen extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: (){
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => LayoutScreen(),));
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LayoutScreen(),));
                       },
                       child: Padding(
                         padding: EdgeInsets.only(left: 20),
