@@ -124,7 +124,7 @@ class LoginScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          5.isHeight,
+                          15.isHeight,
                           state is Loading
                               ? Column(
                                   children: [
