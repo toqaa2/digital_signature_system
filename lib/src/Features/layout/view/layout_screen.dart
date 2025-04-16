@@ -28,11 +28,16 @@ class LayoutScreen extends StatelessWidget {
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 20),
-                      child: SvgPicture.asset(
-                        'assets/Logo.svg',
-                        height: 50,
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => LayoutScreen(),));
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 20),
+                        child: SvgPicture.asset(
+                          'assets/Logo.svg',
+                          height: 50,
+                        ),
                       ),
                     ),
                     Row(
