@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/helper/extension/distance.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 
 import '../../../../core/shared_widgets/custom_button.dart';
-import '../../../../core/shared_widgets/searchable_dropdown.dart';
 import '../../manager/home_cubit.dart';
 
 class SendRequestEmails extends StatefulWidget {

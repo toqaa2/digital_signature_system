@@ -120,8 +120,9 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                                 .signTheForm(paintKeys,
                                                     widget.formModel, context)
                                                 .then((onValue) {
-                                              if (context.mounted)
+                                              if (context.mounted) {
                                                 Navigator.pop(context);
+                                              }
                                             });
                                           }
                                         }),
@@ -246,7 +247,6 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                         text: "Download Electronic Invoice",
                                         onTap: () async {
                                           AppFunctions.downloadPdf(widget.formModel.electronicInvoice!);
-
                                         }),
                                 ],
                               ),
@@ -458,7 +458,7 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
 }
 
 void _showDialog(BuildContext context) {
-  final TextEditingController _textFieldController = TextEditingController();
+  final TextEditingController textFieldController = TextEditingController();
 
   showDialog(
     context: context,
@@ -470,9 +470,9 @@ void _showDialog(BuildContext context) {
           textAlign: TextAlign.center,
           style: TextStyle(color: AppColors.mainColor),
         ),
-        content: Container(
-          width: 400, // Set the desired width
-          height: 150, // Set the desired height
+        content: SizedBox(
+          width: 400,
+          height: 150,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -488,7 +488,7 @@ void _showDialog(BuildContext context) {
                 height: 10,
               ),
               TextFieldWidget(
-                controller: _textFieldController,
+                controller: textFieldController,
                 labelText: "Type here..",
               ),
             ],
@@ -505,7 +505,7 @@ void _showDialog(BuildContext context) {
             child: Text('Reverse'),
             onPressed: () {
               // Handle the send action
-              String inputText = _textFieldController.text;
+              String inputText = textFieldController.text;
               print(
                   'Input: $inputText'); // You can replace this with your logic
               Navigator.of(context).pop();

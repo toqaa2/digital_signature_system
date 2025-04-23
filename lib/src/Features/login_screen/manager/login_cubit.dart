@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,7 +8,6 @@ import 'package:signature_system/src/Features/layout/view/layout_screen.dart';
 import 'package:signature_system/src/Features/login_screen/view/change_password_screen.dart';
 import 'package:signature_system/src/core/models/user_model.dart';
 import '../../../core/constants/constants.dart';
-import 'package:http/http.dart' as http;
 
 part 'login_state.dart';
 
@@ -84,9 +82,7 @@ class LoginCubit extends Cubit<LoginState> {
         passwordController.text = '';
       }).catchError((onError) {
         emit(Error(onError.toString()));
-        print('Failed to update password: ${onError}');
-
-        Fluttertoast.showToast(msg: 'Failed to update password');
+        print('Failed to update password: $onError');
         Fluttertoast.showToast(msg: 'Failed to update password');
       });
     }catch(e){

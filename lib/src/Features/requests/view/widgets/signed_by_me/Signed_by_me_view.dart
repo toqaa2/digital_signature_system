@@ -52,7 +52,7 @@ class SignedByMeView extends StatelessWidget {
                       ],
                     ),
                     Text(
-                    "${intl.DateFormat('yyy-MM-dd hh:mm a').format(DateTime.fromMicrosecondsSinceEpoch(form.sentDate?.microsecondsSinceEpoch??0))}"
+                    intl.DateFormat('yyy-MM-dd hh:mm a').format(DateTime.fromMicrosecondsSinceEpoch(form.sentDate?.microsecondsSinceEpoch??0))
                         )
                   ],
                 ),

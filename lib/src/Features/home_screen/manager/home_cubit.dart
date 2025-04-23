@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:signature_system/src/core/functions/app_functions.dart';
@@ -406,6 +405,7 @@ class HomeCubit extends Cubit<HomeState> {
     await ref?.get().then((onValue) {
       return FormModel.fromJson(onValue.data());
     }).catchError((onError) {});
+    return null;
   }
 
   Future<void> sendPaymentForm({

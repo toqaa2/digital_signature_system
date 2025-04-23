@@ -65,7 +65,7 @@ class _SearchableDropdownState extends State<SearchableDropdown> {
                       setState(() {
                         fromDate = value.start.toString().split(' ').first;
                         toDate = value.end.toString().split(' ').first;
-                      });;
+                      });
                       widget.onDateChanged(DateTimeRange(
                           start: value.start,
                           end: value.end.add(const Duration(

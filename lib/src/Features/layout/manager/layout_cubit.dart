@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:signature_system/src/Features/home_screen/view/home_screen.dart';
+import 'package:signature_system/src/core/constants/constants.dart';
 import '../../profile/view/profile_screen.dart';
 import '../../requests/view/requests_screen.dart';
 
@@ -10,6 +11,14 @@ class LayoutCubit extends Cubit<LayoutState> {
   LayoutCubit() : super(LayoutInitial());
 
   static LayoutCubit get(context) => BlocProvider.of(context);
+
+  checkUserEmailToChangeHomePage() {
+    if (Constants.userModel?.email == "a.elghandakly@aur-consumerfinance.com" ||
+        Constants.userModel?.email == "a.ibrahim@waseela-cf.com") {
+      changePage(1);
+    }
+  }
+
   List<Widget> pages = [
     HomeScreen(),
     RequestsScreen(),

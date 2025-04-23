@@ -2,8 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:signature_system/firebase_options.dart';
-import 'package:signature_system/src/Features/home_screen/view/home_screen.dart';
-import 'package:signature_system/src/Features/layout/view/layout_screen.dart';
 import 'package:signature_system/src/Features/login_screen/view/login_screen.dart';
 
 void main() async{

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:signature_system/src/Features/layout/manager/layout_cubit.dart';
 import 'package:signature_system/src/Features/login_screen/view/login_screen.dart';
+import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 
 class LayoutScreen extends StatelessWidget {
@@ -11,9 +12,11 @@ class LayoutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LayoutCubit(),
+      create: (context) => LayoutCubit()..checkUserEmailToChangeHomePage(),
       child: BlocConsumer<LayoutCubit, LayoutState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+         print('state is $state');
+        },
         builder: (context, state) {
           LayoutCubit cubit = LayoutCubit.get(context);
           return Container(
@@ -29,8 +32,10 @@ class LayoutScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GestureDetector(
-                      onTap: (){
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LayoutScreen(),));
+                      onTap: () {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => LayoutScreen(),
+                        ));
                       },
                       child: Padding(
                         padding: EdgeInsets.only(left: 20),
@@ -40,25 +45,125 @@ class LayoutScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Row(
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              cubit.changePage(0);
-                            },
-                            child: Text("Home",style: TextStyle(fontWeight: cubit.isSelected[0] ?FontWeight.bold: FontWeight.normal ,color: cubit.isSelected[0] ? AppColors.mainColor : Colors.blueGrey,))),
-                        TextButton(
-                            onPressed: () {
-                              cubit.changePage(1);
-                            },
-                            child: Text("Requests",style: TextStyle(fontWeight: cubit.isSelected[1] ?FontWeight.bold: FontWeight.normal ,color: cubit.isSelected[1] ? AppColors.mainColor : Colors.blueGrey,))),
-                        TextButton(
-                            onPressed: () {
-                              cubit.changePage(2);
-                            },
-                            child: Text("Profile",style: TextStyle(fontWeight: cubit.isSelected[2] ?FontWeight.bold: FontWeight.normal ,color: cubit.isSelected[2] ? AppColors.mainColor : Colors.blueGrey,))),
-                      ],
-                    ),
+                  Row(
+                            children:(Constants.userModel?.email ==
+                                "a.elghandakly@aur-consumerfinance.com" ||
+                                Constants.userModel?.email ==
+                                    "a.ibrahim@waseela-cf.com")
+                                ? [
+                              TextButton(
+                                  onPressed: () {
+                                    cubit.changePage(1);
+                                  },
+                                  child: Text(
+                                    "Requests",
+                                    style: TextStyle(
+                                      fontWeight: cubit.isSelected[1]
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                      color: cubit.isSelected[1]
+                                          ? AppColors.mainColor
+                                          : Colors.blueGrey,
+                                    ),
+                                  )),
+                              TextButton(
+                                  onPressed: () {
+                                    cubit.changePage(0);
+                                  },
+                                  child: Text(
+                                    "Send Form",
+                                    style: TextStyle(
+                                      fontWeight: cubit.isSelected[0]
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                      color: cubit.isSelected[0]
+                                          ? AppColors.mainColor
+                                          : Colors.blueGrey,
+                                    ),
+                                  )),
+                              TextButton(
+                                  onPressed: () {
+                                    cubit.changePage(2);
+                                  },
+                                  child: Text(
+                                    "Profile",
+                                    style: TextStyle(
+                                      fontWeight: cubit.isSelected[2]
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                      color: cubit.isSelected[2]
+                                          ? AppColors.mainColor
+                                          : Colors.blueGrey,
+                                    ),
+                                  )),
+                            ]: [
+                              TextButton(
+                                  onPressed: () {
+                                    cubit.changePage(0);
+                                  },
+                                  child: Text(
+                                    "Home",
+                                    style: TextStyle(
+                                      fontWeight: cubit.isSelected[0]
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                      color: cubit.isSelected[0]
+                                          ? AppColors.mainColor
+                                          : Colors.blueGrey,
+                                    ),
+                                  )),
+                              TextButton(
+                                  onPressed: () {
+                                    cubit.changePage(1);
+                                  },
+                                  child: Text(
+                                    "Requests",
+                                    style: TextStyle(
+                                      fontWeight: cubit.isSelected[1]
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                      color: cubit.isSelected[1]
+                                          ? AppColors.mainColor
+                                          : Colors.blueGrey,
+                                    ),
+                                  )),
+                              TextButton(
+                                  onPressed: () {
+                                    cubit.changePage(2);
+                                  },
+                                  child: Text(
+                                    "Profile",
+                                    style: TextStyle(
+                                      fontWeight: cubit.isSelected[2]
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                      color: cubit.isSelected[2]
+                                          ? AppColors.mainColor
+                                          : Colors.blueGrey,
+                                    ),
+                                  )),
+                            ],
+                          ),
+
+                    // Row(
+                    //   children: [
+                    //     TextButton(
+                    //         onPressed: () {
+                    //           cubit.changePage(0);
+                    //         },
+                    //         child: Text("Home",style: TextStyle(fontWeight: cubit.isSelected[0] ?FontWeight.bold: FontWeight.normal ,color: cubit.isSelected[0] ? AppColors.mainColor : Colors.blueGrey,))),
+                    //     TextButton(
+                    //         onPressed: () {
+                    //           cubit.changePage(1);
+                    //         },
+                    //         child: Text("Requests",style: TextStyle(fontWeight: cubit.isSelected[1] ?FontWeight.bold: FontWeight.normal ,color: cubit.isSelected[1] ? AppColors.mainColor : Colors.blueGrey,))),
+                    //     TextButton(
+                    //         onPressed: () {
+                    //           cubit.changePage(2);
+                    //         },
+                    //         child: Text("Profile",style: TextStyle(fontWeight: cubit.isSelected[2] ?FontWeight.bold: FontWeight.normal ,color: cubit.isSelected[2] ? AppColors.mainColor : Colors.blueGrey,))),
+                    //   ],
+                    // ),
                     GestureDetector(
                       onTap: () {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
