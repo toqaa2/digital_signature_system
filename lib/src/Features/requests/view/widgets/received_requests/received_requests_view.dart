@@ -9,6 +9,7 @@ import 'package:signature_system/src/core/style/colors.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+import '../../../../../core/functions/app_functions.dart';
 import '../../../../../core/shared_widgets/custom_button.dart';
 import '../../../../login_screen/view/widgets/custom_text_field.dart';
 import '../../../manager/requests_cubit.dart';
@@ -176,7 +177,7 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                       if (widget
                                           .formModel.serviceType!.isNotEmpty)
                                         Text(
-                                            "Service Type:${widget.formModel.serviceType!}"),
+                                            "Service Type: ${widget.formModel.serviceType!}"),
                                       if (widget.formModel.bankName!.isNotEmpty)
                                         Text(
                                             "Bank Name: ${widget.formModel.bankName!}"),
@@ -216,7 +217,10 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                             fontSize: 12, color: Colors.white),
                                         text:
                                             "Download Commercial Reqistration",
-                                        onTap: () async {}),
+                                        onTap: () async {
+                                          AppFunctions.downloadPdf(widget.formModel.commercialRegistration!);
+
+                                        }),
                                   if (widget
                                       .formModel.advancePayment!.isNotEmpty)
                                     ButtonWidget(
@@ -227,7 +231,9 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                         textStyle: TextStyle(
                                             fontSize: 12, color: Colors.white),
                                         text: "Download Advance Payment",
-                                        onTap: () async {}),
+                                        onTap: () async {
+                                          AppFunctions.downloadPdf(widget.formModel.advancePayment!);
+                                        }),
                                   if (widget
                                       .formModel.electronicInvoice!.isNotEmpty)
                                     ButtonWidget(
@@ -238,7 +244,10 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                         textStyle: TextStyle(
                                             fontSize: 12, color: Colors.white),
                                         text: "Download Electronic Invoice",
-                                        onTap: () async {}),
+                                        onTap: () async {
+                                          AppFunctions.downloadPdf(widget.formModel.electronicInvoice!);
+
+                                        }),
                                 ],
                               ),
                             ],

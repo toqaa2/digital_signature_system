@@ -8,7 +8,7 @@ class FormModel {
   List<String>? sentTo;
   String? sentBy;
   List<String>? signedBy;
-  List<String>? serviceType;
+  String? serviceType;
   String? pathURL;
   bool? isFullySigned;
   Timestamp? sentDate;
@@ -85,7 +85,7 @@ class FormModel {
     sentTo =List.generate(json?['sentTo']==null?0:json?['sentTo'].length,  (index) => json?['sentTo']?[index],) ;
     sentBy = json?['sentBy'];
     signedBy =List.generate(json?['signedBy']==null?0:json?['signedBy'].length,  (index) => json?['signedBy']?[index],)  ;
-    serviceType = List.generate(json?['serviceType']==null?0:json?['serviceType'].length,  (index) => json?['serviceType']?[index],)  ;
+    serviceType = json?['serviceType']  ;
     isFullySigned = json?['isFullySigned'];
     sentDate = json?['sentDate'];
     signedDate = json?['signedDate'];
