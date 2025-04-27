@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:signature_system/src/core/helper/extension/distance.dart';
 import 'package:signature_system/src/core/style/colors.dart';
@@ -75,17 +76,22 @@ class _SendRequestEmailsState extends State<SendRequestEmails> {
           BlocBuilder<HomeCubit, HomeState>(
             builder: (context, state) {
               final cubit = context.read<HomeCubit>();
-              return Column(
-                spacing: 5,
-                children: cubit.requiredEmails.map((email) {
-                  return Row(
-                    children: [
-                      SvgPicture.asset('emailicon.svg', width: 20, height: 20),
-                      2.isWidth,
-                      Text(email, style: TextStyle(fontSize: 12, color: Colors.grey)),
-                    ],
-                  );
-                }).toList(),
+              return SizedBox(
+                height: 100.h,
+                child: SingleChildScrollView(
+                  child: Column(
+                    spacing: 5,
+                    children: cubit.requiredEmails.map((email) {
+                      return Row(
+                        children: [
+                          SvgPicture.asset('emailicon.svg', width: 20, height: 20),
+                          2.isWidth,
+                          Text(email, style: TextStyle(fontSize: 12, color: Colors.grey)),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                ),
               );
             },
           ),
