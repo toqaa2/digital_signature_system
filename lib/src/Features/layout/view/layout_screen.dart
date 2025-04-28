@@ -49,7 +49,8 @@ class LayoutScreen extends StatelessWidget {
                             children:(Constants.userModel?.email ==
                                 "a.elghandakly@aur-consumerfinance.com" ||
                                 Constants.userModel?.email ==
-                                    "a.ibrahim@waseela-cf.com")
+                                    "a.ibrahim@waseela-cf.com"||  Constants.userModel?.email ==
+                                "n.elzorkany@aur-consumerfinance.com")
                                 ? [
                               TextButton(
                                   onPressed: () {
@@ -63,7 +64,7 @@ class LayoutScreen extends StatelessWidget {
                                           : FontWeight.normal,
                                       color: cubit.isSelected[1]
                                           ? AppColors.mainColor
-                                          : Colors.blueGrey,
+                                          : Colors.grey.shade700,
                                     ),
                                   )),
                               TextButton(
@@ -78,7 +79,7 @@ class LayoutScreen extends StatelessWidget {
                                           : FontWeight.normal,
                                       color: cubit.isSelected[0]
                                           ? AppColors.mainColor
-                                          : Colors.blueGrey,
+                                          :Colors.grey.shade700,
                                     ),
                                   )),
                               TextButton(
@@ -93,7 +94,7 @@ class LayoutScreen extends StatelessWidget {
                                           : FontWeight.normal,
                                       color: cubit.isSelected[2]
                                           ? AppColors.mainColor
-                                          : Colors.blueGrey,
+                                          : Colors.grey.shade700,
                                     ),
                                   )),
                             ]: [

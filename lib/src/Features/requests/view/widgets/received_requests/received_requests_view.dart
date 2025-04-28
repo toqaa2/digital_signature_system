@@ -23,7 +23,6 @@ class ReceivedFormsView extends StatefulWidget {
     required this.formLink,
     required this.cubit,
   });
-
   final RequestsCubit cubit;
   final FormModel formModel;
   final String formName;
@@ -250,6 +249,38 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                         }),
                                 ],
                               ),
+                            ],
+                          ),
+                        ),
+                      if (widget.formModel.formName!
+                          .contains("InternalCommittee") &&
+                          isVisible&&widget.formModel.otherDocument!
+                          .isNotEmpty)
+                        Container(
+                          color: Colors.blue.shade50,
+                          margin: EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 50),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 25),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (widget.formModel.otherDocument!
+                                  .isNotEmpty)
+                                ButtonWidget(
+                                    verticalMargin: 2,
+                                    buttonColor: Colors.green,
+                                    minWidth: 230,
+                                    height: 35,
+                                    textStyle: TextStyle(
+                                        fontSize: 12, color: Colors.white),
+                                    text:
+                                    "Download Attached Document",
+                                    onTap: () async {
+                                      AppFunctions.downloadPdf(widget.formModel.otherDocument!);
+
+                                    }),
                             ],
                           ),
                         ),

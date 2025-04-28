@@ -14,7 +14,8 @@ class LayoutCubit extends Cubit<LayoutState> {
 
   checkUserEmailToChangeHomePage() {
     if (Constants.userModel?.email == "a.elghandakly@aur-consumerfinance.com" ||
-        Constants.userModel?.email == "a.ibrahim@waseela-cf.com") {
+        Constants.userModel?.email == "a.ibrahim@waseela-cf.com"|| Constants.userModel?.email ==
+        "n.elzorkany@aur-consumerfinance.com") {
       changePage(1);
     }
   }

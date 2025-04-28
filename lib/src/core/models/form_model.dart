@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FormModel {
   String? formID;
   String? formLink;
+  String? otherDocument;
   String? formName;
   List<String>? requiredToSign;
   List<String>? sentTo;
@@ -47,11 +48,13 @@ class FormModel {
     this.bankName,
     this.invoiceNumber,
     this.bankAccountNumber,
+    this.otherDocument
   });
 
   Map<String, dynamic> toMap() => {
     'form_reference':formReference,
     if(formID!=null)'formID': formID,
+    if(otherDocument!=null)'otherDocument': otherDocument,
     if(formLink!=null)'formLink': formLink,
     if(formName!=null)'formName': formName,
      'requiredToSign': List.generate(requiredToSign?.length??0,  (index) => requiredToSign?[index],),
@@ -78,6 +81,7 @@ class FormModel {
     print('req');
     print(json?['requiredToSign']);
     formID = json?['formID'];
+    otherDocument = json?['otherDocument'];
     formLink = json?['formLink'];
     formName = json?['formName'];
     formReference = json?['form_reference'];

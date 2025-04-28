@@ -141,6 +141,36 @@ class HomeCubit extends Cubit<HomeState> {
 
     emit(FormSelected());
   }
+  String? uploadOtherDoc;
+
+  Future<void> pickAndUploadOtherDocument(String userID, String formName) async {
+    emit(UploadOtherfileLoading());
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (result != null) {
+      String fileName = result.files.single.name;
+      docFile = result.files.single.bytes;
+      if (docFile != null) {
+        print('File picked: $fileName');
+        print(docFile);
+        final storageRef = FirebaseStorage.instance.ref();
+        Reference pdfRef = storageRef.child(
+            'other_Document/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
+
+        UploadTask uploadTask = pdfRef.putData(
+            docFile!, SettableMetadata(contentType: 'application/pdf'));
+        await uploadTask;
+
+        uploadOtherDoc = await pdfRef.getDownloadURL();
+        print('Download URL: $uploadOtherDoc');
+
+        emit(UploadOtherfileSuccess());
+      }
+    }
+  }
 
   String? uploadedCommertialRegestration;
 
@@ -324,6 +354,7 @@ class HomeCubit extends Cubit<HomeState> {
     await formReference!.set({
       'form_reference': formReference,
       'formID': formID,
+      'otherDocument':uploadOtherDoc??"",
       'formName': formName,
       'pathURL': pathURL,
       'downloadLink': downloadLink,

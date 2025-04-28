@@ -90,6 +90,49 @@ class Step2Screen extends StatelessWidget {
             ),
           ],
         ),
+        if ( cubit.selectedItem!.contains('InternalCommittee'))
+        Column(
+          spacing: 10,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Attach Other Document if necessary",
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+            Container(
+              height: 50,
+              width: 500,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade300)
+              ),
+              child: ListTile(
+                onTap: (){
+                  cubit.pickAndUploadOtherDocument(Constants.userModel!.userId!,cubit.selectedFormModel!.formName!);
+                },
+                leading:  SvgPicture.asset(
+                  'assets/Document.svg',
+                  height: 30,
+                ),
+                title: Text("Upload other Document",style: TextStyle(fontSize: 14, color: Colors.grey.shade700),),
+                trailing:
+                cubit.state is UploadOtherfileLoading
+                    ? CircularProgressIndicator(
+
+                  color: AppColors.mainColor,
+                )
+                    : cubit.state is UploadfileSuccess
+                    ? SvgPicture.asset(
+                  'assets/uploaded.svg',
+                  height: 30,
+                )
+                    : SvgPicture.asset(
+                  'assets/UploadSvg.svg',
+                  height: 30,
+                ),
+              ),
+            ),
+          ],
+        ),
       ],
     ),
     );
