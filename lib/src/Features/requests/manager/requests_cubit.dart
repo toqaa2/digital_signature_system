@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/src/intl/date_format.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 import 'package:signature_system/src/core/functions/app_functions.dart';
@@ -66,6 +64,7 @@ class RequestsCubit extends Cubit<RequestsState> {
       emit(Search());
     }
   }
+
   dateQueryAllForms(DateTimeRange? dateRange) {
     if (dateRange != null) {
       allFormsView = allFormsView.where((element) {
@@ -125,6 +124,7 @@ class RequestsCubit extends Cubit<RequestsState> {
         sentForms.where((element) => element.formTitle == title).toList();
     emit(Search());
   }
+
   searchAllForms(String? title) {
     if (title == null || title.isEmpty) {
       allFormsView = allForms.toList();
@@ -173,8 +173,19 @@ class RequestsCubit extends Cubit<RequestsState> {
     emit(Search());
   }
 
+  SignedByModel signedByModel = SignedByModel(
+    email: Constants.userModel?.email ?? '',
+    signatureLink: Constants.userModel?.mainSignature ?? '',
+    scale: 100,
+    signatureX: 100,
+    signatureY: 100,
+  );
+
   Future signTheForm(
-      List<GlobalKey> globalKeys, FormModel form, BuildContext context) async {
+    // List<GlobalKey> globalKeys,
+    FormModel form,
+    BuildContext context,
+  ) async {
     try {
       showDialog(
         barrierDismissible: false,
@@ -190,31 +201,37 @@ class RequestsCubit extends Cubit<RequestsState> {
       await Future.delayed(const Duration(seconds: 1));
 
       /// sign the form
-      Uint8List pdfBytes = await AppFunctions.saveWidgetsAsPdf(globalKeys);
+      // Uint8List pdfBytes = await AppFunctions.saveWidgetsAsPdf(globalKeys);
 
       /// upload form get link
-      String downloadLink = form.formLink ?? '';
-      await FirebaseStorage.instance
-          .ref()
-          .child(
-              'SignedForms/$form.formName/${Constants.userModel?.userId}/$form.formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf')
-          .putData(pdfBytes, SettableMetadata(contentType: 'application/pdf'))
-          .then((onValue) async {
-        downloadLink = await onValue.ref.getDownloadURL();
-      });
+      // String downloadLink = form.formLink ?? '';
+      // await FirebaseStorage.instance
+      //     .ref()
+      //     .child(
+      //     'SignedForms/$form.formName/${Constants.userModel
+      //         ?.userId}/$form.formName${DateFormat('yyy-MM-dd-hh:mm').format(
+      //         DateTime.now())}.pdf')
+      //     .putData(pdfBytes, SettableMetadata(contentType: 'application/pdf'))
+      //     .then((onValue) async {
+      //   downloadLink = await onValue.ref.getDownloadURL();
+      // });
 
       /// check if last required email
       /// change link
       /// add me to signed by and if last required email change isFullySigned
       bool isLastRequiredEmail = false;
-      form.signedBy!.add(Constants.userModel!.email!);
+      form.signedBy!.add(signedByModel);
+      List<Map<String, dynamic>> signedByMeList = List.generate(
+        form.signedBy?.length ?? 0,
+        (index) => form.signedBy![index].toMap(),
+      );
       if (form.sentTo!.length == form.signedBy!.length) {
         isLastRequiredEmail = true;
       }
 
       await form.formReference!.update({
-        'formLink': downloadLink,
-        'signedBy': form.signedBy,
+        // 'formLink': downloadLink,
+        'signedBy': signedByMeList,
         'isFullySigned': isLastRequiredEmail,
       });
       if (form.sentTo!.length != form.signedBy!.length) {
@@ -229,18 +246,24 @@ class RequestsCubit extends Cubit<RequestsState> {
   }
 
   bool checkIfValidToSign(FormModel form) {
+    print(form.sentTo);
+    print(Constants.userModel!.email);
     late bool isValidToSign;
     for (int i = 0; i < form.sentTo!.length; i++) {
       if (Constants.userModel!.email == form.sentTo![i] && i == 0) {
         isValidToSign = true;
+        return isValidToSign;
       } else if (Constants.userModel!.email == form.sentTo![i]) {
         if (form.signedBy!.length == i) {
           isValidToSign = true;
+          return isValidToSign;
         } else {
           isValidToSign = false;
+          return isValidToSign;
         }
       }
     }
+    print(isValidToSign);
     return isValidToSign;
   }
 
@@ -299,8 +322,9 @@ class RequestsCubit extends Cubit<RequestsState> {
         print(receivedFormRef);
         await receivedFormRef.get().then((onValue) {
           var form = FormModel.fromJson(onValue.data());
-          if (form.signedBy?.contains(Constants.userModel!.email) ?? false) {
+          if (form.signedBy?.any((element) =>element.email == Constants.userModel?.email) ?? false) {
             signedByMe.add(form);
+            receivedForms.add(form);
           } else {
             receivedForms.add(form);
           }

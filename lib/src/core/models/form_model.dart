@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:signature_system/src/core/constants/constants.dart';
 
 class FormModel {
   String? formID;
@@ -7,7 +8,7 @@ class FormModel {
   List<String>? requiredToSign;
   List<String>? sentTo;
   String? sentBy;
-  List<String>? signedBy;
+  List<SignedByModel>? signedBy;
   String? serviceType;
   String? pathURL;
   bool? isFullySigned;
@@ -22,7 +23,7 @@ class FormModel {
   String? bankName;
   String? invoiceNumber;
   String? bankAccountNumber;
-  DocumentReference<Map<String,dynamic>>? formReference;
+  DocumentReference<Map<String, dynamic>>? formReference;
 
   FormModel({
     required this.formID,
@@ -30,8 +31,8 @@ class FormModel {
     required this.formName,
     required this.requiredToSign,
     this.sentTo,
-     this.pathURL,
-      this.formReference,
+    this.pathURL,
+    this.formReference,
     this.sentBy,
     this.signedBy,
     this.serviceType,
@@ -50,29 +51,42 @@ class FormModel {
   });
 
   Map<String, dynamic> toMap() => {
-    'form_reference':formReference,
-    if(formID!=null)'formID': formID,
-    if(formLink!=null)'formLink': formLink,
-    if(formName!=null)'formName': formName,
-     'requiredToSign': List.generate(requiredToSign?.length??0,  (index) => requiredToSign?[index],),
-     'sentTo': List.generate(sentTo?.length??0,  (index) => sentTo?[index],),
-    if(sentBy!=null)'sentBy': sentBy,
-     'signedBy': List.generate(signedBy?.length??0,  (index) => signedBy?[index],),
-     'serviceType':  List.generate(serviceType?.length??0,  (index) => serviceType?[index],),
-    if(isFullySigned!=null)'isFullySigned': isFullySigned,
-    if(sentDate!=null)'sentDate': sentDate,
-    if(pathURL!=null)'pathURL': pathURL,
-     if(signedDate!=null)'signedDate': signedDate,
-    if(formTitle!=null)'formTitle': formTitle,
-    if(paymentType!=null)'paymentType': paymentType,
-    if(commercialRegistration!=null)'commercialRegistration': commercialRegistration,
-    if(electronicInvoice!=null)'electronicInvoice': electronicInvoice,
-    if(advancePayment!=null)'advancePayment': advancePayment,
-    if(taxID!=null)'taxID': taxID,
-    if(bankName!=null)'bankName': bankName,
-    if(invoiceNumber!=null)'invoiceNumber': invoiceNumber,
-    if(bankAccountNumber!=null)'bankAccountNumber': bankAccountNumber,
-  };
+        'form_reference': formReference,
+        if (formID != null) 'formID': formID,
+        if (formLink != null) 'formLink': formLink,
+        if (formName != null) 'formName': formName,
+        'requiredToSign': List.generate(
+          requiredToSign?.length ?? 0,
+          (index) => requiredToSign?[index],
+        ),
+        'sentTo': List.generate(
+          sentTo?.length ?? 0,
+          (index) => sentTo?[index],
+        ),
+        if (sentBy != null) 'sentBy': sentBy,
+        'signedBy': List.generate(
+          signedBy?.length ?? 0,
+          (index) => signedBy?[index],
+        ),
+        'serviceType': List.generate(
+          serviceType?.length ?? 0,
+          (index) => serviceType?[index],
+        ),
+        if (isFullySigned != null) 'isFullySigned': isFullySigned,
+        if (sentDate != null) 'sentDate': sentDate,
+        if (pathURL != null) 'pathURL': pathURL,
+        if (signedDate != null) 'signedDate': signedDate,
+        if (formTitle != null) 'formTitle': formTitle,
+        if (paymentType != null) 'paymentType': paymentType,
+        if (commercialRegistration != null)
+          'commercialRegistration': commercialRegistration,
+        if (electronicInvoice != null) 'electronicInvoice': electronicInvoice,
+        if (advancePayment != null) 'advancePayment': advancePayment,
+        if (taxID != null) 'taxID': taxID,
+        if (bankName != null) 'bankName': bankName,
+        if (invoiceNumber != null) 'invoiceNumber': invoiceNumber,
+        if (bankAccountNumber != null) 'bankAccountNumber': bankAccountNumber,
+      };
 
   FormModel.fromJson(Map<String, dynamic>? json) {
     print('req');
@@ -81,11 +95,20 @@ class FormModel {
     formLink = json?['formLink'];
     formName = json?['formName'];
     formReference = json?['form_reference'];
-    requiredToSign = List.generate(json?['requiredToSign']==null?0:json?['requiredToSign'].length,  (index) => json?['requiredToSign']?[index],);
-    sentTo =List.generate(json?['sentTo']==null?0:json?['sentTo'].length,  (index) => json?['sentTo']?[index],) ;
+    requiredToSign = List.generate(
+      json?['requiredToSign'] == null ? 0 : json?['requiredToSign'].length,
+      (index) => json?['requiredToSign']?[index],
+    );
+    sentTo = List.generate(
+      json?['sentTo'] == null ? 0 : json?['sentTo'].length,
+      (index) => json?['sentTo']?[index],
+    );
     sentBy = json?['sentBy'];
-    signedBy =List.generate(json?['signedBy']==null?0:json?['signedBy'].length,  (index) => json?['signedBy']?[index],)  ;
-    serviceType = json?['serviceType']  ;
+    signedBy = List.generate(
+      json?['signedBy'] == null ? 0 : json?['signedBy'].length,
+      (index) => SignedByModel.fromJson(json?['signedBy']?[index]),
+    );
+    serviceType = json?['serviceType'];
     isFullySigned = json?['isFullySigned'];
     sentDate = json?['sentDate'];
     signedDate = json?['signedDate'];
@@ -99,4 +122,36 @@ class FormModel {
     invoiceNumber = json?['invoiceNumber'];
     bankAccountNumber = json?['bankAccountNumber'];
   }
+}
+
+class SignedByModel {
+  final String email;
+  final String signatureLink;
+  num scale;
+  num signatureX;
+  num signatureY;
+
+  SignedByModel({
+    required this.email,
+    required this.signatureLink,
+    required this.scale,
+    required this.signatureX,
+    required this.signatureY,
+  });
+
+  factory SignedByModel.fromJson(Map<String, dynamic>? json) => SignedByModel(
+        email: json?['email'] ?? 'No Email',
+        signatureLink: json?['signature_link'] ?? "",
+        scale: json?['scale'] ?? 0,
+        signatureX: json?['signature_x'] ?? 0,
+        signatureY: json?['signature_y'] ?? 0,
+      );
+
+  Map<String, dynamic> toMap() => {
+        'email': email,
+        'signature_link': Constants.userModel?.mainSignature,
+        'scale': scale,
+        'signature_x': signatureX,
+        'signature_y': signatureY,
+      };
 }

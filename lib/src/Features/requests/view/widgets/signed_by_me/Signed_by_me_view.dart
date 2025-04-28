@@ -46,7 +46,7 @@ class SignedByMeView extends StatelessWidget {
                           spacing: 4,
                           children: [
                             SvgPicture.asset('assets/Signed status.svg',width: 22,height: 22,),
-                            Text(form.signedBy![index]),
+                            Text(form.signedBy![index].email),
                           ],
                         ))
                       ],
@@ -57,10 +57,24 @@ class SignedByMeView extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  height: MediaQuery.of(context).size.height * 1,
-                  child: SfPdfViewer.network(
-                    form.formLink!,
+                  width: 1100,
+                  height: 1410,
+                  child: Stack(
+                    children: [
+                      SfPdfViewer.network(
+                        form.formLink!,
+                      ),
+                      ...form.signedBy?.map((e) =>  Positioned(
+                        left: e.signatureX.toDouble(),
+                        top: e.signatureY.toDouble(),
+                        child: Image.network(
+                          e.signatureLink,
+                          fit: BoxFit.contain,
+                          width: e.scale.toDouble(),
+                          height: e.scale.toDouble() / 2,
+                        ),
+                      ),)??[]
+                    ],
                   ),
                 )
               ],

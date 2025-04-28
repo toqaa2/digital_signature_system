@@ -117,8 +117,9 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                           if (paintKeys.isNotEmpty) {
                                             /// save to DB
                                             widget.cubit
-                                                .signTheForm(paintKeys,
-                                                    widget.formModel, context)
+                                                .signTheForm(
+                                                    widget.formModel,
+                                                    context)
                                                 .then((onValue) {
                                               if (context.mounted) {
                                                 Navigator.pop(context);
@@ -219,8 +220,9 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                         text:
                                             "Download Commercial Reqistration",
                                         onTap: () async {
-                                          AppFunctions.downloadPdf(widget.formModel.commercialRegistration!);
-
+                                          AppFunctions.downloadPdf(widget
+                                              .formModel
+                                              .commercialRegistration!);
                                         }),
                                   if (widget
                                       .formModel.advancePayment!.isNotEmpty)
@@ -233,7 +235,8 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                             fontSize: 12, color: Colors.white),
                                         text: "Download Advance Payment",
                                         onTap: () async {
-                                          AppFunctions.downloadPdf(widget.formModel.advancePayment!);
+                                          AppFunctions.downloadPdf(
+                                              widget.formModel.advancePayment!);
                                         }),
                                   if (widget
                                       .formModel.electronicInvoice!.isNotEmpty)
@@ -246,7 +249,8 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                             fontSize: 12, color: Colors.white),
                                         text: "Download Electronic Invoice",
                                         onTap: () async {
-                                          AppFunctions.downloadPdf(widget.formModel.electronicInvoice!);
+                                          AppFunctions.downloadPdf(widget
+                                              .formModel.electronicInvoice!);
                                         }),
                                 ],
                               ),
@@ -296,6 +300,7 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
           pageCount,
           (index) => PdfPageSignature(
             key: ValueKey(index),
+            cubit: widget.cubit,
             document: documents[index],
             index: index,
             signatureX: signatureX[index],
@@ -321,6 +326,7 @@ class PdfPageSignature extends StatefulWidget {
     required this.signatureX,
     required this.signatureY,
     required this.paintKey,
+    required this.cubit,
   });
 
   final GlobalKey<State<StatefulWidget>> paintKey;
@@ -328,7 +334,7 @@ class PdfPageSignature extends StatefulWidget {
   final int index;
   final double signatureX;
   final double signatureY;
-
+  final RequestsCubit cubit;
   @override
   State<PdfPageSignature> createState() => _PdfPageSignatureState();
 }
@@ -404,7 +410,6 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
                 height: 1410,
                 color: Colors.transparent,
               ),
-
               if (showSignature)
                 Positioned(
                   left: signatureX,
@@ -419,6 +424,9 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
                       setState(() {
                         signatureX += details.delta.dx;
                         signatureY += details.delta.dy;
+                        widget.cubit.signedByModel.signatureX = signatureX;
+                        widget.cubit.signedByModel.signatureY = signatureY;
+
                       });
                     },
                     child: Column(
@@ -430,12 +438,14 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
                             max: 400,
                             onChangeEnd: (value) {
                               setState(() {
-                                rescale=false;
+                                rescale = false;
                               });
                             },
                             onChanged: (value) {
                               setState(() {
                                 scale = value;
+                                widget.cubit.signedByModel.scale = scale;
+
                               });
                             },
                           ),
@@ -443,7 +453,7 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
                           Constants.userModel?.mainSignature ?? '',
                           fit: BoxFit.contain,
                           width: scale,
-                          height: scale/2,
+                          height: scale / 2,
                         ),
                       ],
                     ),
