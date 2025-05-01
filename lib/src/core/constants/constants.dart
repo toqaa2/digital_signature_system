@@ -3,7 +3,7 @@ import 'package:signature_system/src/core/functions/app_functions.dart';
 import '../models/user_model.dart';
 
 abstract class Constants {
-  static String version ='1.0.4+1';
+  static String version ='1.0.5+1';
   static UserModel? userModel = UserModel(
     email: 'i.medhat@waseela-cf.com',
     department: 'department',
@@ -15,7 +15,7 @@ abstract class Constants {
     systemRole: AppFunctions.getSystemRole('view_download_all'),
   );
   static final List<String> titleName = [
-    'Other'
+    'Other',
     'Problematic Asset Committee',
     'Procurement Committee',
     'Product / Pricing Committee',

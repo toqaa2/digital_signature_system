@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/models/form_model.dart';
 import 'package:intl/intl.dart' as intl;
 
@@ -253,6 +254,38 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                             ],
                           ),
                         ),
+                      if (widget.formModel.formName!
+                          .contains("InternalCommittee") &&
+                          isVisible&&widget.formModel.otherDocument!
+                          .isNotEmpty)
+                        Container(
+                          color: Colors.blue.shade50,
+                          margin: EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 50),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 25),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (widget.formModel.otherDocument!
+                                  .isNotEmpty)
+                                ButtonWidget(
+                                    verticalMargin: 2,
+                                    buttonColor: Colors.green,
+                                    minWidth: 230,
+                                    height: 35,
+                                    textStyle: TextStyle(
+                                        fontSize: 12, color: Colors.white),
+                                    text:
+                                    "Download Attached Document",
+                                    onTap: () async {
+                                      AppFunctions.downloadPdf(widget.formModel.otherDocument!);
+
+                                    }),
+                            ],
+                          ),
+                        ),
                       SizedBox(height: 20),
                       Expanded(
                           child: Center(
@@ -302,6 +335,7 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
         );
         setState(() {});
       } else {
+        debugPrint('Failed to load PDF: ${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Error in received widget view is : $e');
@@ -316,7 +350,7 @@ class PdfPageSignature extends StatefulWidget {
     required this.index,
     required this.paintKey,
     required this.formModel,
-    required this.cubit,
+    required this.cubit
   });
 
   final FormModel formModel;

@@ -28,10 +28,12 @@ class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
             children: [
               Expanded(
                 child: GestureDetector(
-                  onTap: () {
-                    widget.cubit.uploadCommertialRegestration(
-                        Constants.userModel!.name!,
-                        widget.cubit.selectedFormModel!.formName!);
+                  onTap: () async{
+                    widget.cubit.commercialRegistrationController.text=await
+                    widget.cubit.uploadDocument(
+                       formName: widget.cubit.selectedFormModel!.formName!,
+                       userID:  Constants.userModel!.name!,
+                    );
                   },
                   child: DashedTextField(
                     textStyle: widget.cubit.commercialRegistrationController.text.isEmpty
@@ -59,10 +61,11 @@ class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
               5.isWidth,
               Expanded(
                 child: GestureDetector(
-                  onTap: () {
-                    widget.cubit.uploadAdvancePaymentCertificate(
-                        Constants.userModel!.name!,
-                        widget.cubit.selectedFormModel!.formName!);
+                  onTap: ()async{
+                    widget.cubit.advancePaymentController.text =await    widget.cubit.uploadDocument(
+                       formName: widget.cubit.selectedFormModel!.formName!,
+                       userID:  Constants.userModel!.name!,
+                    );
                   },
                   child: DashedTextField(
                     hintText: "Upload Advance payment Certificate",
@@ -95,10 +98,11 @@ class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
             children: [
               Expanded(
                 child: GestureDetector(
-                  onTap: () {
-                    widget.cubit.uploadElectronicInvoice(
-                        Constants.userModel!.name!,
-                        widget.cubit.selectedFormModel!.formName!);
+                  onTap: () async{
+                    widget.cubit.electronicInvoiceController.text=await       widget.cubit.uploadDocument(
+                         formName: widget.cubit.selectedFormModel!.formName!,
+                         userID:  Constants.userModel!.name!,
+                    );
                   },
                   child: DashedTextField(
                     textStyle: widget.cubit.electronicInvoiceController.text.isEmpty

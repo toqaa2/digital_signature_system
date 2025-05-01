@@ -76,7 +76,7 @@ class _RequestsScreenState extends State<RequestsScreen> with SingleTickerProvid
                         labelColor: AppColors.mainColor,
                         indicatorColor: AppColors.mainColor,
                         indicatorWeight: 4.0,
-                        unselectedLabelColor: Colors.grey.shade400,
+                        unselectedLabelColor: Colors.grey.shade600,
                       ),
                       Expanded(
                         child: TabBarView(

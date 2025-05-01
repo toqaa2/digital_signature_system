@@ -142,14 +142,16 @@ class HomeCubit extends Cubit<HomeState> {
     emit(FormSelected());
   }
 
-  String? uploadedCommertialRegestration;
+  String uploadOtherDoc = '';
 
-  void uploadCommertialRegestration(String userID, String formName) async {
-    emit(UploadCommertialRegestrationLoading());
+  Future<void> pickAndUploadOtherDocument(
+      String userID, String formName) async {
+    emit(UploadOtherfileLoading());
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf'],
     );
+
     if (result != null) {
       String fileName = result.files.single.name;
       docFile = result.files.single.bytes;
@@ -158,82 +160,116 @@ class HomeCubit extends Cubit<HomeState> {
         print(docFile);
         final storageRef = FirebaseStorage.instance.ref();
         Reference pdfRef = storageRef.child(
-            'uploadCommertialRegestration/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
+            'other_Document/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
 
         UploadTask uploadTask = pdfRef.putData(
             docFile!, SettableMetadata(contentType: 'application/pdf'));
         await uploadTask;
 
-        uploadedCommertialRegestration = await pdfRef.getDownloadURL();
-        commercialRegistrationController.text =
-            uploadedCommertialRegestration ?? "";
-        print('Download URL: $uploadedCommertialRegestration');
+        uploadOtherDoc = await pdfRef.getDownloadURL();
+        print('Download URL: $uploadOtherDoc');
 
-        emit(UploadCommertialRegestrationSuccess());
+        emit(UploadOtherfileSuccess());
       }
     }
   }
 
-  String? uploadedAdvancePaymentCertificate;
 
-  void uploadAdvancePaymentCertificate(String userID, String formName) async {
-    emit(UploadAdvancePaymentLoading());
+  // void uploadCommertialRegestration(String userID, String formName) async {
+  //   emit(UploadCommertialRegestrationLoading());
+  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //     type: FileType.custom,
+  //     allowedExtensions: ['pdf'],
+  //   );
+  //   if (result != null) {
+  //     String fileName = result.files.single.name;
+  //     docFile = result.files.single.bytes;
+  //     if (docFile != null) {
+  //       print('File picked: $fileName');
+  //       print(docFile);
+  //       final storageRef = FirebaseStorage.instance.ref();
+  //       Reference pdfRef = storageRef.child(
+  //           'uploadCommertialRegestration/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
+  //
+  //       UploadTask uploadTask = pdfRef.putData(
+  //           docFile!, SettableMetadata(contentType: 'application/pdf'));
+  //       await uploadTask;
+  //
+  //       uploadedCommertialRegestration = await pdfRef.getDownloadURL();
+  //       commercialRegistrationController.text =
+  //           uploadedCommertialRegestration ?? "";
+  //       print('Download URL: $uploadedCommertialRegestration');
+  //
+  //       emit(UploadCommertialRegestrationSuccess());
+  //     }
+  //   }
+  // }
+
+
+  // void uploadAdvancePaymentCertificate(String userID, String formName) async {
+  //   emit(UploadAdvancePaymentLoading());
+  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //     type: FileType.custom,
+  //     allowedExtensions: ['pdf'],
+  //   );
+  //   if (result != null) {
+  //     String fileName = result.files.single.name;
+  //     docFile = result.files.single.bytes;
+  //     if (docFile != null) {
+  //       print('File picked: $fileName');
+  //       print(docFile);
+  //       final storageRef = FirebaseStorage.instance.ref();
+  //       Reference pdfRef = storageRef.child(
+  //           'uploadAdvancePaymentCertificate/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
+  //
+  //       UploadTask uploadTask = pdfRef.putData(
+  //           docFile!, SettableMetadata(contentType: 'application/pdf'));
+  //       await uploadTask;
+  //
+  //       uploadedAdvancePaymentCertificate = await pdfRef.getDownloadURL();
+  //       advancePaymentController.text = uploadedAdvancePaymentCertificate ?? "";
+  //       print('Download URL: $uploadedAdvancePaymentCertificate');
+  //
+  //       emit(UploadAdvancePaymentSuccess());
+  //     }
+  //   }
+  // }
+
+
+  Future<String> uploadDocument({
+    required String userID,
+    required String formName,
+    // required var documentType,
+    // TextEditingController? controller,
+  }) async {
+    emit(UploadLoading());
+
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf'],
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
     );
     if (result != null) {
       String fileName = result.files.single.name;
+      final String? fileType = fileName.split('.').last.toLowerCase();
       docFile = result.files.single.bytes;
       if (docFile != null) {
         print('File picked: $fileName');
         print(docFile);
         final storageRef = FirebaseStorage.instance.ref();
         Reference pdfRef = storageRef.child(
-            'uploadAdvancePaymentCertificate/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
-
-        UploadTask uploadTask = pdfRef.putData(
-            docFile!, SettableMetadata(contentType: 'application/pdf'));
-        await uploadTask;
-
-        uploadedAdvancePaymentCertificate = await pdfRef.getDownloadURL();
-        advancePaymentController.text = uploadedAdvancePaymentCertificate ?? "";
-        print('Download URL: $uploadedAdvancePaymentCertificate');
-
-        emit(UploadAdvancePaymentSuccess());
+            '$fileName/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.$fileType');
+        await pdfRef.putData(
+            docFile!, SettableMetadata(contentType: 'application/$fileType'));
+        // await uploadTask;
+        // documentType = ;
+        // controller?.text = documentType ?? "";
+        // print('Download URL: $documentType');
+        // print('Download URL: $uploadOtherDoc');
+        emit(UploadSuccess());
+        return  (await pdfRef.getDownloadURL());
       }
     }
-  }
-
-  String? uploadedElectronicInvoice;
-
-  void uploadElectronicInvoice(String userID, String formName) async {
-    emit(UploadElectronicInvoiceLoading());
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf'],
-    );
-    if (result != null) {
-      String fileName = result.files.single.name;
-      docFile = result.files.single.bytes;
-      if (docFile != null) {
-        print('File picked: $fileName');
-        print(docFile);
-        final storageRef = FirebaseStorage.instance.ref();
-        Reference pdfRef = storageRef.child(
-            'uploadElectronicInvoice/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
-
-        UploadTask uploadTask = pdfRef.putData(
-            docFile!, SettableMetadata(contentType: 'application/pdf'));
-        await uploadTask;
-
-        uploadedElectronicInvoice = await pdfRef.getDownloadURL();
-        electronicInvoiceController.text = uploadedElectronicInvoice ?? "";
-        print('Download URL: $uploadedElectronicInvoice');
-
-        emit(UploadElectronicInvoiceSuccess());
-      }
-    }
+    return 'No Link';
   }
 
   Future<void> sendToRequiredEmails({
@@ -316,14 +352,19 @@ class HomeCubit extends Cubit<HomeState> {
     print("form send");
     await addMetoSign(email: Constants.userModel!.email!, context: context);
     // String formIDWithDate =formName+DateTime.now().toString();
+    print("document Image Link :----------------");
+    print(uploadOtherDoc);
     formReference = FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
         .collection('sent_forms')
         .doc(formID);
+    print("document Image Link :----------------");
+    print(uploadOtherDoc);
     await formReference!.set({
       'form_reference': formReference,
       'formID': formID,
+      'otherDocument': uploadOtherDoc ?? "",
       'formName': formName,
       'pathURL': pathURL,
       'downloadLink': downloadLink,
@@ -443,9 +484,9 @@ class HomeCubit extends Cubit<HomeState> {
       'isFullySigned': false,
       'formTitle': selectedtitleName,
       'paymentType': paymentType,
-      'commercialRegistration': uploadedCommertialRegestration ?? "",
-      'electronicInvoice': uploadedElectronicInvoice ?? "",
-      'advancePayment': uploadedAdvancePaymentCertificate ?? "",
+      'commercialRegistration': commercialRegistrationController.text ?? "",
+      'electronicInvoice': electronicInvoiceController.text ?? "",
+      'advancePayment': advancePaymentController.text ?? "",
       'taxID': taxID,
       'bankName': bankName,
       'invoiceNumber': invoiceNumber,
