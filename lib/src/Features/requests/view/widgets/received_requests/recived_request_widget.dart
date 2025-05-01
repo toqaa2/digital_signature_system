@@ -85,13 +85,7 @@ class _RecivedRequestWidgetState extends State<RecivedRequestWidget> {
                           builder: (context) => ReceivedFormsView(
                               cubit: widget.cubit,
                               formModel: receivedForm,
-                              formLink: receivedForm.formLink!,
-                              formName: receivedForm.formName.toString(),
-                              sentDate: intl.DateFormat('yyy-MM-dd hh:mm a').format(
-                                DateTime.fromMicrosecondsSinceEpoch(
-                                    receivedForm.sentDate?.microsecondsSinceEpoch ??
-                                        0),
-                              )),
+                              ),
                         ))
                             .then((onValue) {
                           widget.cubit

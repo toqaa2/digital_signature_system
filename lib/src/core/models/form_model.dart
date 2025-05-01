@@ -104,10 +104,14 @@ class FormModel {
       (index) => json?['sentTo']?[index],
     );
     sentBy = json?['sentBy'];
-    signedBy = List.generate(
-      json?['signedBy'] == null ? 0 : json?['signedBy'].length,
-      (index) => SignedByModel.fromJson(json?['signedBy']?[index]),
-    );
+    signedBy = json?['signedBy'] == null || json?['signedBy'].isEmpty
+        ? []
+        : (json?['signedBy']?[0]) is String
+            ? []
+            : List.generate(
+                json?['signedBy'] == null ? 0 : json?['signedBy'].length,
+                (index) => SignedByModel.fromJson(json?['signedBy']?[index]),
+              );
     serviceType = json?['serviceType'];
     isFullySigned = json?['isFullySigned'];
     sentDate = json?['sentDate'];
@@ -127,29 +131,55 @@ class FormModel {
 class SignedByModel {
   final String email;
   final String signatureLink;
-  num scale;
-  num signatureX;
-  num signatureY;
-
+final List<SignatureModel> signatureModelList;
   SignedByModel({
     required this.email,
     required this.signatureLink,
-    required this.scale,
-    required this.signatureX,
-    required this.signatureY,
+    required this.signatureModelList,
   });
 
   factory SignedByModel.fromJson(Map<String, dynamic>? json) => SignedByModel(
         email: json?['email'] ?? 'No Email',
         signatureLink: json?['signature_link'] ?? "",
-        scale: json?['scale'] ?? 0,
-        signatureX: json?['signature_x'] ?? 0,
-        signatureY: json?['signature_y'] ?? 0,
+        signatureModelList: List.generate(
+          json?['signature'] == null ? 0 : json?['signature'].length,
+          (index) => SignatureModel.fromJson(json?['signature']?[index]),
+        ),
       );
 
   Map<String, dynamic> toMap() => {
         'email': email,
-        'signature_link': Constants.userModel?.mainSignature,
+        'signature_link': signatureLink,
+        'signature': List.generate(
+          signatureModelList.length,
+          (index) => signatureModelList[index].toMap(),
+        ),
+      };
+}
+
+class SignatureModel {
+  num page;
+  num scale;
+  num signatureX;
+  num signatureY;
+
+  SignatureModel({
+    required this.page,
+    required this.scale,
+    required this.signatureX,
+    required this.signatureY,
+  });
+
+  factory SignatureModel.fromJson(Map<String, dynamic>? json) => SignatureModel(
+        page: json?['page'] ?? 0,
+        scale:json?['scale'] ?? 0,
+        signatureX:json?['signature_x'] ?? 0,
+        signatureY:json?['signature_y'] ?? 0,
+      );
+
+  Map<String, dynamic> toMap() =>
+      {
+        'page': page,
         'scale': scale,
         'signature_x': signatureX,
         'signature_y': signatureY,

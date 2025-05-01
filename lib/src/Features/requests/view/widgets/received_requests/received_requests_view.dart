@@ -1,10 +1,8 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/models/form_model.dart';
-
-import 'package:signature_system/src/core/style/colors.dart';
+import 'package:intl/intl.dart' as intl;
 
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -12,23 +10,19 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../../../../core/functions/app_functions.dart';
 import '../../../../../core/shared_widgets/custom_button.dart';
 import '../../../../login_screen/view/widgets/custom_text_field.dart';
+import '../../../../../core/constants/constants.dart';
+import '../../../../../core/style/colors.dart';
 import '../../../manager/requests_cubit.dart';
 
 class ReceivedFormsView extends StatefulWidget {
   const ReceivedFormsView({
     super.key,
     required this.formModel,
-    required this.formName,
-    required this.sentDate,
-    required this.formLink,
     required this.cubit,
   });
 
   final RequestsCubit cubit;
   final FormModel formModel;
-  final String formName;
-  final String sentDate;
-  final String formLink;
 
   @override
   _ReceivedFormsViewState createState() => _ReceivedFormsViewState();
@@ -52,7 +46,7 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
 
   @override
   void initState() {
-    loadPdfFromUrl(widget.formLink);
+    loadPdfFromUrl(widget.formModel.formLink ?? '');
     super.initState();
   }
 
@@ -60,10 +54,6 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // if (widget.cubit.state is LoadingSave)
-        // Center(
-        //   child: CircularProgressIndicator(),
-        // ),
         Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -97,8 +87,15 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(widget.formName),
-                                  Text("at ${widget.sentDate}"),
+                                  Text(widget.formModel.formName ?? ''),
+                                  Text(
+                                      "at ${intl.DateFormat('yyy-MM-dd hh:mm a').format(
+                                    DateTime.fromMicrosecondsSinceEpoch(widget
+                                            .formModel
+                                            .sentDate
+                                            ?.microsecondsSinceEpoch ??
+                                        0),
+                                  )}"),
                                 ],
                               ),
                               Row(
@@ -118,8 +115,7 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                             /// save to DB
                                             widget.cubit
                                                 .signTheForm(
-                                                    widget.formModel,
-                                                    context)
+                                                    widget.formModel, context)
                                                 .then((onValue) {
                                               if (context.mounted) {
                                                 Navigator.pop(context);
@@ -218,7 +214,7 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
                                         textStyle: TextStyle(
                                             fontSize: 12, color: Colors.white),
                                         text:
-                                            "Download Commercial Reqistration",
+                                            "Download Commercial Registration",
                                         onTap: () async {
                                           AppFunctions.downloadPdf(widget
                                               .formModel
@@ -280,11 +276,8 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
 
   Future<void> loadPdfFromUrl(String url) async {
     try {
-      print(url);
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
-        print('response bodybytes');
-        print(response.bodyBytes);
         documentBytes = response.bodyBytes;
         final PdfDocument document = PdfDocument(inputBytes: documentBytes!);
         pageCount = document.pages.count;
@@ -300,20 +293,18 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
           pageCount,
           (index) => PdfPageSignature(
             key: ValueKey(index),
+            formModel: widget.formModel,
             cubit: widget.cubit,
             document: documents[index],
             index: index,
-            signatureX: signatureX[index],
-            signatureY: signatureY[index],
             paintKey: paintKeys[index],
           ),
         );
         setState(() {});
       } else {
-        print('Failed to load PDF: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error in received widget view is : $e');
     }
   }
 }
@@ -323,35 +314,39 @@ class PdfPageSignature extends StatefulWidget {
     super.key,
     required this.document,
     required this.index,
-    required this.signatureX,
-    required this.signatureY,
     required this.paintKey,
+    required this.formModel,
     required this.cubit,
   });
+
+  final FormModel formModel;
 
   final GlobalKey<State<StatefulWidget>> paintKey;
   final Uint8List document;
   final int index;
-  final double signatureX;
-  final double signatureY;
   final RequestsCubit cubit;
+
   @override
   State<PdfPageSignature> createState() => _PdfPageSignatureState();
 }
 
 class _PdfPageSignatureState extends State<PdfPageSignature> {
-  late double signatureX;
-  late double signatureY;
   bool showSignature = false;
+  final SignatureModel signatureModel = SignatureModel(
+    page: 0,
+    scale: 100,
+    signatureY: 100,
+    signatureX: 100,
+  );
+  List<Widget> widgets = [];
 
   @override
   void initState() {
     super.initState();
-    signatureX = widget.signatureX;
-    signatureY = widget.signatureY;
+    signatureModel.page = widget.index;
+    widgets = AppFunctions.viewSignatures(widget.formModel, widget.index);
   }
 
-  double scale = 100;
   bool rescale = false;
 
   @override
@@ -373,6 +368,7 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
               ? "Add Signature to this Page"
               : "Remove Signature from this Page",
           onTap: () {
+            signatureModel.page = widget.index;
             setState(() {
               showSignature = !showSignature;
             });
@@ -381,79 +377,56 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
         RepaintBoundary(
           key: widget.paintKey,
           child: Stack(
-            children: [
-              Container(
-                color: Colors.white,
-                width: 1100,
-                height: 1410,
-                child: SfPdfViewer.memory(
-                  widget.document,
-                  initialPageNumber: widget.index + 1,
-                  scrollDirection: PdfScrollDirection.horizontal,
-                  canShowHyperlinkDialog: false,
-                  canShowPageLoadingIndicator: true,
-                  canShowPaginationDialog: false,
-                  canShowPasswordDialog: false,
-                  canShowScrollHead: false,
-                  canShowScrollStatus: false,
-                  canShowSignaturePadDialog: false,
-                  canShowTextSelectionMenu: false,
-                  enableDocumentLinkAnnotation: false,
-                  enableDoubleTapZooming: false,
-                  enableHyperlinkNavigation: false,
-                  enableTextSelection: false,
-                  interactionMode: PdfInteractionMode.pan,
-                ),
-              ),
-              Container(
-                width: 1100,
-                height: 1410,
-                color: Colors.transparent,
+            children: <Widget>[
+              PdfWithSignaturesWidget(
+                formModel: widget.formModel,
+                documentBytes: widget.document,
+                page: widget.index,
               ),
               if (showSignature)
                 Positioned(
-                  left: signatureX,
-                  top: signatureY,
+                  left: signatureModel.signatureX.toDouble(),
+                  top: signatureModel.signatureY.toDouble(),
                   child: GestureDetector(
                     onDoubleTap: () {
                       setState(() {
                         rescale = !rescale;
                       });
                     },
+                    onPanEnd: (details) {
+
+                      widget.cubit.signatureSet.add(signatureModel);
+                    },
                     onPanUpdate: (details) {
                       setState(() {
-                        signatureX += details.delta.dx;
-                        signatureY += details.delta.dy;
-                        widget.cubit.signedByModel.signatureX = signatureX;
-                        widget.cubit.signedByModel.signatureY = signatureY;
-
+                        signatureModel.signatureX += details.delta.dx;
+                        signatureModel.signatureY += details.delta.dy;
                       });
                     },
                     child: Column(
                       children: [
                         if (rescale)
                           Slider(
-                            value: scale,
+                            value: signatureModel.scale.toDouble(),
                             min: 1,
                             max: 400,
                             onChangeEnd: (value) {
+                              widget.cubit.signatureSet.add(signatureModel);
                               setState(() {
                                 rescale = false;
                               });
                             },
                             onChanged: (value) {
                               setState(() {
-                                scale = value;
-                                widget.cubit.signedByModel.scale = scale;
-
+                                signatureModel.scale = value;
                               });
                             },
                           ),
                         Image.network(
+                          width: signatureModel.scale.toDouble(),
+                          height: signatureModel.scale.toDouble() / 2,
                           Constants.userModel?.mainSignature ?? '',
                           fit: BoxFit.contain,
-                          width: scale,
-                          height: scale / 2,
                         ),
                       ],
                     ),
@@ -461,6 +434,56 @@ class _PdfPageSignatureState extends State<PdfPageSignature> {
                 ),
             ],
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class PdfWithSignaturesWidget extends StatelessWidget {
+  const PdfWithSignaturesWidget({
+    super.key,
+    required this.formModel,
+    required this.page,
+    required this.documentBytes,
+  });
+
+  final FormModel formModel;
+  final int page;
+  final Uint8List documentBytes;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Container(
+          color: Colors.white,
+          width: 1100,
+          height: 1410,
+          child: SfPdfViewer.memory(
+            documentBytes,
+            initialPageNumber: page + 1,
+            scrollDirection: PdfScrollDirection.horizontal,
+            canShowHyperlinkDialog: false,
+            canShowPageLoadingIndicator: true,
+            canShowPaginationDialog: false,
+            canShowPasswordDialog: false,
+            canShowScrollHead: false,
+            canShowScrollStatus: false,
+            canShowSignaturePadDialog: false,
+            canShowTextSelectionMenu: false,
+            enableDocumentLinkAnnotation: false,
+            enableDoubleTapZooming: false,
+            enableHyperlinkNavigation: false,
+            enableTextSelection: false,
+            interactionMode: PdfInteractionMode.pan,
+          ),
+        ),
+        ...AppFunctions.viewSignatures(formModel, page),
+        Container(
+          width: 1100,
+          height: 1410,
+          color: Colors.transparent,
         ),
       ],
     );
@@ -514,10 +537,6 @@ void _showDialog(BuildContext context) {
           TextButton(
             child: Text('Reverse'),
             onPressed: () {
-              // Handle the send action
-              String inputText = textFieldController.text;
-              print(
-                  'Input: $inputText'); // You can replace this with your logic
               Navigator.of(context).pop();
             },
           ),

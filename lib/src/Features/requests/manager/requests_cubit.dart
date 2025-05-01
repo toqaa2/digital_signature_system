@@ -176,13 +176,12 @@ class RequestsCubit extends Cubit<RequestsState> {
   SignedByModel signedByModel = SignedByModel(
     email: Constants.userModel?.email ?? '',
     signatureLink: Constants.userModel?.mainSignature ?? '',
-    scale: 100,
-    signatureX: 100,
-    signatureY: 100,
+    signatureModelList: [],
   );
 
+  Set<SignatureModel> signatureSet = {};
+
   Future signTheForm(
-    // List<GlobalKey> globalKeys,
     FormModel form,
     BuildContext context,
   ) async {
@@ -199,27 +198,8 @@ class RequestsCubit extends Cubit<RequestsState> {
         ),
       );
       await Future.delayed(const Duration(seconds: 1));
-
-      /// sign the form
-      // Uint8List pdfBytes = await AppFunctions.saveWidgetsAsPdf(globalKeys);
-
-      /// upload form get link
-      // String downloadLink = form.formLink ?? '';
-      // await FirebaseStorage.instance
-      //     .ref()
-      //     .child(
-      //     'SignedForms/$form.formName/${Constants.userModel
-      //         ?.userId}/$form.formName${DateFormat('yyy-MM-dd-hh:mm').format(
-      //         DateTime.now())}.pdf')
-      //     .putData(pdfBytes, SettableMetadata(contentType: 'application/pdf'))
-      //     .then((onValue) async {
-      //   downloadLink = await onValue.ref.getDownloadURL();
-      // });
-
-      /// check if last required email
-      /// change link
-      /// add me to signed by and if last required email change isFullySigned
       bool isLastRequiredEmail = false;
+      signedByModel.signatureModelList.addAll(signatureSet);
       form.signedBy!.add(signedByModel);
       List<Map<String, dynamic>> signedByMeList = List.generate(
         form.signedBy?.length ?? 0,
@@ -230,7 +210,6 @@ class RequestsCubit extends Cubit<RequestsState> {
       }
 
       await form.formReference!.update({
-        // 'formLink': downloadLink,
         'signedBy': signedByMeList,
         'isFullySigned': isLastRequiredEmail,
       });
@@ -241,13 +220,11 @@ class RequestsCubit extends Cubit<RequestsState> {
       }
       if (context.mounted) Navigator.pop(context);
     } catch (e) {
-      print('Sign Error: $e');
+      debugPrint('Sign Error: $e');
     }
   }
 
   bool checkIfValidToSign(FormModel form) {
-    print(form.sentTo);
-    print(Constants.userModel!.email);
     late bool isValidToSign;
     for (int i = 0; i < form.sentTo!.length; i++) {
       if (Constants.userModel!.email == form.sentTo![i] && i == 0) {
@@ -263,7 +240,6 @@ class RequestsCubit extends Cubit<RequestsState> {
         }
       }
     }
-    print(isValidToSign);
     return isValidToSign;
   }
 
@@ -271,7 +247,6 @@ class RequestsCubit extends Cubit<RequestsState> {
 
   void getSentForms(String userId) async {
     emit(LoadingSentForms());
-    print(userId);
     sentForms.clear();
     fullSignedList.clear();
     await FirebaseFirestore.instance
@@ -299,8 +274,6 @@ class RequestsCubit extends Cubit<RequestsState> {
     emit(GetSentForms());
   }
 
-  //if isFullySigned is true put form in Signedbyme List
-
   List<FormModel> signedByMe = [];
   List<FormModel> signedByMeView = [];
 
@@ -319,10 +292,11 @@ class RequestsCubit extends Cubit<RequestsState> {
       for (var element in value.docs) {
         DocumentReference<Map<String, dynamic>> receivedFormRef;
         receivedFormRef = await element['formRef'];
-        print(receivedFormRef);
         await receivedFormRef.get().then((onValue) {
           var form = FormModel.fromJson(onValue.data());
-          if (form.signedBy?.any((element) =>element.email == Constants.userModel?.email) ?? false) {
+          if (form.signedBy?.any(
+                  (element) => element.email == Constants.userModel?.email) ??
+              false) {
             signedByMe.add(form);
             receivedForms.add(form);
           } else {
@@ -330,7 +304,6 @@ class RequestsCubit extends Cubit<RequestsState> {
           }
         });
       }
-      print(signedByMe);
       signedByMeView = signedByMe.toList();
       receivedFormsView = receivedForms.toList();
       receivedFormsView.sort((a, b) {
@@ -338,7 +311,6 @@ class RequestsCubit extends Cubit<RequestsState> {
             .compareTo(a.sentDate!.microsecondsSinceEpoch);
       });
     });
-
     emit(GetReceivedForms());
   }
 
@@ -351,16 +323,11 @@ class RequestsCubit extends Cubit<RequestsState> {
     }
 
     try {
-      // emit(LoadingSave());
-
       final pdf = pw.Document();
-
       for (int i = 0; i < globalKeys.length; i++) {
         final globalKey = globalKeys[i];
-
         // Check if the global key's context is valid
         if (globalKey.currentContext == null) {
-          print('Error: Global key context is null for index $i');
           continue; // Skip this key if the context is invalid
         }
 
@@ -372,7 +339,6 @@ class RequestsCubit extends Cubit<RequestsState> {
         ByteData? byteData =
             await image.toByteData(format: ui.ImageByteFormat.png);
         Uint8List pngBytes = byteData!.buffer.asUint8List();
-
         // Add a page with the image
         pdf.addPage(
           pw.Page(
@@ -401,11 +367,10 @@ class RequestsCubit extends Cubit<RequestsState> {
       anchor.click();
       html.document.body!.children.remove(anchor);
       html.Url.revokeObjectUrl(url);
-      // emit(SaveSuccess());
 
       return bytes;
     } catch (e) {
-      print('Error saving widgets as PDF: $e');
+      debugPrint('Error saving widgets as PDF: $e');
       return [] as Uint8List;
     }
   }

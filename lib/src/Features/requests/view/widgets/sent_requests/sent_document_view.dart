@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:signature_system/src/Features/requests/manager/requests_cubit.dart';
 import 'package:signature_system/src/core/functions/app_functions.dart';
 import 'package:signature_system/src/core/models/form_model.dart';
 import 'package:intl/intl.dart' as intl;
@@ -8,7 +9,7 @@ import 'package:signature_system/src/core/shared_widgets/custom_button.dart';
 
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-class SentDocumentView extends StatelessWidget {
+class SentDocumentView extends StatefulWidget {
   const SentDocumentView({
     super.key,
     required this.form,
@@ -17,6 +18,19 @@ class SentDocumentView extends StatelessWidget {
 
   final FormModel form;
   final bool canDownload;
+
+  @override
+  State<SentDocumentView> createState() => _SentDocumentViewState();
+}
+
+class _SentDocumentViewState extends State<SentDocumentView> {
+  List<Widget> signatures = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // signatures=AppFunctions.viewSignatures(form, index);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +55,12 @@ class SentDocumentView extends StatelessWidget {
                       spacing: 10,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(form.formName!),
-                        ...List.generate(form.sentTo!.length, (index) {
-                          bool isSigned =
-                              form.signedBy!.contains(form.sentTo![index]);
+                        Text(widget.form.formName!),
+                        ...List.generate(widget.form.sentTo!.length, (index) {
+                          bool isSigned = widget.form.signedBy!.any(
+                            (element) =>
+                                element.email == widget.form.sentTo![index],
+                          );
                           return Row(
                             spacing: 5,
                             children: [
@@ -55,7 +71,7 @@ class SentDocumentView extends StatelessWidget {
                                 width: 22,
                                 height: 22,
                               ),
-                              Text(form.sentTo![index]),
+                              Text(widget.form.sentTo![index]),
                             ],
                           );
                         })
@@ -65,12 +81,14 @@ class SentDocumentView extends StatelessWidget {
                       children: [
                         Text(intl.DateFormat('yyy-MM-dd hh:mm a').format(
                             DateTime.fromMicrosecondsSinceEpoch(
-                                form.sentDate!.microsecondsSinceEpoch ?? 0))),
-                        if (canDownload)
+                                widget.form.sentDate!.microsecondsSinceEpoch ??
+                                    0))),
+                        if (widget.canDownload)
                           ButtonWidget(
                             minWidth: 40.w,
                             onTap: () {
-                              AppFunctions.downloadPdf(form.formLink ?? '');
+                              AppFunctions.downloadPdf(
+                                  widget.form.formLink ?? '');
                             },
                             text: 'Download',
                           ),
@@ -78,12 +96,36 @@ class SentDocumentView extends StatelessWidget {
                     )
                   ],
                 ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  height: MediaQuery.of(context).size.height * 1,
-                  child: SfPdfViewer.network(
-                    form.formLink!,
-                  ),
+                Stack(
+                  children: [
+                    SizedBox(
+                      width: 1100,
+                      height: 1410,
+                      child: SfPdfViewer.network(
+                        widget.form.formLink!,
+                      ),
+                    ),
+                    Container(
+                      width: 1100,
+                      height: 1410,
+                      color: Colors.transparent,
+                    ),
+                    // ... RequestsCubit.viewSignatures(form),
+
+                    // ...form.signedBy?.map(
+                    //       (e) => Positioned(
+                    //     left: e.signatureX.toDouble(),
+                    //     top: e.signatureY.toDouble(),
+                    //     child: Image.network(
+                    //       e.signatureLink,
+                    //       fit: BoxFit.contain,
+                    //       width: e.scale.toDouble(),
+                    //       height: e.scale.toDouble() / 2,
+                    //     ),
+                    //   ),
+                    // ) ??
+                    //     []
+                  ],
                 )
               ],
             ),

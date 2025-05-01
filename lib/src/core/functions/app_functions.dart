@@ -6,12 +6,34 @@ import 'package:flutter/rendering.dart';
 import 'package:pdf/pdf.dart';
 import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/helper/enums/form_enum.dart';
+import 'package:signature_system/src/core/models/form_model.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 import 'package:pdf/widgets.dart' as pw;
 
 class AppFunctions {
+  static List<Widget> viewSignatures(FormModel form, int index) {
+    List<Widget> widgets = [];
+    form.signedBy?.forEach((element) {
+      for (SignatureModel e in element.signatureModelList) {
+        if (e.page == index) {
+          widgets.add(Positioned(
+            left: e.signatureX.toDouble(),
+            top: e.signatureY.toDouble(),
+            child: Image.network(
+              element.signatureLink,
+              fit: BoxFit.contain,
+              width: e.scale.toDouble(),
+              height: e.scale.toDouble() / 2,
+            ),
+          ));
+        }
+      }
+    });
+    return widgets;
+  }
+
   static SystemRoleEnum getSystemRole(String systemRole) {
     switch (systemRole) {
       case 'view_download_all':
@@ -123,8 +145,8 @@ class AppFunctions {
       anchor.click();
       html.document.body!.children.remove(anchor);
       html.Url.revokeObjectUrl(url);
-     } catch (e) {
+    } catch (e) {
       print('Error saving widgets as PDF: $e');
-     }
+    }
   }
 }
