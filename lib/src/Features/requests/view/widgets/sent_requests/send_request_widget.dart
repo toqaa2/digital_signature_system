@@ -130,17 +130,47 @@ class SentListView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                    color: AppColors.mainColor.withAlpha(30),
-                    borderRadius: BorderRadius.circular(4)),
-                height: 30,
-                width: 100,
-                child: Center(
-                  child: Text(
-                    "Pending",
-                    style: TextStyle(color: AppColors.mainColor, fontSize: 12),
-                  ),
+
+              SizedBox(
+                width: 170,
+                child: Row(
+                  spacing: 5,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                          color: AppColors.mainColor.withAlpha(30),
+                          borderRadius: BorderRadius.circular(4)),
+                      height: 30,
+                      width: 80,
+                      child: Center(
+                        child: Text(
+                          "Pending",
+                          style: TextStyle(color: AppColors.mainColor, fontSize: 12),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: (){
+                        cubit.deleteSentDocument(
+                          userId: Constants.userModel!.userId,
+                            formID: sentForm.formID!,
+                            emailsToRemoveFrom: sentForm.sentTo!);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.redAccent,
+                            borderRadius: BorderRadius.circular(4)),
+                        height: 30,
+                        width: 80,
+                        child: Center(
+                          child: Text(
+                            "Delete",
+                            style: TextStyle(color: Colors.white, fontSize: 12),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(

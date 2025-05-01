@@ -14,4 +14,5 @@ final class LoadingSave extends RequestsState {}
 final class SaveSuccess extends RequestsState {}
 final class ToggleVisibality extends RequestsState {}
 final class GetAllFormsLoading extends RequestsState {}
+final class DeletedSuccessfully extends RequestsState {}
 final class GetAllFormsDone extends RequestsState {}

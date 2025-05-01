@@ -18,8 +18,7 @@ class _AllFormsScreenState extends State<AllFormsScreen> {
   @override
   void initState() {
     super.initState();
-
-    widget.cubit.getAllForms();
+    widget.cubit.getFullySignedForms();
   }
 
   @override
@@ -30,7 +29,7 @@ class _AllFormsScreenState extends State<AllFormsScreen> {
             children: [
               SearchableDropdown(
                 onReset: () {
-                  widget.cubit.getAllForms();
+                  widget.cubit.getFullySignedForms();
                 },
                 onDateChanged: (p0) {
                   widget.cubit.dateQueryAllForms(p0);

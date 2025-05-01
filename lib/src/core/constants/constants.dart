@@ -15,7 +15,7 @@ abstract class Constants {
     systemRole: AppFunctions.getSystemRole('view_download_all'),
   );
   static final List<String> titleName = [
-    'Other'
+    'Other',
     'Problematic Asset Committee',
     'Procurement Committee',
     'Product / Pricing Committee',

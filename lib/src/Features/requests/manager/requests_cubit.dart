@@ -29,21 +29,20 @@ class RequestsCubit extends Cubit<RequestsState> {
   List<FormModel> sentFormsView = [];
   List<FormModel> fullySignedView = [];
 
-  getAllForms() async {
+
+  getFullySignedForms() async {
     allForms.clear();
     allFormsView.clear();
     emit(GetAllFormsLoading());
     await FirebaseFirestore.instance
-        .collection('sentForms')
+        .collection('fullySignedForms')
         .get()
         .then((onValue) async {
       for (var element in onValue.docs) {
         DocumentReference<Map<String, dynamic>> ref;
         ref = await element.data()['ref'];
         await ref.get().then((onValue) async {
-          if ((await onValue.data()?['isFullySigned']) ?? false) {
-            allForms.add(FormModel.fromJson(onValue.data()));
-          }
+          allForms.add(FormModel.fromJson(onValue.data()));
         });
       }
     });
@@ -210,6 +209,9 @@ class RequestsCubit extends Cubit<RequestsState> {
       form.signedBy!.add(Constants.userModel!.email!);
       if (form.sentTo!.length == form.signedBy!.length) {
         isLastRequiredEmail = true;
+        await FirebaseFirestore.instance
+            .collection('fullySignedForms')
+            .add({'ref': form.formReference});
       }
 
       await form.formReference!.update({
@@ -243,6 +245,37 @@ class RequestsCubit extends Cubit<RequestsState> {
     }
     return isValidToSign;
   }
+
+  Future<void> deleteSentDocument({
+    required String formID,
+    required userId,
+    required List<String> emailsToRemoveFrom,
+  }) async {
+    for (String email in emailsToRemoveFrom) {
+      DocumentReference formDocRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(email)
+          .collection('received_forms')
+          .doc(formID);
+
+      await formDocRef.delete().then((_) {
+
+      }).catchError((error) {
+      });
+      emit(DeletedSuccessfully());
+    }
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('sent_forms')
+        .doc(formID).delete();
+    emit(DeletedSuccessfully());
+    getSentForms(Constants.userModel!.email!);
+  }
+
+
+
+
 
   List<FormModel> fullSignedList = [];
 

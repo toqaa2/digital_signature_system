@@ -307,12 +307,9 @@ class _ReceivedFormsViewState extends State<ReceivedFormsView> {
 
   Future<void> loadPdfFromUrl(String url) async {
     try {
-      print(url);
-      final response = await http.get(Uri.parse(url));
+       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
-        print('response bodybytes');
-        print(response.bodyBytes);
-        documentBytes = response.bodyBytes;
+         documentBytes = response.bodyBytes;
         final PdfDocument document = PdfDocument(inputBytes: documentBytes!);
         pageCount = document.pages.count;
         document.dispose();
