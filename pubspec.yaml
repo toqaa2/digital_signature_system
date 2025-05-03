@@ -5,6 +5,10 @@ version: 1.0.5+1
 environment:
   sdk: ^3.5.0
 dependencies:
+  intl:
+  web:
+  syncfusion_flutter_pdf:
+  image:
   flutter:
     sdk: flutter
   # The following adds the Cupertino Icons font to your application.

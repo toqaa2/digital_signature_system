@@ -1,12 +1,8 @@
-import 'dart:convert';
-
-import 'package:crypto/crypto.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:signature_system/firebase_options.dart';
-import 'package:signature_system/src/Features/layout/view/layout_screen.dart';
-import 'package:signature_system/src/Features/login_screen/view/login_screen.dart';
+import 'package:signature_system/src/features/login_screen/view/login_screen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +29,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: ScreenUtilInit(child:   LayoutScreen()),
+      home: ScreenUtilInit(child:   LoginScreen()),
     );
   }
 }

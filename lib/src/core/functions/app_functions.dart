@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pdf/pdf.dart';
@@ -44,10 +44,9 @@ class AppFunctions {
   }
 
   static sendEmailTo(
-      {required String toEmail, required String fromEmail}) async {
-    print(toEmail);
-    print(fromEmail);
-    var response = await http.post(
+      {required String toEmail, required String fromEmail}) async
+  {
+     await http.post(
       Uri.parse('https://api.emailjs.com/api/v1.0/email/send'),
       headers: {
         'Content-Type': "application/json",
@@ -63,14 +62,13 @@ class AppFunctions {
         },
       }),
     );
-    print(response.body);
   }
 
   static img.Image imageDecode(Uint8List imageData) {
     return img.decodeImage(imageData)!;
   }
 
-  static Future<Uint8List> saveWidgetsAsPdf(List<GlobalKey> globalKeys) async {
+  static Future<Uint8List> saveWidgetsAsPdf(List<GlobalKey> globalKeys,String fileName,) async {
     if (globalKeys.isEmpty) {
       throw ArgumentError(
           'The number of global keys must match the number of image names.');
@@ -84,7 +82,6 @@ class AppFunctions {
 
         // Check if the global key's context is valid
         if (globalKey.currentContext == null) {
-          print('Error: Global key context is null for index $i');
           continue; // Skip this key if the context is invalid
         }
 
@@ -94,16 +91,12 @@ class AppFunctions {
         // Get the original size of the widget
         double originalWidth = boundary.size.width;
         double originalHeight = boundary.size.height;
-        print(originalWidth);
-        print(originalHeight);
-
         ui.Image image = await boundary.toImage(
             pixelRatio: 3.0); // Increase pixel ratio for better quality
         ByteData? byteData =
             await image.toByteData(format: ui.ImageByteFormat.png);
         Uint8List pngBytes = byteData!.buffer.asUint8List();
         // Calculate the aspect ratio of the original image
-        final double aspectRatio = originalWidth / originalHeight;
 
         // Define the page format and size. Match the image's aspect ratio for best results
         PdfPageFormat pageFormat =
@@ -125,12 +118,33 @@ class AppFunctions {
 
       // Save the PDF to bytes
       Uint8List bytes = await pdf.save();
-      // downloadPdf(bytes);
+      await downloadPdfFromBytes(bytes,fileName);
       return bytes;
       // Trigger a download of the PDF file
     } catch (e) {
-      print('sign pdf error: $e');
       return [] as Uint8List;
+    }
+  }
+
+  static Future<void> downloadPdfFromBytes(Uint8List bytes, String fileName) async{
+    if (kIsWeb) {
+      try {
+    // Trigger a download of the PDF file
+    final blob = html.Blob([bytes]);
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.document.createElement('a') as html.AnchorElement
+    ..href = url
+    ..style.display = 'none'
+    ..download = '$fileName.pdf'; // Set the PDF file name
+    html.document.body!.children.add(anchor);
+    anchor.click();
+    html.document.body!.children.remove(anchor);
+    html.Url.revokeObjectUrl(url);
+      } catch (e) {
+        debugPrint('Error downloading PDF from bytes: $e');
+      }
+    } else {
+      debugPrint('Downloading PDF from bytes is only supported on the web.');
     }
   }
 
@@ -146,7 +160,7 @@ class AppFunctions {
       html.document.body!.children.remove(anchor);
       html.Url.revokeObjectUrl(url);
     } catch (e) {
-      print('Error saving widgets as PDF: $e');
+      debugPrint('Error saving widgets as PDF: $e');
     }
   }
 

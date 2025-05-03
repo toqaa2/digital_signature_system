@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:signature_system/src/core/constants/constants.dart';
 
 class FormModel {
   String? formID;
@@ -54,7 +53,7 @@ class FormModel {
 
   Map<String, dynamic> toMap() => {
     'form_reference': formReference,
-    if(otherDocument!=null)'otherDocument': otherDocument,
+    'otherDocument': otherDocument??'',
     if (formID != null) 'formID': formID,
     if (formLink != null) 'formLink': formLink,
     if (formName != null) 'formName': formName,
@@ -92,7 +91,7 @@ class FormModel {
   };
 
   FormModel.fromJson(Map<String, dynamic>? json) {
-    otherDocument = json?['otherDocument'];
+    otherDocument = json?['otherDocument']??'';
     formID = json?['formID'];
     formLink = json?['formLink'];
     formName = json?['formName'];

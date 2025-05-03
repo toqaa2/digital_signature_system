@@ -1,22 +1,22 @@
-class DeparmentModel {
-  String? deprtmentID;
+class DepartmentModel {
+  String? departmentID;
   String? departmentName;
   List<String>? roles;
 
-  DeparmentModel({
-    required this.deprtmentID,
+  DepartmentModel({
+    required this.departmentID,
     required this.departmentName,
     required this.roles,
   });
 
   Map<String, dynamic> toMap() => {
-        'deprtmentID': deprtmentID,
+        'deprtmentID': departmentID,
         'departmentName': departmentName,
         'roles': roles,
       };
 
-  DeparmentModel.fromJson(Map<String, dynamic>? json) {
-    deprtmentID = json!['deprtmentID'];
+  DepartmentModel.fromJson(Map<String, dynamic>? json) {
+    departmentID = json!['deprtmentID'];
     departmentName = json['departmentName'];
     roles = List.generate(json['roles'].length, (index) => json['roles'][index],);
   }
