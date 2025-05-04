@@ -272,12 +272,12 @@ class HomeCubit extends Cubit<HomeState> {
     required String pathURL,
     required String downloadLink,
     required String sentBy,
-    required List<String> selectedEmails,
-  }) async {
+   }) async {
     requiredEmails = requiredEmails.reversed.toList();
     await addMeToSign(email: Constants.userModel!.email!, context: context);
     requiredEmails += selectedFormModel?.requiredToSign ?? [];
-    // String formIDWithDate =formName+DateTime.now().toString();
+    print(requiredEmails);
+    String formIDWithDate =formName+DateTime.now().toString();
     formReference = FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
@@ -291,7 +291,7 @@ class HomeCubit extends Cubit<HomeState> {
       'pathURL': pathURL,
       'downloadLink': downloadLink,
       'formLink': downloadURLOFUploadedDocument,
-      'sentTo': selectedEmails,
+      'sentTo': requiredEmails,
       'sentBy': sentBy,
       'sentDate': DateTime.now(),
       'isFullySigned': false,
@@ -302,7 +302,7 @@ class HomeCubit extends Cubit<HomeState> {
           .add({'ref': formReference});
 
       await AppFunctions.sendEmailTo(
-          toEmail: selectedEmails[0], fromEmail: sentBy);
+          toEmail: requiredEmails[0], fromEmail: sentBy);
       emit(SendForm());
     });
     formSent = true;
@@ -403,10 +403,11 @@ class HomeCubit extends Cubit<HomeState> {
     required String invoiceNumber,
     required String bankAccountNumber,
     required String serviceType,
-    required List<String> selectedEmails,
-  }) async {
+   }) async {
+    requiredEmails = requiredEmails.reversed.toList();
     await addMeToSign(email: Constants.userModel!.email!, context: context);
-    formPaymentReference = FirebaseFirestore.instance
+    requiredEmails += selectedFormModel?.requiredToSign ?? [];
+     formPaymentReference = FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
         .collection('sent_forms')
@@ -418,7 +419,7 @@ class HomeCubit extends Cubit<HomeState> {
       'downloadLink': downloadLink,
       'formName': formName,
       'formLink': downloadURLOFUploadedDocument,
-      'sentTo': selectedEmails,
+      'sentTo': requiredEmails,
       'sentBy': sentBy,
       'sentDate': DateTime.now(),
       'isFullySigned': false,
@@ -440,7 +441,7 @@ class HomeCubit extends Cubit<HomeState> {
           .add({'ref': formPaymentReference});
 
       await AppFunctions.sendEmailTo(
-          toEmail: selectedEmails[0], fromEmail: sentBy);
+          toEmail: requiredEmails[0], fromEmail: sentBy);
     });
   }
 }

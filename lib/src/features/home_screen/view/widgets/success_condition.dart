@@ -108,8 +108,7 @@ class ConditionalStepWidget extends StatelessWidget {
                                             formName: cubit
                                                 .selectedFormModel!.formName!,
                                             sentBy: Constants.userModel!.email!,
-                                            selectedEmails: cubit
-                                                .requiredEmails)
+                                            )
                                         .then(
                                           (value) => cubit.sendToRequiredEmails(
                                             sentBy: Constants.userModel!.email!,
@@ -146,8 +145,7 @@ class ConditionalStepWidget extends StatelessWidget {
                                             formName: cubit
                                                 .selectedFormModel!.formName!,
                                             sentBy: Constants.userModel!.email!,
-                                            selectedEmails: cubit
-                                                .requiredEmails)
+                                             )
                                         .then(
                                           (value) => cubit.sendToRequiredEmails(
                                             sentBy: Constants.userModel!.email!,
