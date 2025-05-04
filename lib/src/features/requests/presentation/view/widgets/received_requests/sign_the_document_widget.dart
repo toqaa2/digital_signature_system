@@ -80,6 +80,12 @@ class _SignTheDocumentWidgetState extends State<SignTheDocumentWidget> {
             signatureModel.page = widget.index;
             setState(() {
               showSignature = !showSignature;
+              if (showSignature) {
+                widget.cubit.signatureSet.add(signatureModel);
+              }
+              if (!showSignature) {
+                widget.cubit.signatureSet.remove(signatureModel);
+              }
             });
           },
         ),
