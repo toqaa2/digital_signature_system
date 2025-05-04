@@ -59,7 +59,8 @@ class Step2Screen extends StatelessWidget {
             children: [
               Text(
                 "Please Upload your form after fill it as a PDF File*",
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: TextStyle(fontSize: 12, color: Colors.grey
+                ),
               ),
               Container(
                 height: 50,
