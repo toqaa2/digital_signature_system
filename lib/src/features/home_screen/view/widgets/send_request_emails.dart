@@ -64,7 +64,7 @@ class _SendRequestEmailsState extends State<SendRequestEmails> {
               text: "Add Email",
               onTap: widget.cubit.selectedEmail == null
                   ? (){}
-                  : () => widget.cubit.addToRequiredToSign(widget.cubit.selectedEmail!,context),
+                  : () => widget.cubit.addToRequiredToSign(email: widget.cubit.selectedEmail!,context:  context),
           ),
           // ElevatedButton(
           //   onPressed: widget.cubit.selectedEmail == null
@@ -87,6 +87,10 @@ class _SendRequestEmailsState extends State<SendRequestEmails> {
                           SvgPicture.asset('email_icon.svg', width: 20, height: 20),
                           2.isWidth,
                           Text(email, style: TextStyle(fontSize: 12, color: Colors.grey)),
+                          Spacer(),
+                          IconButton(onPressed: (){
+                            cubit.removeEmail(email: email, context: context);
+                          }, icon: Icon(Icons.delete,color: Colors.redAccent,))
                         ],
                       );
                     }).toList(),

@@ -316,14 +316,29 @@ class HomeCubit extends Cubit<HomeState> {
     emit(FetchEmails());
   }
 
-  Future<void> addToRequiredToSign(
-    String email,
-    BuildContext context,
-  ) async {
+  Future<void> addToRequiredToSign({
+    required String email,
+    required BuildContext context,
+  }) async {
+    if (requiredEmails.contains(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('This email is already exists.')),
+      );
+      return;
+    }
+    print("required emails =$requiredEmails");
+    print("email  =$email");
     requiredEmails.insert(0, email);
+    print("any = ${
+        requiredEmails.any(
+              (element) => element == email,
+        )
+    }");
     emit(AddToList());
+    print("required emails =$requiredEmails");
+
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$email added to requiredToSign')),
+      SnackBar(content: Text('You Should Sign It Firstly')),
     );
   }
 
@@ -331,10 +346,24 @@ class HomeCubit extends Cubit<HomeState> {
     required String email,
     required BuildContext context,
   }) async {
+    
     requiredEmails.insert(0, email);
+  
     emit(AddToList());
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('You Should Sign It Firstly')),
+    );
+  }
+
+  Future<void> removeEmail({
+    required String email,
+    required BuildContext context,
+  }) async {
+    requiredEmails.remove(email);
+    emit(RemoveEmail());
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Email $email removed Successfully')),
     );
   }
 
