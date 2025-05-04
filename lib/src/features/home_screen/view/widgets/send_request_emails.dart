@@ -81,7 +81,11 @@ class _SendRequestEmailsState extends State<SendRequestEmails> {
                 child: SingleChildScrollView(
                   child: Column(
                     spacing: 5,
-                    children: cubit.requiredEmails.map((email) {
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children:[
+                    if(cubit.requiredEmails.isNotEmpty)  Text('It will be sent to :'),
+
+                      ...cubit.requiredEmails.reversed.toList().map((email) {
                       return Row(
                         children: [
                           SvgPicture.asset('email_icon.svg', width: 20, height: 20),
@@ -93,7 +97,25 @@ class _SendRequestEmailsState extends State<SendRequestEmails> {
                           }, icon: Icon(Icons.delete,color: Colors.redAccent,))
                         ],
                       );
-                    }).toList(),
+                    }),
+
+                      if(cubit.requiredEmails.isNotEmpty)                      Text("Then :"),
+
+                      ...cubit.selectedFormModel!.requiredToSign!.map((email) {
+                        return Row(
+                          children: [
+                            SvgPicture.asset('email_icon.svg', width: 20, height: 20),
+                            2.isWidth,
+                            Text(email, style: TextStyle(fontSize: 12, color: Colors.grey)),
+                            Spacer(),
+                            IconButton(onPressed: (){
+                              cubit.removeEmail(email: email, context: context);
+                            }, icon: Icon(Icons.delete,color: Colors.redAccent,))
+                          ],
+                        );
+                      }),
+
+                    ],
                   ),
                 ),
               );

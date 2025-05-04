@@ -128,7 +128,7 @@ class HomeCubit extends Cubit<HomeState> {
     selectedItem = formId;
     if (formId != null) {
       selectedFormModel = forms.firstWhere((form) => form.formID == formId);
-      requiredEmails = selectedFormModel?.requiredToSign ?? [];
+      // requiredEmails = selectedFormModel?.requiredToSign ?? [];
       formID = selectedFormModel!.formID! + DateTime.now().toString();
     } else {
       selectedFormModel = null;
@@ -165,6 +165,7 @@ class HomeCubit extends Cubit<HomeState> {
       }
     }
   }
+
   Future<String> uploadDocument({
     required String userID,
     required String formName,
@@ -191,7 +192,7 @@ class HomeCubit extends Cubit<HomeState> {
         // print('Download URL: $documentType');
         // print('Download URL: $uploadOtherDoc');
         emit(UploadSuccess());
-        return  (await pdfRef.getDownloadURL());
+        return (await pdfRef.getDownloadURL());
       }
     }
     return 'No Link';
@@ -273,7 +274,9 @@ class HomeCubit extends Cubit<HomeState> {
     required String sentBy,
     required List<String> selectedEmails,
   }) async {
+    requiredEmails = requiredEmails.reversed.toList();
     await addMeToSign(email: Constants.userModel!.email!, context: context);
+    requiredEmails += selectedFormModel?.requiredToSign ?? [];
     // String formIDWithDate =formName+DateTime.now().toString();
     formReference = FirebaseFirestore.instance
         .collection('users')
@@ -301,7 +304,6 @@ class HomeCubit extends Cubit<HomeState> {
       await AppFunctions.sendEmailTo(
           toEmail: selectedEmails[0], fromEmail: sentBy);
       emit(SendForm());
-
     });
     formSent = true;
   }
@@ -326,19 +328,13 @@ class HomeCubit extends Cubit<HomeState> {
       );
       return;
     }
-    print("required emails =$requiredEmails");
-    print("email  =$email");
+
     requiredEmails.insert(0, email);
-    print("any = ${
-        requiredEmails.any(
-              (element) => element == email,
-        )
-    }");
+
     emit(AddToList());
-    print("required emails =$requiredEmails");
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('You Should Sign It Firstly')),
+      SnackBar(content: Text('email $email is added successfully')),
     );
   }
 
@@ -346,9 +342,8 @@ class HomeCubit extends Cubit<HomeState> {
     required String email,
     required BuildContext context,
   }) async {
-    
     requiredEmails.insert(0, email);
-  
+
     emit(AddToList());
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -430,8 +425,8 @@ class HomeCubit extends Cubit<HomeState> {
       'formTitle': selectedTitleName,
       'paymentType': paymentType,
       'commercialRegistration': commercialRegistrationController.text,
-      'electronicInvoice': electronicInvoiceController.text ,
-      'advancePayment': advancePaymentController.text ,
+      'electronicInvoice': electronicInvoiceController.text,
+      'advancePayment': advancePaymentController.text,
       'taxID': taxID,
       'bankName': bankName,
       'invoiceNumber': invoiceNumber,
@@ -446,7 +441,6 @@ class HomeCubit extends Cubit<HomeState> {
 
       await AppFunctions.sendEmailTo(
           toEmail: selectedEmails[0], fromEmail: sentBy);
-
     });
   }
 }
