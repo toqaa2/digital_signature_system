@@ -13,8 +13,8 @@ import 'package:signature_system/src/features/requests/presentation/manager/requ
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 ScrollController scrollController=ScrollController();
-class ReceivedFormsView extends StatefulWidget {
-  const ReceivedFormsView({
+class SignTheDocumentScreen extends StatefulWidget {
+  const SignTheDocumentScreen({
     super.key,
     required this.formModel,
     required this.cubit,
@@ -24,10 +24,10 @@ class ReceivedFormsView extends StatefulWidget {
   final FormModel formModel;
 
   @override
-  State<ReceivedFormsView> createState() => _ReceivedFormsViewState();
+  State<SignTheDocumentScreen> createState() => _SignTheDocumentScreenState();
 }
 
-class _ReceivedFormsViewState extends State<ReceivedFormsView> {
+class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
   int pageCount = 0;
   Uint8List? documentBytes;
   List<Uint8List> documents = [];

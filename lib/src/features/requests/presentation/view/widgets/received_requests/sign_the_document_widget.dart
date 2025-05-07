@@ -7,7 +7,7 @@ import 'package:signature_system/src/core/models/form_model.dart';
 import 'package:signature_system/src/core/shared_widgets/custom_button.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 import 'package:signature_system/src/features/requests/presentation/manager/requests_cubit.dart';
-import 'package:signature_system/src/features/requests/presentation/view/widgets/received_requests/received_requests_view.dart';
+import 'package:signature_system/src/features/requests/presentation/view/widgets/received_requests/sign_the_document_screen.dart';
 import 'package:signature_system/src/features/requests/presentation/view/widgets/view_single_page_with_signature.dart';
 
 class SignTheDocumentWidget extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signature_system/src/features/requests/presentation/manager/requests_cubit.dart';
-import 'package:signature_system/src/features/requests/presentation/view/widgets/received_requests/received_requests_view.dart';
+import 'package:signature_system/src/features/requests/presentation/view/widgets/received_requests/sign_the_document_screen.dart';
 import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/models/form_model.dart';
 import 'package:signature_system/src/core/shared_widgets/searchable_dropdown.dart';
@@ -82,7 +82,7 @@ class _ReceivedRequestScreenState extends State<ReceivedRequestScreen> {
                       onTap: () {
                         Navigator.of(context)
                             .push(MaterialPageRoute(
-                          builder: (context) => ReceivedFormsView(
+                          builder: (context) => SignTheDocumentScreen(
                               cubit: widget.cubit,
                               formModel: receivedForm,
                               ),

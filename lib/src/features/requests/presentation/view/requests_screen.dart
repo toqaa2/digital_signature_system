@@ -9,7 +9,7 @@ import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/helper/enums/form_enum.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 
- import 'screens/send_request_screen.dart';
+ import 'screens/sent_request_screen.dart';
 
 class RequestsScreen extends StatefulWidget {
   const RequestsScreen({super.key});
