@@ -81,11 +81,11 @@ class Step2Screen extends StatelessWidget {
                     cubit.selectedFormModel!.formName!,
                     style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
                   ),
-                  trailing: cubit.state is UploadFileLoading
+                  trailing: cubit.isLoadingForm == true
                       ? CircularProgressIndicator(
                           color: AppColors.mainColor,
                         )
-                      : cubit.state is UploadFileSuccess
+                      :  cubit.isLoadingForm == false
                           ? SvgPicture.asset(
                               'assets/uploaded.svg',
                               height: 30,
@@ -129,11 +129,11 @@ class Step2Screen extends StatelessWidget {
                       style:
                           TextStyle(fontSize: 14, color: Colors.grey.shade700),
                     ),
-                    trailing: cubit.state is UploadLoading
+                    trailing: cubit.isLoadingOtherDocument == true
                         ? CircularProgressIndicator(
                             color: AppColors.mainColor,
                           )
-                        : cubit.state is UploadSuccess
+                        : cubit.isLoadingOtherDocument  == false
                             ? SvgPicture.asset(
                                 'assets/uploaded.svg',
                                 height: 30,

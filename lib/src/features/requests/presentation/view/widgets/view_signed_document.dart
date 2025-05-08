@@ -57,6 +57,12 @@ class _ViewSignedDocumentWidgetState extends State<ViewSignedDocumentWidget> {
         debugPrint('Failed to load PDF: ${response.statusCode}');
       }
     } catch (e) {
+        showDialog(
+          context:context.mounted? context:context,
+          builder: (context) => AlertDialog(
+            content: Text('Please Try Again '),
+          ),
+        );
       debugPrint('Error in received widget view is : $e');
     }
   }

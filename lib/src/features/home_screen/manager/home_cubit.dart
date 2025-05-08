@@ -60,8 +60,9 @@ class HomeCubit extends Cubit<HomeState> {
 
   Uint8List? docFile;
   String downloadURLOFUploadedDocument = '';
-
+bool? isLoadingForm;
   Future<void> pickAndUploadDocument(String userID, String formName) async {
+    isLoadingForm = true;
     emit(UploadFileLoading());
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -81,7 +82,7 @@ class HomeCubit extends Cubit<HomeState> {
 
         downloadURLOFUploadedDocument = await pdfRef.getDownloadURL();
         debugPrint('Download URL: $downloadURLOFUploadedDocument');
-
+        isLoadingForm = false;
         emit(UploadFileSuccess());
       }
     }
@@ -165,11 +166,13 @@ class HomeCubit extends Cubit<HomeState> {
       }
     }
   }
-
+bool? isLoadingOtherDocument;
   Future<String> uploadDocument({
     required String userID,
     required String formName,
   }) async {
+    isLoadingOtherDocument = true;
+
     emit(UploadLoading());
 
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -192,6 +195,8 @@ class HomeCubit extends Cubit<HomeState> {
         // print('Download URL: $documentType');
         // print('Download URL: $uploadOtherDoc');
         emit(UploadSuccess());
+        isLoadingOtherDocument = false;
+
         return (await pdfRef.getDownloadURL());
       }
     }
