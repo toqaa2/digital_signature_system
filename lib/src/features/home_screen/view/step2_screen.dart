@@ -146,6 +146,54 @@ class Step2Screen extends StatelessWidget {
                 ),
               ],
             ),
+          if (cubit.selectedItem!.contains('PaymentRequest Above 30K'))
+            Column(
+              spacing: 10,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Attach Procurement Committee Payment ",
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                Container(
+                  height: 50,
+                  width: 500,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.shade300)),
+                  child: ListTile(
+                    onTap: () async {
+                      cubit.uploadProcurment = await cubit.uploadDocument(
+                        formName: cubit.selectedFormModel!.formName!,
+                        userID: Constants.userModel!.userId!,
+                      );
+                    },
+                    leading: SvgPicture.asset(
+                      'assets/Document.svg',
+                      height: 30,
+                    ),
+                    title: Text(
+                      "Upload Procurement Committee Payment",
+                      style:
+                      TextStyle(fontSize: 14, color: Colors.grey.shade700),
+                    ),
+                    trailing: cubit.isLoadingOtherDocument == true
+                        ? CircularProgressIndicator(
+                      color: AppColors.mainColor,
+                    )
+                        : cubit.isLoadingOtherDocument  == false
+                        ? SvgPicture.asset(
+                      'assets/uploaded.svg',
+                      height: 30,
+                    )
+                        : SvgPicture.asset(
+                      'assets/UploadSvg.svg',
+                      height: 30,
+                    ),
+                  ),
+                ),
+              ],
+            ),
         ],
       ),
     );

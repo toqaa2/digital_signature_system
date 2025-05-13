@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/helper/extension/distance.dart';
-import 'package:signature_system/src/core/style/colors.dart';
-import '../../../login_screen/view/widgets/custom_text_field.dart';
+ import '../../../login_screen/view/widgets/custom_text_field.dart';
 import '../../manager/home_cubit.dart';
 import 'dashed_text_field.dart';
 
@@ -18,75 +17,83 @@ class Step3PaymentRequest extends StatefulWidget {
 class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
   @override
   Widget build(BuildContext context) {
+    print('here1');
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-      child: Column(
+      child:
+
+      widget.cubit.selectedPaymentType =='Petty Cash'?
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            child: Column(
+
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: DashedTextField(
+                        onTap: ()async{
+                          widget.cubit.pettyCashDocument.text =await    widget.cubit.uploadDocument(
+                            formName: widget.cubit.selectedFormModel!.formName!,
+                            userID:  Constants.userModel!.name!,
+                          );
+                          widget.cubit.emit(UploadSuccess());
+                        },
+                        hintText: "Upload Document or Image",
+
+                        controller: widget.cubit.pettyCashDocument,
+
+                      ),
+                    ),
+                  ],
+                ),
+                20.isHeight,
+                Row(
+                  children: [
+                    Expanded(
+                        child: TextFieldWidget(
+                          controller: widget.cubit.commentPettyCash,
+                          labelText: "Add Comment..",
+                        )),
+                  ],
+                ),
+              ],
+            ),
+          )
+          :
+      Column(
         children: [
           // First Row
           Row(
             children: [
               Expanded(
-                child: GestureDetector(
+                child: DashedTextField(
                   onTap: () async{
                     widget.cubit.commercialRegistrationController.text=await
                     widget.cubit.uploadDocument(
-                       formName: widget.cubit.selectedFormModel!.formName!,
-                       userID:  Constants.userModel!.name!,
+                      formName: widget.cubit.selectedFormModel!.formName!,
+                      userID:  Constants.userModel!.name!,
                     );
+                    widget.cubit.emit(UploadSuccess());
                   },
-                  child: DashedTextField(
-                    textStyle: widget.cubit.commercialRegistrationController.text.isEmpty
-                        ? TextStyle(fontSize: 11, color: Colors.grey)
-                        : TextStyle(fontSize: 11, color: Colors.green),
-                    hintText: "Upload Commercial Registration",
-                    controller: widget.cubit.commercialRegistrationController,
-                    leadingIcon:
-                    widget.cubit.state is UploadCommercialRegistrationLoading
-                        ? CircularProgressIndicator(
-                      color: AppColors.mainColor,
-                    )
-                        : widget.cubit.commercialRegistrationController.text.isNotEmpty
-                        ? Icon(
-                      Icons.check_circle,
-                      color: Colors.green,
-                    )
-                        : Icon(
-                      Icons.upload,
-                      color: Colors.grey,
-                    ),
-                  ),
+                  hintText: "Upload Commercial Registration",
+                  controller: widget.cubit.commercialRegistrationController,
                 ),
               ),
               5.isWidth,
               Expanded(
-                child: GestureDetector(
+                child: DashedTextField(
                   onTap: ()async{
                     widget.cubit.advancePaymentController.text =await    widget.cubit.uploadDocument(
-                       formName: widget.cubit.selectedFormModel!.formName!,
-                       userID:  Constants.userModel!.name!,
+                      formName: widget.cubit.selectedFormModel!.formName!,
+                      userID:  Constants.userModel!.name!,
                     );
+                    widget.cubit.emit(UploadSuccess());
                   },
-                  child: DashedTextField(
-                    hintText: "Upload Advance payment Certificate",
-                    textStyle: widget.cubit.advancePaymentController.text.isEmpty
-                        ? TextStyle(fontSize: 11, color: Colors.grey)
-                        : TextStyle(fontSize: 11, color: Colors.green),
-                    controller: widget.cubit.advancePaymentController,
-                    leadingIcon:
-                        widget.cubit.state is UploadAdvancePaymentLoading
-                            ? CircularProgressIndicator(
-                                color: AppColors.mainColor,
-                              )
-                            : widget.cubit.advancePaymentController.text.isNotEmpty
-                                ? Icon(
-                                    Icons.check_circle,
-                                    color: Colors.green,
-                                  )
-                                : Icon(
-                                    Icons.upload,
-                                    color: Colors.grey,
-                                  ),
-                  ),
+                  hintText: "Upload Advance payment Certificate",
+
+                  controller: widget.cubit.advancePaymentController,
+
                 ),
               ),
             ],
@@ -96,34 +103,18 @@ class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
           Row(
             children: [
               Expanded(
-                child: GestureDetector(
+                child: DashedTextField(
                   onTap: () async{
                     widget.cubit.electronicInvoiceController.text=await       widget.cubit.uploadDocument(
-                         formName: widget.cubit.selectedFormModel!.formName!,
-                         userID:  Constants.userModel!.name!,
+                      formName: widget.cubit.selectedFormModel!.formName!,
+                      userID:  Constants.userModel!.name!,
                     );
+                    widget.cubit.emit(UploadSuccess());
                   },
-                  child: DashedTextField(
-                    textStyle: widget.cubit.electronicInvoiceController.text.isEmpty
-                        ? TextStyle(fontSize: 11, color: Colors.grey)
-                        : TextStyle(fontSize: 11, color: Colors.green),
-                    hintText: "Upload Electronic Invoice",
-                    controller: widget.cubit.electronicInvoiceController,
-                    leadingIcon:
-                    widget.cubit.state is UploadElectronicInvoiceLoading
-                        ? CircularProgressIndicator(
-                      color: AppColors.mainColor,
-                    )
-                        : widget.cubit.electronicInvoiceController.text.isNotEmpty
-                        ? Icon(
-                      Icons.check_circle,
-                      color: Colors.green,
-                    )
-                        : Icon(
-                      Icons.upload,
-                      color: Colors.grey,
-                    ),
-                  ),
+
+                  hintText: "Upload Electronic Invoice",
+                  controller: widget.cubit.electronicInvoiceController,
+
                 ),
               ),
               5.isWidth,

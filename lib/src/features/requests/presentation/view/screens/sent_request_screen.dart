@@ -188,7 +188,7 @@ class SentListView extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => SignedDocumentScreen(
-                  form: sentForm,
+                  formModel: sentForm,
                 ),
               ),
             );
@@ -251,7 +251,7 @@ class FullSignedListView extends StatelessWidget {
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => SignedDocumentScreen(
-                form: fullSigned,
+                formModel: fullSigned,
               ),
             ));
           },

@@ -84,7 +84,7 @@ class _SignedByMeScreenState extends State<SignedByMeScreen> {
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => SignedDocumentScreen(
-                            form: signedByMe,
+                            formModel: signedByMe,
                           ),
                         ));
                       },

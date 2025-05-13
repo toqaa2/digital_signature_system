@@ -99,7 +99,7 @@ class _SendRequestEmailsState extends State<SendRequestEmails> {
                       );
                     }),
 
-                      if(cubit.requiredEmails.isNotEmpty)                      Text("Then :"),
+                      if(cubit.requiredEmails.isNotEmpty)Text("Then :"),
 
                       ...cubit.selectedFormModel!.requiredToSign!.map((email) {
                         return Row(

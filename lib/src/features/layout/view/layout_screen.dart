@@ -14,8 +14,7 @@ class LayoutScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => LayoutCubit()..checkUserEmailToChangeHomePage(),
       child: BlocConsumer<LayoutCubit, LayoutState>(
-        listener: (context, state) {
-        },
+        listener: (context, state) {},
         builder: (context, state) {
           LayoutCubit cubit = LayoutCubit.get(context);
           return Container(
@@ -44,13 +43,14 @@ class LayoutScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                  Row(
-                            children:(Constants.userModel?.email ==
-                                "a.elghandakly@aur-consumerfinance.com" ||
-                                Constants.userModel?.email ==
-                                    "a.ibrahim@waseela-cf.com"||  Constants.userModel?.email ==
-                                "n.elzorkany@aur-consumerfinance.com")
-                                ? [
+                    Row(
+                      children: (Constants.userModel?.email ==
+                                  "a.elghandakly@aur-consumerfinance.com" ||
+                              Constants.userModel?.email ==
+                                  "a.ibrahim@waseela-cf.com" ||
+                              Constants.userModel?.email ==
+                                  "n.elzorkany@aur-consumerfinance.com")
+                          ? [
                               TextButton(
                                   onPressed: () {
                                     cubit.changePage(1);
@@ -78,7 +78,7 @@ class LayoutScreen extends StatelessWidget {
                                           : FontWeight.normal,
                                       color: cubit.isSelected[0]
                                           ? AppColors.mainColor
-                                          :Colors.grey.shade700,
+                                          : Colors.grey.shade700,
                                     ),
                                   )),
                               TextButton(
@@ -96,7 +96,8 @@ class LayoutScreen extends StatelessWidget {
                                           : Colors.grey.shade700,
                                     ),
                                   )),
-                            ]: [
+                            ]
+                          : [
                               TextButton(
                                   onPressed: () {
                                     cubit.changePage(0);
@@ -143,7 +144,7 @@ class LayoutScreen extends StatelessWidget {
                                     ),
                                   )),
                             ],
-                          ),
+                    ),
 
                     // Row(
                     //   children: [

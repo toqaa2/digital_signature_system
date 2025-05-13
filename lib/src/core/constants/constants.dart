@@ -3,7 +3,7 @@ import 'package:signature_system/src/core/functions/app_functions.dart';
 import '../models/user_model.dart';
 
 abstract class Constants {
-  static String version ='1.0.6+1';
+  static String version ='1.0.7+1';
   static UserModel? userModel = UserModel(
     email: 'i.medhat@waseela-cf.com',
     department: 'department',
@@ -19,6 +19,8 @@ abstract class Constants {
     'Problematic Asset Committee',
     'Procurement Committee',
     'Product / Pricing Committee',
+    'Annual Expenses',
+    'iScore Expenses',
     'Administrative Stuff',
     'Board Authentication Fees',
     'Board Expenses',

@@ -77,7 +77,7 @@ class _AllFormsScreenState extends State<AllFormsScreen> {
                         Navigator.of(context)
                             .push(MaterialPageRoute(
                           builder: (context) => SignedDocumentScreen(
-                            form: receivedForm,
+                            formModel: receivedForm,
                             canDownload: true,
                           ),
                         ))

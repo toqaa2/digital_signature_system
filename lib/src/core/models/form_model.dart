@@ -1,11 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:signature_system/src/core/models/comment_model.dart';
 
 class FormModel {
   String? formID;
   String? formLink;
+  String? uploadProcurment;
   String? otherDocument;
+  String? pettyCashDocument;
+  String? commentPettyCash;
   String? formName;
   List<String>? requiredToSign;
+  List<CommentModel>? comments;
   List<String>? sentTo;
   String? sentBy;
   List<SignedByModel>? signedBy;
@@ -20,6 +25,7 @@ class FormModel {
   String? electronicInvoice;
   String? advancePayment;
   String? taxID;
+
   String? bankName;
   String? invoiceNumber;
   String? bankAccountNumber;
@@ -31,7 +37,11 @@ class FormModel {
     required this.formName,
     required this.requiredToSign,
     this.otherDocument,
+    this.uploadProcurment,
     this.sentTo,
+    this.comments,
+    this.commentPettyCash,
+    this.pettyCashDocument,
     this.pathURL,
     this.formReference,
     this.sentBy,
@@ -52,80 +62,89 @@ class FormModel {
   });
 
   Map<String, dynamic> toMap() => {
-    'form_reference': formReference,
-    'otherDocument': otherDocument??'',
-    if (formID != null) 'formID': formID,
-    if (formLink != null) 'formLink': formLink,
-    if (formName != null) 'formName': formName,
-    'requiredToSign': List.generate(
-      requiredToSign?.length ?? 0,
+        'form_reference': formReference,
+        'comments': comments,
+        'otherDocument': otherDocument ?? '',
+        if (formID != null) 'formID': formID,
+        if (formLink != null) 'formLink': formLink,
+        if (formName != null) 'formName': formName,
+        'requiredToSign': List.generate(
+          requiredToSign?.length ?? 0,
           (index) => requiredToSign?[index],
-    ),
-    'sentTo': List.generate(
-      sentTo?.length ?? 0,
+        ),
+        'sentTo': List.generate(
+          sentTo?.length ?? 0,
           (index) => sentTo?[index],
-    ),
-    if (sentBy != null) 'sentBy': sentBy,
-    'signedBy': List.generate(
-      signedBy?.length ?? 0,
+        ),
+        if (sentBy != null) 'sentBy': sentBy,
+        'signedBy': List.generate(
+          signedBy?.length ?? 0,
           (index) => signedBy?[index],
-    ),
-    'serviceType': List.generate(
-      serviceType?.length ?? 0,
+        ),
+        'serviceType': List.generate(
+          serviceType?.length ?? 0,
           (index) => serviceType?[index],
-    ),
-    if (isFullySigned != null) 'isFullySigned': isFullySigned,
-    if (sentDate != null) 'sentDate': sentDate,
-    if (pathURL != null) 'pathURL': pathURL,
-    if (signedDate != null) 'signedDate': signedDate,
-    if (formTitle != null) 'formTitle': formTitle,
-    if (paymentType != null) 'paymentType': paymentType,
-    if (commercialRegistration != null)
-      'commercialRegistration': commercialRegistration,
-    if (electronicInvoice != null) 'electronicInvoice': electronicInvoice,
-    if (advancePayment != null) 'advancePayment': advancePayment,
-    if (taxID != null) 'taxID': taxID,
-    if (bankName != null) 'bankName': bankName,
-    if (invoiceNumber != null) 'invoiceNumber': invoiceNumber,
-    if (bankAccountNumber != null) 'bankAccountNumber': bankAccountNumber,
-  };
+        ),
+        if (isFullySigned != null) 'isFullySigned': isFullySigned,
+        if (sentDate != null) 'sentDate': sentDate,
+        if (pathURL != null) 'pathURL': pathURL,
+        if (uploadProcurment != null) 'uploadProcurment': uploadProcurment,
+        if (signedDate != null) 'signedDate': signedDate,
+        if (formTitle != null) 'formTitle': formTitle,
+        if (paymentType != null) 'paymentType': paymentType,
+        if (commercialRegistration != null)
+          'commercialRegistration': commercialRegistration,
+        if (electronicInvoice != null) 'electronicInvoice': electronicInvoice,
+        if (advancePayment != null) 'advancePayment': advancePayment,
+        if (taxID != null) 'taxID': taxID,
+        if (bankName != null) 'bankName': bankName,
+        if (invoiceNumber != null) 'invoiceNumber': invoiceNumber,
+        if (bankAccountNumber != null) 'bankAccountNumber': bankAccountNumber,
+      };
 
   FormModel.fromJson(Map<String, dynamic>? json) {
-    otherDocument = json?['otherDocument']??'';
+    otherDocument = json?['otherDocument'] ?? '';
     formID = json?['formID'];
     formLink = json?['formLink'];
-    formName = json?['formName'];
+    commentPettyCash = json?['commentPettyCash'] ?? '';
+    pettyCashDocument = json?['pettyCashDocument'] ?? '';
+    formName = json?['formName'] ?? '';
     formReference = json?['form_reference'];
     requiredToSign = List.generate(
       json?['requiredToSign'] == null ? 0 : json?['requiredToSign'].length,
-          (index) => json?['requiredToSign']?[index],
+      (index) => json?['requiredToSign']?[index],
     );
     sentTo = List.generate(
       json?['sentTo'] == null ? 0 : json?['sentTo'].length,
-          (index) => json?['sentTo']?[index],
+      (index) => json?['sentTo']?[index],
     );
     sentBy = json?['sentBy'];
     signedBy = json?['signedBy'] == null || json?['signedBy'].isEmpty
         ? []
         : (json?['signedBy']?[0]) is String
-        ? []
-        : List.generate(
-      json?['signedBy'] == null ? 0 : json?['signedBy'].length,
-          (index) => SignedByModel.fromJson(json?['signedBy']?[index]),
+            ? []
+            : List.generate(
+                json?['signedBy'] == null ? 0 : json?['signedBy'].length,
+                (index) => SignedByModel.fromJson(json?['signedBy']?[index]),
+              );
+    serviceType = json?['serviceType'] ?? '';
+    comments = List.generate(
+      json?['comments'] == null ? 0 : json?['comments'].length,
+      (index) => CommentModel.fromJson(json?['comments'][index]),
     );
-    serviceType = json?['serviceType'];
     isFullySigned = json?['isFullySigned'];
     sentDate = json?['sentDate'];
     signedDate = json?['signedDate'];
+    uploadProcurment = json?['uploadProcurment']??'';
     formTitle = json?['formTitle'];
-    paymentType = json?['paymentType'];
-    commercialRegistration = json?['commercialRegistration'];
-    electronicInvoice = json?['electronicInvoice'];
-    advancePayment = json?['advancePayment'];
-    taxID = json?['taxID'];
-    bankName = json?['bankName'];
-    invoiceNumber = json?['invoiceNumber'];
-    bankAccountNumber = json?['bankAccountNumber'];
+    paymentType = json?['paymentType'] ?? '';
+    commercialRegistration = json?['commercialRegistration'] ?? '';
+    electronicInvoice = json?['electronicInvoice'] ?? '';
+    advancePayment = json?['advancePayment'] ?? '';
+    taxID = json?['taxID'] ?? '';
+    bankName = json?['bankName'] ?? '';
+    invoiceNumber = json?['invoiceNumber'] ?? '';
+    bankAccountNumber = json?['bankAccountNumber'] ?? '';
   }
 }
 
@@ -133,6 +152,7 @@ class SignedByModel {
   final String email;
   final String signatureLink;
   final List<SignatureModel> signatureModelList;
+
   SignedByModel({
     required this.email,
     required this.signatureLink,
@@ -140,22 +160,22 @@ class SignedByModel {
   });
 
   factory SignedByModel.fromJson(Map<String, dynamic>? json) => SignedByModel(
-    email: json?['email'] ?? 'No Email',
-    signatureLink: json?['signature_link'] ?? "",
-    signatureModelList: List.generate(
-      json?['signature'] == null ? 0 : json?['signature'].length,
+        email: json?['email'] ?? 'No Email',
+        signatureLink: json?['signature_link'] ?? "",
+        signatureModelList: List.generate(
+          json?['signature'] == null ? 0 : json?['signature'].length,
           (index) => SignatureModel.fromJson(json?['signature']?[index]),
-    ),
-  );
+        ),
+      );
 
   Map<String, dynamic> toMap() => {
-    'email': email,
-    'signature_link': signatureLink,
-    'signature': List.generate(
-      signatureModelList.length,
+        'email': email,
+        'signature_link': signatureLink,
+        'signature': List.generate(
+          signatureModelList.length,
           (index) => signatureModelList[index].toMap(),
-    ),
-  };
+        ),
+      };
 }
 
 class SignatureModel {
@@ -172,15 +192,13 @@ class SignatureModel {
   });
 
   factory SignatureModel.fromJson(Map<String, dynamic>? json) => SignatureModel(
-    page: json?['page'] ?? 0,
-    scale:json?['scale'] ?? 0,
-    signatureX:json?['signature_x'] ?? 0,
-    signatureY:json?['signature_y'] ?? 0,
+        page: json?['page'] ?? 0,
+        scale: json?['scale'] ?? 0,
+        signatureX: json?['signature_x'] ?? 0,
+        signatureY: json?['signature_y'] ?? 0,
+      );
 
-  );
-
-  Map<String, dynamic> toMap() =>
-      {
+  Map<String, dynamic> toMap() => {
         'page': page,
         'scale': scale,
         'signature_x': signatureX,

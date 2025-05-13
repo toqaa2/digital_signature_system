@@ -60,7 +60,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   Uint8List? docFile;
   String downloadURLOFUploadedDocument = '';
-bool? isLoadingForm;
+  bool? isLoadingForm;
+
   Future<void> pickAndUploadDocument(String userID, String formName) async {
     isLoadingForm = true;
     emit(UploadFileLoading());
@@ -166,7 +167,38 @@ bool? isLoadingForm;
       }
     }
   }
-bool? isLoadingOtherDocument;
+
+  String uploadProcurment = '';
+
+  Future<void> pickAndUploadProcurment({required String userID, required String formName}) async {
+    isLoadingProcurement = true;
+    emit(UploadOtherFileLoading());
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (result != null) {
+      docFile = result.files.single.bytes;
+      if (docFile != null) {
+        final storageRef = FirebaseStorage.instance.ref();
+        Reference pdfRef = storageRef.child(
+            'Procurement/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
+
+        UploadTask uploadTask = pdfRef.putData(
+            docFile!, SettableMetadata(contentType: 'application/pdf'));
+        await uploadTask;
+
+        uploadProcurment = await pdfRef.getDownloadURL();
+        isLoadingProcurement = false;
+        emit(UploadOtherFileSuccess());
+      }
+    }
+  }
+
+  bool? isLoadingOtherDocument;
+  bool? isLoadingProcurement;
+
   Future<String> uploadDocument({
     required String userID,
     required String formName,
@@ -277,12 +309,12 @@ bool? isLoadingOtherDocument;
     required String pathURL,
     required String downloadLink,
     required String sentBy,
-   }) async {
+  }) async {
     requiredEmails = requiredEmails.reversed.toList();
     await addMeToSign(email: Constants.userModel!.email!, context: context);
     requiredEmails += selectedFormModel?.requiredToSign ?? [];
     print(requiredEmails);
-    String formIDWithDate =formName+DateTime.now().toString();
+    String formIDWithDate = formName + DateTime.now().toString();
     formReference = FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
@@ -302,9 +334,9 @@ bool? isLoadingOtherDocument;
       'isFullySigned': false,
       'formTitle': selectedTitleName ?? ""
     }).then((_) async {
-      await FirebaseFirestore.instance
-          .collection('sentForms')
-          .add({'ref': formReference});
+      await FirebaseFirestore.instance.collection('sentForms').add({
+        'ref': formReference,
+      });
 
       await AppFunctions.sendEmailTo(
           toEmail: requiredEmails[0], fromEmail: sentBy);
@@ -371,9 +403,11 @@ bool? isLoadingOtherDocument;
       TextEditingController();
   TextEditingController electronicInvoiceController = TextEditingController();
   TextEditingController advancePaymentController = TextEditingController();
+  TextEditingController pettyCashDocument = TextEditingController();
   TextEditingController taxIDController = TextEditingController();
   TextEditingController bankNameController = TextEditingController();
   TextEditingController invoiceNumberController = TextEditingController();
+  TextEditingController commentPettyCash = TextEditingController();
   TextEditingController bankAccountNumberController = TextEditingController();
   TextEditingController serviceTypeController = TextEditingController();
   final List<String> typeOfService = ['Service', 'Product'];
@@ -408,11 +442,11 @@ bool? isLoadingOtherDocument;
     required String invoiceNumber,
     required String bankAccountNumber,
     required String serviceType,
-   }) async {
+  }) async {
     requiredEmails = requiredEmails.reversed.toList();
     await addMeToSign(email: Constants.userModel!.email!, context: context);
     requiredEmails += selectedFormModel?.requiredToSign ?? [];
-     formPaymentReference = FirebaseFirestore.instance
+    formPaymentReference = FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
         .collection('sent_forms')
@@ -420,8 +454,11 @@ bool? isLoadingOtherDocument;
     await formPaymentReference!.set({
       'form_reference': formPaymentReference,
       'formID': formID,
+      'commentPettyCash':commentPettyCash.text,
+      'pettyCashDocument': pettyCashDocument.text,
       'pathURL': pathURL,
       'downloadLink': downloadLink,
+      'uploadProcurment': uploadProcurment,
       'formName': formName,
       'formLink': downloadURLOFUploadedDocument,
       'sentTo': requiredEmails,

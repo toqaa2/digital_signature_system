@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/functions/app_functions.dart';
+import 'package:signature_system/src/core/models/comment_model.dart';
 import 'package:signature_system/src/core/models/form_model.dart';
 import 'package:signature_system/src/core/style/colors.dart';
-
 
 part 'requests_state.dart';
 
@@ -18,10 +18,9 @@ class RequestsCubit extends Cubit<RequestsState> {
   List<FormModel> allFormsView = [];
   List<FormModel> receivedForms = [];
   List<FormModel> receivedFormsView = [];
-
+  TextEditingController commentsController = TextEditingController();
   List<FormModel> sentFormsView = [];
   List<FormModel> fullySignedView = [];
-
 
   getFullySignedForms() async {
     allForms.clear();
@@ -174,6 +173,39 @@ class RequestsCubit extends Cubit<RequestsState> {
   );
 
   Set<SignatureModel> signatureSet = {};
+  List<CommentModel> comments = [];
+
+  void getComments(FormModel formModel) {
+    comments.clear();
+    DocumentReference<Map<String, dynamic>> ref = formModel.formReference!;
+    ref.get().then((onValue) {
+      final data = onValue.data();
+      if (data != null && data['comments'] != null) {
+        List<dynamic> commentList = data['comments'];
+        comments = commentList.map((e) => CommentModel.fromJson(e)).toList();
+      }
+      emit(GetComments());
+    }).catchError((error) {
+    });
+  }
+
+
+  Future addComment(FormModel formModel) async {
+
+    print(formModel.comments?.length);
+    comments = formModel.comments!.toList();
+    print(comments.length);
+    comments.add(CommentModel(
+      userID: Constants.userModel?.userId,
+      comment: commentsController.text,
+    ));
+    await formModel.formReference?.update({
+      'comments': List.generate(
+        comments.length,
+        (index) => comments[index].toMap(),
+      )
+    });
+  }
 
   Future signTheForm(
     FormModel form,
@@ -252,17 +284,15 @@ class RequestsCubit extends Cubit<RequestsState> {
           .collection('received_forms')
           .doc(formID);
 
-      await formDocRef.delete().then((_) {
-
-      }).catchError((error) {
-      });
+      await formDocRef.delete().then((_) {}).catchError((error) {});
       emit(DeletedSuccessfully());
     }
     await FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
         .collection('sent_forms')
-        .doc(formID).delete();
+        .doc(formID)
+        .delete();
     emit(DeletedSuccessfully());
     getSentForms(Constants.userModel!.email!);
   }
@@ -329,6 +359,7 @@ class RequestsCubit extends Cubit<RequestsState> {
       }
       signedByMeView = signedByMe.toList();
       receivedFormsView = receivedForms.toList();
+
       receivedFormsView.sort((a, b) {
         return b.sentDate!.microsecondsSinceEpoch
             .compareTo(a.sentDate!.microsecondsSinceEpoch);
@@ -338,5 +369,4 @@ class RequestsCubit extends Cubit<RequestsState> {
   }
 
   bool isLoading = false;
-
 }
