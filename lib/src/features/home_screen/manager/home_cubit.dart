@@ -53,6 +53,7 @@ class HomeCubit extends Cubit<HomeState> {
   List<FormModel> forms = [];
 
   TextEditingController docNameController = TextEditingController();
+  TextEditingController otherTitle = TextEditingController();
 
   void downloadFile(String url, String fileName) {
     window.open(url, fileName);
@@ -92,7 +93,7 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> fetchForms() async {
     try {
       QuerySnapshot snapshot =
-          await FirebaseFirestore.instance.collection('forms').get();
+      await FirebaseFirestore.instance.collection('forms').get();
       forms = snapshot.docs
           .map((doc) => FormModel.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
@@ -103,7 +104,7 @@ class HomeCubit extends Cubit<HomeState> {
             formID: "System Update",
             formName: "System Update",
             formLink:
-                "https://firebasestorage.googleapis.com/v0/b/e-document-70241.firebasestorage.app/o/forms%2FDigitalization.docx?alt=media&token=3986a236-4fbc-40eb-9d3a-d26e82081faa",
+            "https://firebasestorage.googleapis.com/v0/b/e-document-70241.firebasestorage.app/o/forms%2FDigitalization.docx?alt=media&token=3986a236-4fbc-40eb-9d3a-d26e82081faa",
             requiredToSign: [
               "m.ghoneim@waseela-cf.com",
               "a.elghandakly@aur-consumerfinance.com"
@@ -332,7 +333,7 @@ class HomeCubit extends Cubit<HomeState> {
       'sentBy': sentBy,
       'sentDate': DateTime.now(),
       'isFullySigned': false,
-      'formTitle': selectedTitleName ?? ""
+      'formTitle':  selectedTitleName== 'Other'?otherTitle.text :selectedTitleName,
     }).then((_) async {
       await FirebaseFirestore.instance.collection('sentForms').add({
         'ref': formReference,
@@ -400,7 +401,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   TextEditingController commercialRegistrationController =
-      TextEditingController();
+  TextEditingController();
   TextEditingController electronicInvoiceController = TextEditingController();
   TextEditingController advancePaymentController = TextEditingController();
   TextEditingController pettyCashDocument = TextEditingController();
@@ -419,9 +420,9 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<FormModel?> getForm() async {
     DocumentReference<Map<String, dynamic>?>? ref =
-        selectedItem!.contains('PaymentRequest')
-            ? formPaymentReference
-            : formReference;
+    selectedItem!.contains('PaymentRequest')
+        ? formPaymentReference
+        : formReference;
     await ref?.get().then((onValue) {
       return FormModel.fromJson(onValue.data());
     });
@@ -465,7 +466,7 @@ class HomeCubit extends Cubit<HomeState> {
       'sentBy': sentBy,
       'sentDate': DateTime.now(),
       'isFullySigned': false,
-      'formTitle': selectedTitleName,
+      'formTitle': selectedTitleName== 'Other'?otherTitle.text :selectedTitleName,
       'paymentType': paymentType,
       'commercialRegistration': commercialRegistrationController.text,
       'electronicInvoice': electronicInvoiceController.text,
@@ -485,5 +486,31 @@ class HomeCubit extends Cubit<HomeState> {
       await AppFunctions.sendEmailTo(
           toEmail: requiredEmails[0], fromEmail: sentBy);
     });
+  }
+  List<FormModel> allForms = [];
+  List<FormModel> allFormsView = [];
+
+
+  getAllForms() async {
+    allForms.clear();
+    allFormsView.clear();
+    await FirebaseFirestore.instance
+        .collection('sentForms')
+        .get()
+        .then((onValue) async {
+      for (var element in onValue.docs) {
+        DocumentReference<Map<String, dynamic>> ref;
+        ref = await element.data()['ref'];
+        await ref.get().then((onValue) async {
+          allForms.add(FormModel.fromJson(onValue.data()));
+        });
+      }
+    });
+    allFormsView = allForms.toList();
+    allFormsView.sort((a, b) {
+      return b.sentDate!.microsecondsSinceEpoch
+          .compareTo(a.sentDate!.microsecondsSinceEpoch);
+    });
+    emit(GetAllForms());
   }
 }
