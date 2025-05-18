@@ -166,13 +166,6 @@ class RequestsCubit extends Cubit<RequestsState> {
     emit(Search());
   }
 
-  SignedByModel signedByModel = SignedByModel(
-    email: Constants.userModel?.email ?? '',
-    signatureLink: Constants.userModel?.mainSignature ?? '',
-    signatureModelList: [],
-  );
-
-  Set<SignatureModel> signatureSet = {};
   List<CommentModel> comments = [];
 
   void getComments(FormModel formModel) {
@@ -225,8 +218,7 @@ class RequestsCubit extends Cubit<RequestsState> {
       );
       await Future.delayed(const Duration(seconds: 1));
       bool isLastRequiredEmail = false;
-      signedByModel.signatureModelList.addAll(signatureSet);
-      form.signedBy!.add(signedByModel);
+      form.signedBy!.add(SignatureModel());
       List<Map<String, dynamic>> signedByMeList = List.generate(
         form.signedBy?.length ?? 0,
         (index) => form.signedBy![index].toMap(),

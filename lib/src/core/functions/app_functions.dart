@@ -13,27 +13,6 @@ import 'package:image/image.dart' as img;
 import 'package:pdf/widgets.dart' as pw;
 
 class AppFunctions {
-  static List<Widget> viewSignatures(FormModel form, int index) {
-    List<Widget> widgets = [];
-    form.signedBy?.forEach((element) {
-      for (SignatureModel e in element.signatureModelList) {
-        if (e.page == index) {
-          widgets.add(Positioned(
-            left: e.signatureX.toDouble(),
-            top: e.signatureY.toDouble(),
-            child: Image.network(
-              element.signatureLink,
-              fit: BoxFit.contain,
-              width: e.scale.toDouble(),
-              height: e.scale.toDouble() / 2,
-            ),
-          ));
-        }
-      }
-    });
-    return widgets;
-  }
-
   static SystemRoleEnum getSystemRole(String systemRole) {
     switch (systemRole) {
       case 'view_download_all':

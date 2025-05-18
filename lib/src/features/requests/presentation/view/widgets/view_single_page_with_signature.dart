@@ -20,12 +20,10 @@ class ViewSinglePageWithSignature extends StatefulWidget {
   final GlobalKey<State<StatefulWidget>>? paintKey;
 
   @override
-  State<ViewSinglePageWithSignature> createState() =>
-      _ViewSinglePageWithSignatureState();
+  State<ViewSinglePageWithSignature> createState() => _ViewSinglePageWithSignatureState();
 }
 
 class _ViewSinglePageWithSignatureState extends State<ViewSinglePageWithSignature> {
-
   @override
   void initState() {
     super.initState();
@@ -37,14 +35,13 @@ class _ViewSinglePageWithSignatureState extends State<ViewSinglePageWithSignatur
       key: widget.paintKey,
       child: Stack(
         children: [
-          Container(
-            color: Colors.white,
-            width: 1100,
-            height: 1410,
+          AspectRatio(
+            aspectRatio: 5 / 7,
             child: SfPdfViewer.memory(
               widget.documentBytes,
               initialPageNumber: widget.page + 1,
-              scrollDirection: PdfScrollDirection.horizontal,
+              scrollDirection: PdfScrollDirection.vertical,
+              pageLayoutMode: PdfPageLayoutMode.single,
               canShowHyperlinkDialog: false,
               canShowPageLoadingIndicator: true,
               canShowPaginationDialog: false,
@@ -60,12 +57,12 @@ class _ViewSinglePageWithSignatureState extends State<ViewSinglePageWithSignatur
               interactionMode: PdfInteractionMode.pan,
             ),
           ),
-          ...AppFunctions.viewSignatures(widget.formModel, widget.page),
-          Container(
-            width: 1100,
-            height: 1410,
-            color: Colors.transparent,
-          ),
+          AspectRatio(
+            aspectRatio: 5 / 2,
+            child: Container(
+              color: Colors.transparent,
+            ),
+          )
         ],
       ),
     );

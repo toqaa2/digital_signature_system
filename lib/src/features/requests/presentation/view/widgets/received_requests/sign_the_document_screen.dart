@@ -6,15 +6,15 @@ import 'package:signature_system/src/core/functions/app_functions.dart';
 import 'package:signature_system/src/core/models/form_model.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:signature_system/src/core/shared_widgets/custom_button.dart';
-import 'package:signature_system/src/features/requests/presentation/view/widgets/received_requests/sign_the_document_widget.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 import 'package:signature_system/src/features/requests/presentation/manager/requests_cubit.dart';
+import 'package:signature_system/src/features/requests/presentation/view/widgets/signatures_table_widget.dart';
+import 'package:signature_system/src/features/requests/presentation/view/widgets/view_single_page_with_signature.dart';
 
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 import '../../../../../login_screen/view/widgets/custom_text_field.dart';
 
-ScrollController scrollController = ScrollController();
 
 class SignTheDocumentScreen extends StatefulWidget {
   const SignTheDocumentScreen({
@@ -31,18 +31,163 @@ class SignTheDocumentScreen extends StatefulWidget {
 }
 
 class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
-  int pageCount = 0;
   Uint8List? documentBytes;
-  List<Uint8List> documents = [];
   List<GlobalKey<State<StatefulWidget>>> paintKeys = [];
   List<Widget> pdfPageSignatures = [];
+
+  @override
+  void initState() {
+    widget.cubit.getComments(widget.formModel);
+    _loadPdfFromUrl(widget.formModel.formLink ?? '');
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(image: AssetImage("assets/background.png"), fit: BoxFit.fill),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white.withAlpha(150),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 30, left: 40, right: 40),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(widget.formModel.formName ?? ''),
+                          Text("at ${intl.DateFormat('yyy-MM-dd hh:mm a').format(
+                            DateTime.fromMicrosecondsSinceEpoch(
+                                widget.formModel.sentDate?.microsecondsSinceEpoch ?? 0),
+                          )}"),
+                          ButtonWidget(
+                            verticalMargin: 2,
+                            buttonColor: Colors.white,
+                            borderColor: AppColors.mainColor,
+                            minWidth: 200,
+                            height: 30,
+                            textStyle: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.mainColor,
+                            ),
+                            text: "Add Comment",
+                            onTap: () {
+                              setState(() {
+                                _showDialog2(context);
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      Column(
+                        spacing: 5,
+                        children: [
+                          if (widget.cubit.checkIfValidToSign(widget.formModel))
+                            ButtonWidget(
+                                verticalMargin: 2,
+                                minWidth: 200,
+                                height: 30,
+                                textStyle: TextStyle(fontSize: 12, color: Colors.white),
+                                text: "Approve form",
+                                onTap: () async {
+                                  if (paintKeys.isNotEmpty) {
+                                    /// save to DB
+                                    widget.cubit
+                                        .signTheForm(widget.formModel, context)
+                                        .then((onValue) {
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                      }
+                                    });
+                                  }
+                                }),
+                          if (hasDialogContent())
+                            ButtonWidget(
+                              verticalMargin: 2,
+                              buttonColor: Colors.white,
+                              borderColor: AppColors.mainColor,
+                              minWidth: 200,
+                              height: 30,
+                              textStyle: TextStyle(
+                                fontSize: 12,
+                                color: AppColors.mainColor,
+                              ),
+                              text: "Show Attached Docs",
+                              onTap: () {
+                                setState(() {
+                                  _showDialog(context);
+                                });
+                              },
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Expanded(
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          ...pdfPageSignatures,
+                          SignaturesTableWidget(signatures: widget.formModel.signedBy,),
+                        ],
+                      )),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _loadPdfFromUrl(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        documentBytes = response.bodyBytes;
+        final PdfDocument document = PdfDocument(inputBytes: documentBytes!);
+        paintKeys =
+            List.generate(document.pages.count, (index) => GlobalKey<State<StatefulWidget>>());
+        pdfPageSignatures = List.generate(
+          document.pages.count,
+          (index) => ViewSinglePageWithSignature(
+            key: ValueKey(index),
+            formModel: widget.formModel,
+            documentBytes: documentBytes!,
+            page: index,
+            paintKey: paintKeys[index],
+          ),
+        );
+        setState(() {});
+        // document.dispose();
+      } else {
+        debugPrint('Failed to load PDF: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error in received widget view is : $e');
+    }
+  }
 
   bool hasDialogContent() {
     final formModel = widget.formModel;
 
     // Check for PaymentRequest content
     if (formModel.formName!.contains("PaymentRequest")) {
-
       if (formModel.commentPettyCash!.isNotEmpty ||
           formModel.pettyCashDocument!.isNotEmpty ||
           formModel.taxID!.isNotEmpty ||
@@ -52,16 +197,14 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
           formModel.invoiceNumber!.isNotEmpty ||
           formModel.commercialRegistration!.isNotEmpty ||
           formModel.advancePayment!.isNotEmpty ||
-          formModel.electronicInvoice!.isNotEmpty||formModel.uploadProcurment!.isNotEmpty
-
-      ) {
+          formModel.electronicInvoice!.isNotEmpty ||
+          formModel.uploadProcurment!.isNotEmpty) {
         return true;
       }
     }
 
     // Check for InternalCommittee content
-    if (formModel.formName!.contains("InternalCommittee") &&
-        formModel.otherDocument!.isNotEmpty) {
+    if (formModel.formName!.contains("InternalCommittee") && formModel.otherDocument!.isNotEmpty) {
       return true;
     }
 
@@ -96,19 +239,16 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                              "Comment: ${widget.formModel.commentPettyCash!} "),
+                          Text("Comment: ${widget.formModel.commentPettyCash!} "),
                           ButtonWidget(
                               verticalMargin: 2,
                               buttonColor: Colors.green,
                               minWidth: 230,
                               height: 35,
-                              textStyle: TextStyle(
-                                  fontSize: 12, color: Colors.white),
+                              textStyle: TextStyle(fontSize: 12, color: Colors.white),
                               text: "Download Document",
                               onTap: () async {
-                                AppFunctions.downloadPdf(
-                                    widget.formModel.pettyCashDocument!);
+                                AppFunctions.downloadPdf(widget.formModel.pettyCashDocument!);
                               }),
                         ],
                       ),
@@ -119,35 +259,29 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
                         if (widget.formModel.taxID!.isNotEmpty)
                           Text("TaxID:${widget.formModel.taxID!} "),
                         if (widget.formModel.serviceType!.isNotEmpty)
-                          Text(
-                              "Service Type: ${widget.formModel.serviceType!}"),
+                          Text("Service Type: ${widget.formModel.serviceType!}"),
                         if (widget.formModel.bankName!.isNotEmpty)
                           Text("Bank Name: ${widget.formModel.bankName!}"),
                         if (widget.formModel.bankAccountNumber!.isNotEmpty)
-                          Text(
-                              "Bank Account No.: ${widget.formModel.bankAccountNumber!}"),
+                          Text("Bank Account No.: ${widget.formModel.bankAccountNumber!}"),
                         if (widget.formModel.invoiceNumber!.isNotEmpty)
-                          Text(
-                              "Invoice Number: ${widget.formModel.invoiceNumber!}"),
+                          Text("Invoice Number: ${widget.formModel.invoiceNumber!}"),
                       ],
                     ),
                     Column(
                       spacing: 10,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        if (widget
-                            .formModel.commercialRegistration!.isNotEmpty)
+                        if (widget.formModel.commercialRegistration!.isNotEmpty)
                           ButtonWidget(
                               verticalMargin: 2,
                               buttonColor: Colors.green,
                               minWidth: 230,
                               height: 35,
-                              textStyle: TextStyle(
-                                  fontSize: 12, color: Colors.white),
+                              textStyle: TextStyle(fontSize: 12, color: Colors.white),
                               text: "Download Commercial Registration",
                               onTap: () async {
-                                AppFunctions.downloadPdf(
-                                    widget.formModel.commercialRegistration!);
+                                AppFunctions.downloadPdf(widget.formModel.commercialRegistration!);
                               }),
                         if (widget.formModel.advancePayment!.isNotEmpty)
                           ButtonWidget(
@@ -155,12 +289,10 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
                               minWidth: 230,
                               buttonColor: Colors.green,
                               height: 35,
-                              textStyle: TextStyle(
-                                  fontSize: 12, color: Colors.white),
+                              textStyle: TextStyle(fontSize: 12, color: Colors.white),
                               text: "Download Advance Payment",
                               onTap: () async {
-                                AppFunctions.downloadPdf(
-                                    widget.formModel.advancePayment!);
+                                AppFunctions.downloadPdf(widget.formModel.advancePayment!);
                               }),
                         if (widget.formModel.uploadProcurment!.isNotEmpty)
                           ButtonWidget(
@@ -168,12 +300,10 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
                               minWidth: 230,
                               buttonColor: Colors.green,
                               height: 35,
-                              textStyle: TextStyle(
-                                  fontSize: 12, color: Colors.white),
+                              textStyle: TextStyle(fontSize: 12, color: Colors.white),
                               text: "Download Procurement Committee",
                               onTap: () async {
-                                AppFunctions.downloadPdf(
-                                    widget.formModel.uploadProcurment!);
+                                AppFunctions.downloadPdf(widget.formModel.uploadProcurment!);
                               }),
                         if (widget.formModel.electronicInvoice!.isNotEmpty)
                           ButtonWidget(
@@ -181,12 +311,10 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
                               minWidth: 230,
                               buttonColor: Colors.green,
                               height: 35,
-                              textStyle: TextStyle(
-                                  fontSize: 12, color: Colors.white),
+                              textStyle: TextStyle(fontSize: 12, color: Colors.white),
                               text: "Download Electronic Invoice",
                               onTap: () async {
-                                AppFunctions.downloadPdf(
-                                    widget.formModel.electronicInvoice!);
+                                AppFunctions.downloadPdf(widget.formModel.electronicInvoice!);
                               }),
                       ],
                     ),
@@ -204,12 +332,10 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
                           buttonColor: Colors.green,
                           minWidth: 230,
                           height: 35,
-                          textStyle:
-                              TextStyle(fontSize: 12, color: Colors.white),
+                          textStyle: TextStyle(fontSize: 12, color: Colors.white),
                           text: "Download Attached Document",
                           onTap: () async {
-                            AppFunctions.downloadPdf(
-                                widget.formModel.otherDocument!);
+                            AppFunctions.downloadPdf(widget.formModel.otherDocument!);
                           }),
                   ],
                 ),
@@ -233,6 +359,7 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
       },
     );
   }
+
   void _showDialog2(BuildContext context) {
     showDialog(
       context: context,
@@ -248,14 +375,10 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
               Text(
                 "Comments",
                 style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.mainColor,
-                    fontSize: 18),
+                    fontWeight: FontWeight.bold, color: AppColors.mainColor, fontSize: 18),
               ),
-              Text(
-                  "If there are any comments on the submitted form, you can write them here.",
-                  style: TextStyle(
-                      color: Colors.blueGrey, fontSize: 12)),
+              Text("If there are any comments on the submitted form, you can write them here.",
+                  style: TextStyle(color: Colors.blueGrey, fontSize: 12)),
               TextFieldWidget(
                 controller: widget.cubit.commentsController,
                 labelText: "Add Comment..",
@@ -263,7 +386,7 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
               SizedBox(
                 height: 200,
                 width: 600,
-                child:   ListView.builder(
+                child: ListView.builder(
                   itemCount: widget.cubit.comments.length,
                   itemBuilder: (context, index) {
                     final comment = widget.cubit.comments[index];
@@ -281,10 +404,6 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
                   },
                 ),
               )
-
-
-
-
             ],
           ),
           actions: <Widget>[
@@ -296,179 +415,18 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
             ),
             TextButton(
               child: Text('ok'),
-              onPressed: () async{
-                if(widget.cubit.commentsController.text.isNotEmpty) {
+              onPressed: () async {
+                if (widget.cubit.commentsController.text.isNotEmpty) {
                   await widget.cubit.addComment(widget.formModel);
-                if(context.mounted)Navigator.pop(context);
-                }else{
+                  if (context.mounted) Navigator.pop(context);
+                } else {
                   Fluttertoast.showToast(msg: 'Please add a comment');
                 }
-                },
+              },
             ),
           ],
         );
       },
     );
-  }
-
-  @override
-  void initState() {
-    widget.cubit.getComments(widget.formModel);
-    _loadPdfFromUrl(widget.formModel.formLink ?? '');
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage("assets/background.png"), fit: BoxFit.fill),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.white.withAlpha(150),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 30, left: 40, right: 40),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(widget.formModel.formName ?? ''),
-                          Text(
-                              "at ${intl.DateFormat('yyy-MM-dd hh:mm a').format(
-                            DateTime.fromMicrosecondsSinceEpoch(widget.formModel
-                                    .sentDate?.microsecondsSinceEpoch ??
-                                0),
-                          )}"),
-                          ButtonWidget(
-                            verticalMargin: 2,
-                            buttonColor: Colors.white,
-                            borderColor: AppColors.mainColor,
-                            minWidth: 200,
-                            height: 30,
-                            textStyle: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.mainColor,
-                            ),
-                            text: "Add Comment",
-                            onTap: () {
-                              setState(() {
-                                _showDialog2(context);
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      Column(
-                        spacing: 5,
-                        children: [
-                          if (widget.cubit.checkIfValidToSign(widget.formModel))
-                            ButtonWidget(
-                                verticalMargin: 2,
-                                minWidth: 200,
-                                height: 30,
-                                textStyle: TextStyle(
-                                    fontSize: 12, color: Colors.white),
-                                text: "Approve form",
-                                onTap: () async {
-                                  if (paintKeys.isNotEmpty) {
-                                    /// save to DB
-                                    widget.cubit
-                                        .signTheForm(widget.formModel, context)
-                                        .then((onValue) {
-
-                                      if (context.mounted) {
-                                        Navigator.pop(context);
-                                      }
-                                    });
-                                  }
-                                }),
-                          if (hasDialogContent())
-                            ButtonWidget(
-                              verticalMargin: 2,
-                              buttonColor: Colors.white,
-                              borderColor: AppColors.mainColor,
-                              minWidth: 200,
-                              height: 30,
-                              textStyle: TextStyle(
-                                fontSize: 12,
-                                color: AppColors.mainColor,
-                              ),
-                              text: "Show Attached Docs",
-                              onTap: () {
-                                setState(() {
-                                  _showDialog(context);
-                                });
-                              },
-                            ),
-                        ],
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 20),
-                  Expanded(
-                      child: Center(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      controller: scrollController,
-                      child: Column(
-                        children: pdfPageSignatures,
-                      ),
-                    ),
-                  )),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _loadPdfFromUrl(String url) async {
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        documentBytes = response.bodyBytes;
-        final PdfDocument document = PdfDocument(inputBytes: documentBytes!);
-        pageCount = document.pages.count;
-        document.dispose();
-
-        documents = List.generate(
-            pageCount, (index) => Uint8List.fromList(documentBytes!.toList()));
-        paintKeys = List.generate(
-            pageCount, (index) => GlobalKey<State<StatefulWidget>>());
-        pdfPageSignatures = List.generate(
-          pageCount,
-          (index) => SignTheDocumentWidget(
-            key: ValueKey(index),
-            formModel: widget.formModel,
-            cubit: widget.cubit,
-            document: documents[index],
-            index: index,
-            paintKey: paintKeys[index],
-          ),
-        );
-        setState(() {});
-      } else {
-        debugPrint('Failed to load PDF: ${response.statusCode}');
-      }
-    } catch (e) {
-      debugPrint('Error in received widget view is : $e');
-    }
   }
 }
