@@ -5,6 +5,7 @@ import 'package:signature_system/src/core/helper/extension/distance.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 import 'package:signature_system/src/features/home_screen/manager/home_cubit.dart';
 
+import '../../../login_screen/view/widgets/custom_text_field.dart';
 import 'drop_down_menu_payment_request.dart';
 
 class FirstStep extends StatelessWidget {
@@ -90,11 +91,18 @@ class FirstStep extends StatelessWidget {
                  },
                ),
              ),
+             if (cubit.selectedTitleName == 'Other')
+               TextFieldWidget(
+                 controller:cubit.otherTitle,
+                 labelText: "Enter Title",
+               )
+
            ],
          ),
                 ],
               )
             : Column(
+         spacing: 10,
                 children: [
                   FormTypeSelector(
                     withTitle: true,
@@ -106,7 +114,7 @@ class FirstStep extends StatelessWidget {
                     dropdownItems: cubit.forms.map((form) => form.formID!).toList(), // Populate dropdown with form IDs
                     selectedItem: cubit.selectedItem,
                   ),
-                  5.isHeight,
+
                   // Dropdown Menu for Form Title
                   FormTypeSelector(
                     withTitle: true,
@@ -118,6 +126,11 @@ class FirstStep extends StatelessWidget {
                     dropdownItems: Constants.titleName,
                     selectedItem: cubit.selectedTitleName,
                   ),
+                  if (cubit.selectedTitleName == 'Other')
+                    TextFieldWidget(
+                      controller:cubit.otherTitle,
+                      labelText: "Enter Title",
+                    )
                 ],
               )
       ],

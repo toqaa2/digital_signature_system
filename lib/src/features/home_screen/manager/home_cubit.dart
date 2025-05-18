@@ -53,6 +53,7 @@ class HomeCubit extends Cubit<HomeState> {
   List<FormModel> forms = [];
 
   TextEditingController docNameController = TextEditingController();
+  TextEditingController otherTitle = TextEditingController();
 
   void downloadFile(String url, String fileName) {
     window.open(url, fileName);
@@ -332,7 +333,7 @@ class HomeCubit extends Cubit<HomeState> {
       'sentBy': sentBy,
       'sentDate': DateTime.now(),
       'isFullySigned': false,
-      'formTitle': selectedTitleName ?? ""
+      'formTitle':  selectedTitleName== 'Other'?otherTitle.text :selectedTitleName,
     }).then((_) async {
       await FirebaseFirestore.instance.collection('sentForms').add({
         'ref': formReference,
@@ -465,7 +466,7 @@ class HomeCubit extends Cubit<HomeState> {
       'sentBy': sentBy,
       'sentDate': DateTime.now(),
       'isFullySigned': false,
-      'formTitle': selectedTitleName,
+      'formTitle': selectedTitleName== 'Other'?otherTitle.text :selectedTitleName,
       'paymentType': paymentType,
       'commercialRegistration': commercialRegistrationController.text,
       'electronicInvoice': electronicInvoiceController.text,
@@ -485,5 +486,31 @@ class HomeCubit extends Cubit<HomeState> {
       await AppFunctions.sendEmailTo(
           toEmail: requiredEmails[0], fromEmail: sentBy);
     });
+  }
+  List<FormModel> allForms = [];
+  List<FormModel> allFormsView = [];
+
+
+  getAllForms() async {
+    allForms.clear();
+    allFormsView.clear();
+        await FirebaseFirestore.instance
+        .collection('sentForms')
+        .get()
+        .then((onValue) async {
+      for (var element in onValue.docs) {
+        DocumentReference<Map<String, dynamic>> ref;
+        ref = await element.data()['ref'];
+        await ref.get().then((onValue) async {
+          allForms.add(FormModel.fromJson(onValue.data()));
+        });
+      }
+    });
+    allFormsView = allForms.toList();
+    allFormsView.sort((a, b) {
+      return b.sentDate!.microsecondsSinceEpoch
+          .compareTo(a.sentDate!.microsecondsSinceEpoch);
+    });
+    emit(GetAllForms());
   }
 }

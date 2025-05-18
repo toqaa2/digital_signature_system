@@ -8,9 +8,14 @@ import 'package:signature_system/src/core/helper/extension/distance.dart';
 import 'package:signature_system/src/core/shared_widgets/custom_button.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -21,6 +26,48 @@ class LoginScreen extends StatelessWidget {
         },
         builder: (context, state) {
           final LoginCubit cubit = LoginCubit.get(context);
+          void showEmailDialog() {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  backgroundColor: Colors.white,
+                  title: Text(
+                    'Enter Your Email',
+                    style: TextStyle(color: AppColors.mainColor),
+                  ),
+                  content: TextFieldWidget(
+                    controller: cubit.emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    labelText: 'Email Address',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Cancel'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        cubit
+                            .onResetPasswordPressed(cubit.emailController.text);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.mainColor,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      child: Text('Submit'),
+                    )
+                  ],
+                );
+              },
+            );
+          }
+
           return Container(
             decoration: BoxDecoration(
               image: DecorationImage(
@@ -40,7 +87,7 @@ class LoginScreen extends StatelessWidget {
               backgroundColor: Colors.transparent,
               body: Center(
                 child: Container(
-                  height: MediaQuery.of(context).size.height * 0.5,
+                  height: MediaQuery.of(context).size.height * 0.55,
                   width: MediaQuery.of(context).size.width * 0.55,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -65,8 +112,7 @@ class LoginScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Sign In",
@@ -150,6 +196,11 @@ class LoginScreen extends StatelessWidget {
                                       fontSize: 14, color: Colors.white),
                                   text: "Login",
                                 ),
+                          TextButton(
+                              onPressed: () {
+                                showEmailDialog();
+                              },
+                              child: Text("Reset Password")),
                           Spacer(),
                           Text(
                             'Powered by Waseela Digitalization Team \n v${Constants.version}',

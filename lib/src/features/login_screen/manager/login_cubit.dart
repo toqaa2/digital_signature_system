@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,36 +26,47 @@ class LoginCubit extends Cubit<LoginState> {
     emit(Loading());
     await FirebaseAuth.instance
         .signInWithEmailAndPassword(
-            email: emailController.text.trim(), password: passwordController.text.trim())
+            email: emailController.text.trim(),
+            password: passwordController.text.trim())
         .then((value) async {
       uid = emailController.text.trim();
-      await FirebaseFirestore.instance.collection("users").doc(uid).get().then((value) {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .get()
+          .then((value) {
+        updatePassword();
+
         Constants.userModel = UserModel.fromJson(value.data());
         isLoading = false;
         emit(NotLoading());
-        if(context.mounted){Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => Constants.userModel!.isFirstLogin ?? true
-                ? ChangePasswordScreen()
-                : const LayoutScreen(),
-          ),
-          (route) => false,
-        );}
+        if (context.mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => Constants.userModel!.isFirstLogin ?? true
+                  ? ChangePasswordScreen()
+                  : const LayoutScreen(),
+            ),
+            (route) => false,
+          );
+        }
       });
     }).catchError((onError) {
       Fluttertoast.showToast(msg: onError.message.toString());
     });
     emit(NotLoading());
   }
+
   bool isPasswordVisible = true;
 
   void togglePasswordVisibility() {
-      isPasswordVisible = !isPasswordVisible;
-   emit(ChangeVisibility());
+    isPasswordVisible = !isPasswordVisible;
+    emit(ChangeVisibility());
   }
+
   Future changePassword(BuildContext context) async {
     emit(ChangePasswordLoading());
-    try{
+    try {
       if (passwordController.text.trim().isEmpty) {
         Fluttertoast.showToast(msg: 'Please enter your new password');
         emit(NotLoading());
@@ -65,7 +75,10 @@ class LoginCubit extends Cubit<LoginState> {
       await FirebaseAuth.instance.currentUser!
           .updatePassword(passwordController.text.trim())
           .then((value) async {
-        await FirebaseFirestore.instance.collection('users').doc(Constants.userModel?.email).set(
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(Constants.userModel?.email)
+            .set(
           {
             'isFirstLogin': false,
             'password': passwordController.text.trim(),
@@ -73,7 +86,7 @@ class LoginCubit extends Cubit<LoginState> {
           SetOptions(merge: true),
         );
         Fluttertoast.showToast(msg: 'Password updated successfully');
-        if(context.mounted){
+        if (context.mounted) {
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -85,9 +98,41 @@ class LoginCubit extends Cubit<LoginState> {
         emit(Error(onError.toString()));
         Fluttertoast.showToast(msg: 'Failed to update password');
       });
-    }catch(e){
+    } catch (e) {
       emit(Error(e.toString()));
       Fluttertoast.showToast(msg: 'Error: $e');
     }
+  }
+
+  Future<void> resetPassword(String email) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      print("Password reset email sent. Check your inbox.");
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'invalid-email') {
+        print("The email address is not valid.");
+      } else if (e.code == 'user-not-found') {
+        print("No user found for that email.");
+      } else {
+        print("An error occurred: ${e.message}");
+      }
+    } catch (e) {
+      print("An error occurred: $e");
+    }
+  }
+
+  void onResetPasswordPressed(String email) {
+    if (emailController.text.isEmpty) {
+      Fluttertoast.showToast(msg: 'Write your email First');
+    } else {
+      resetPassword(email);
+    }
+  }
+
+  Future<void> updatePassword() async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(emailController.text)
+        .update({"password": passwordController.text});
   }
 }
