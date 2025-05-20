@@ -11,6 +11,7 @@ import 'package:universal_html/html.dart' as html;
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 import 'package:pdf/widgets.dart' as pw;
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 
 class AppFunctions {
   static SystemRoleEnum getSystemRole(String systemRole) {
@@ -85,6 +86,13 @@ class AppFunctions {
           pw.Page(
             pageFormat: pageFormat,
             build: (pw.Context context) {
+
+              return pw.Column(
+                children: [
+
+                ]
+              );
+
               return pw.Center(
                   child: pw.Image(
                 fit: pw.BoxFit.fill,

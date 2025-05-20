@@ -491,27 +491,7 @@ class HomeCubit extends Cubit<HomeState> {
     });
   }
 
-  List<FormModel> allForms = [];
-  List<FormModel> allFormsView = [];
 
-  getAllForms() async {
-    allForms.clear();
-    allFormsView.clear();
-    await FirebaseFirestore.instance.collection('sentForms').get().then((onValue) async {
-      for (var element in onValue.docs) {
-        DocumentReference<Map<String, dynamic>> ref;
-        ref = await element.data()['ref'];
-        await ref.get().then((onValue) async {
-          allForms.add(FormModel.fromJson(onValue.data()));
-        });
-      }
-    });
-    allFormsView = allForms.toList();
-    allFormsView.sort((a, b) {
-      return b.sentDate!.microsecondsSinceEpoch.compareTo(a.sentDate!.microsecondsSinceEpoch);
-    });
-    emit(GetAllForms());
-  }
   List<FormModel> allForms = [];
   List<FormModel> allFormsView = [];
 
