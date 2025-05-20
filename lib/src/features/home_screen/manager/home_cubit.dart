@@ -490,10 +490,11 @@ class HomeCubit extends Cubit<HomeState> {
   List<FormModel> allForms = [];
   List<FormModel> allFormsView = [];
 
-
+bool? isLoadingDashboard;
   getAllForms() async {
     allForms.clear();
     allFormsView.clear();
+    isLoadingDashboard = true;
     await FirebaseFirestore.instance
         .collection('sentForms')
         .get()
@@ -511,6 +512,8 @@ class HomeCubit extends Cubit<HomeState> {
       return b.sentDate!.microsecondsSinceEpoch
           .compareTo(a.sentDate!.microsecondsSinceEpoch);
     });
+    isLoadingDashboard = false;
+
     emit(GetAllForms());
   }
 }

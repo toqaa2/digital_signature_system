@@ -51,6 +51,12 @@ class HomeScreen extends StatelessWidget {
                           height: MediaQuery.of(context).size.height * 0.8,
                           child: TabBarView(
                             children: [
+                              cubit.isLoadingDashboard == true?
+                              Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.mainColor,
+                                ),
+                              ):
                               EmailGridWidget(emailDataList: cubit.allFormsView,),
                               ConditionalStepWidget(cubit: cubit),
                               // YourOtherWidget(), // Replace with your actual widget

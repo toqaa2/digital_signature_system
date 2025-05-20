@@ -18,6 +18,7 @@ final class RemoveEmail extends HomeState {}
 final class UploadFileLoading extends HomeState {}
 final class UploadOtherFileLoading extends HomeState {}
 final class UploadLoading extends HomeState {}
+final class getAllFormsLoading extends HomeState {}
 final class UploadOtherFileSuccess extends HomeState {}
 final class UploadSuccess extends HomeState {}
 final class UploadFileSuccess extends HomeState {}
