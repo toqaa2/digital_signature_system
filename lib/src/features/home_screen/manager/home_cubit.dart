@@ -87,6 +87,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> fetchForms() async {
     try {
+
       QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('forms').get();
       forms = snapshot.docs
           .map((doc) => FormModel.fromJson(doc.data() as Map<String, dynamic>))
@@ -98,8 +99,12 @@ class HomeCubit extends Cubit<HomeState> {
             formID: "System Update",
             formName: "System Update",
             formLink:
-                "https://firebasestorage.googleapis.com/v0/b/e-document-70241.firebasestorage.app/o/forms%2FDigitalization.docx?alt=media&token=3986a236-4fbc-40eb-9d3a-d26e82081faa",
-            requiredToSign: ["m.ghoneim@waseela-cf.com", "a.elghandakly@aur-consumerfinance.com"],
+            "https://firebasestorage.googleapis.com/v0/b/e-document-70241.firebasestorage.app/o/forms%2FDigitalization.docx?alt=media&token=3986a236-4fbc-40eb-9d3a-d26e82081faa",
+            requiredToSign: [
+              "m.ghoneim@waseela-cf.com",
+              "a.elghandakly@aur-consumerfinance.com"
+            ],
+
           );
           forms.add(uniqueForm);
         }
@@ -330,7 +335,7 @@ class HomeCubit extends Cubit<HomeState> {
           signatureLink: Constants.userModel?.mainSignature ?? 'No Signature',
         ).toMap()
       ],
-    }).then((_) async {
+     }).then((_) async {
       await FirebaseFirestore.instance.collection('sentForms').add({
         'ref': formReference,
       });
@@ -395,6 +400,7 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
+
   TextEditingController commercialRegistrationController = TextEditingController();
   TextEditingController electronicInvoiceController = TextEditingController();
   TextEditingController advancePaymentController = TextEditingController();
@@ -414,6 +420,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<FormModel?> getForm() async {
     DocumentReference<Map<String, dynamic>?>? ref =
+
         selectedItem!.contains('PaymentRequest') ? formPaymentReference : formReference;
     await ref?.get().then((onValue) {
       return FormModel.fromJson(onValue.data());
@@ -458,6 +465,7 @@ class HomeCubit extends Cubit<HomeState> {
       'sentBy': sentBy,
       'sentDate': DateTime.now(),
       'isFullySigned': false,
+
       'formTitle': selectedTitleName == 'Other' ? otherTitle.text : selectedTitleName,
       'paymentType': paymentType,
       'commercialRegistration': commercialRegistrationController.text,
@@ -502,6 +510,35 @@ class HomeCubit extends Cubit<HomeState> {
     allFormsView.sort((a, b) {
       return b.sentDate!.microsecondsSinceEpoch.compareTo(a.sentDate!.microsecondsSinceEpoch);
     });
+    emit(GetAllForms());
+  }
+  List<FormModel> allForms = [];
+  List<FormModel> allFormsView = [];
+
+bool? isLoadingDashboard;
+  getAllForms() async {
+    allForms.clear();
+    allFormsView.clear();
+    isLoadingDashboard = true;
+    await FirebaseFirestore.instance
+        .collection('sentForms')
+        .get()
+        .then((onValue) async {
+      for (var element in onValue.docs) {
+        DocumentReference<Map<String, dynamic>> ref;
+        ref = await element.data()['ref'];
+        await ref.get().then((onValue) async {
+          allForms.add(FormModel.fromJson(onValue.data()));
+        });
+      }
+    });
+    allFormsView = allForms.toList();
+    allFormsView.sort((a, b) {
+      return b.sentDate!.microsecondsSinceEpoch
+          .compareTo(a.sentDate!.microsecondsSinceEpoch);
+    });
+    isLoadingDashboard = false;
+
     emit(GetAllForms());
   }
 }

@@ -29,7 +29,7 @@ class _SendRequestEmailsState extends State<SendRequestEmails> {
           2.isHeight,
           Text("By Sending this Request it Will Automatic Send to these Officials",style: TextStyle(fontSize: 10,color:Colors.grey ),),
           2.isHeight,
-          Text("Select your Manager",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12,color:AppColors.mainColor ),),
+          Text("Select Required Emails",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12,color:AppColors.mainColor ),),
           10.isHeight,
           Autocomplete<String>(
             optionsBuilder: (TextEditingValue textEditingValue) {

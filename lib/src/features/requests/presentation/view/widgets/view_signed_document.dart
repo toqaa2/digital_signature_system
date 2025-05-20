@@ -65,13 +65,11 @@ class _ViewSignedDocumentWidgetState extends State<ViewSignedDocumentWidget> {
       debugPrint('Error in received widget view is : $e');
     }
   }
-
   @override
   void initState() {
     super.initState();
     loadPdfFromUrl(widget.formModel.formLink ?? '');
   }
-
   @override
   Widget build(BuildContext context) {
     return Expanded(

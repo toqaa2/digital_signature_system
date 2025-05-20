@@ -51,6 +51,13 @@ class HomeScreen extends StatelessWidget {
                           height: MediaQuery.of(context).size.height * 0.8,
                           child: TabBarView(
                             children: [
+                              cubit.isLoadingDashboard == true?
+                              Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.mainColor,
+                                ),
+                              ):
+
                               EmailGridWidget(emailDataList: cubit.allFormsView,),
                               ConditionalStepWidget(cubit: cubit),
                               // YourOtherWidget(), // Replace with your actual widget
@@ -95,6 +102,7 @@ class EmailGridWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color:
               item.isFullySigned==true?
+
                   Colors.green.withAlpha(30)
                   :
               Colors.white,
@@ -117,7 +125,8 @@ class EmailGridWidget extends StatelessWidget {
                     DateTime.fromMicrosecondsSinceEpoch(
                         item.sentDate?.microsecondsSinceEpoch ?? 0))}"),
                 const Divider(),
-                 Text("Required to Sign", style: TextStyle(fontWeight: FontWeight.bold,color: AppColors.mainColor)),
+
+                Text("Required to Sign", style: TextStyle(fontWeight: FontWeight.bold,color: AppColors.mainColor)),
                 if (item.sentTo != null && item.sentTo!.isNotEmpty)
                   ...item.sentTo!.map((e) => Text(e)).toList(),
                 const Divider(),

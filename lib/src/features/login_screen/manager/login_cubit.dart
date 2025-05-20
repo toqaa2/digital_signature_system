@@ -26,8 +26,9 @@ class LoginCubit extends Cubit<LoginState> {
     emit(Loading());
     await FirebaseAuth.instance
         .signInWithEmailAndPassword(
-            email: emailController.text.trim(),
-            password: passwordController.text.trim())
+        email: emailController.text.trim(),
+        password: passwordController.text.trim())
+
         .then((value) async {
       uid = emailController.text.trim();
       await FirebaseFirestore.instance
@@ -47,7 +48,8 @@ class LoginCubit extends Cubit<LoginState> {
                   ? ChangePasswordScreen()
                   : const LayoutScreen(),
             ),
-            (route) => false,
+                (route) => false,
+
           );
         }
       });

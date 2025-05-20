@@ -173,30 +173,30 @@ class _LoginScreenState extends State<LoginScreen> {
                           15.isHeight,
                           state is Loading
                               ? Column(
-                                  children: [
-                                    20.isHeight,
-                                    Center(
-                                        child: CircularProgressIndicator(
-                                      color: AppColors.mainColor,
-                                    )),
-                                  ],
-                                )
+                            children: [
+                              20.isHeight,
+                              Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.mainColor,
+                                  )),
+                            ],
+                          )
                               : ButtonWidget(
-                                  onTap: () {
-                                    cubit.login(context: context);
-                                    // Navigator.of(context).pushAndRemoveUntil(
-                                    //   MaterialPageRoute(
-                                    //     builder: (context) => const LayoutScreen(),
-                                    //   ),
-                                    //       (route) => false,
-                                    // );
-                                  },
-                                  minWidth: 500,
-                                  textStyle: TextStyle(
-                                      fontSize: 14, color: Colors.white),
-                                  text: "Login",
-                                ),
-                          TextButton(
+                            onTap: () {
+                              cubit.login(context: context);
+                              // Navigator.of(context).pushAndRemoveUntil(
+                              //   MaterialPageRoute(
+                              //     builder: (context) => const LayoutScreen(),
+                              //   ),
+                              //       (route) => false,
+                              // );
+                            },
+                            minWidth: 500,
+                            textStyle: TextStyle(
+                                fontSize: 14, color: Colors.white),
+                            text: "Login",
+                          ),
+        TextButton(
                               onPressed: () {
                                 showEmailDialog();
                               },
