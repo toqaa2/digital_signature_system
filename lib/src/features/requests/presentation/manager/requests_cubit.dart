@@ -218,7 +218,11 @@ class RequestsCubit extends Cubit<RequestsState> {
       );
       await Future.delayed(const Duration(seconds: 1));
       bool isLastRequiredEmail = false;
-      form.signedBy!.add(SignatureModel());
+      form.signedBy!.add(SignatureModel(
+        email: Constants.userModel?.email??'No Email',
+        name: Constants.userModel?.name??'No Name',
+        signatureLink: Constants.userModel?.mainSignature??'No Signature',
+      ));
       List<Map<String, dynamic>> signedByMeList = List.generate(
         form.signedBy?.length ?? 0,
         (index) => form.signedBy![index].toMap(),
@@ -229,7 +233,6 @@ class RequestsCubit extends Cubit<RequestsState> {
             .collection('fullySignedForms')
             .add({'ref': form.formReference});
       }
-
       await form.formReference!.update({
         'signedBy': signedByMeList,
         'isFullySigned': isLastRequiredEmail,

@@ -154,9 +154,9 @@ class SignatureModel {
   final String name;
 
   SignatureModel({
-    this.email='',
-    this.name='',
-    this.signatureLink='',
+    required this.email,
+    required this.name,
+    required this.signatureLink,
   });
 
   factory SignatureModel.fromJson(Map<String, dynamic>? json) => SignatureModel(
@@ -166,8 +166,8 @@ class SignatureModel {
       );
 
   Map<String, dynamic> toMap() => {
-        'email': Constants.userModel?.email ?? '',
-        'signature_link': Constants.userModel?.mainSignature ?? '',
-        'signature': Constants.userModel?.name ?? '',
+        'email': email,
+        'signature_link': signatureLink,
+        'name': name,
       };
 }
