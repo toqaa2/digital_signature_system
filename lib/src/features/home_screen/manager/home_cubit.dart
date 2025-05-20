@@ -22,12 +22,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   static HomeCubit get(context) => BlocProvider.of(context);
   final List<String> stepNames = ['Choose From', 'Fill From', 'Send Request'];
-  final List<String> stepNames4 = [
-    'Choose From',
-    'Fill From',
-    "Upload Documents",
-    'Send Request'
-  ];
+  final List<String> stepNames4 = ['Choose From', 'Fill From', "Upload Documents", 'Send Request'];
   final List<String> dropdownItems = [
     'Program Lunch Memo',
     'Campaign Memo',
@@ -78,8 +73,8 @@ class HomeCubit extends Cubit<HomeState> {
         Reference pdfRef = storageRef.child(
             'sent_forms/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
 
-        UploadTask uploadTask = pdfRef.putData(
-            docFile!, SettableMetadata(contentType: 'application/pdf'));
+        UploadTask uploadTask =
+            pdfRef.putData(docFile!, SettableMetadata(contentType: 'application/pdf'));
         await uploadTask;
 
         downloadURLOFUploadedDocument = await pdfRef.getDownloadURL();
@@ -92,8 +87,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> fetchForms() async {
     try {
-      QuerySnapshot snapshot =
-      await FirebaseFirestore.instance.collection('forms').get();
+
+      QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('forms').get();
       forms = snapshot.docs
           .map((doc) => FormModel.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
@@ -109,6 +104,7 @@ class HomeCubit extends Cubit<HomeState> {
               "m.ghoneim@waseela-cf.com",
               "a.elghandakly@aur-consumerfinance.com"
             ],
+
           );
           forms.add(uniqueForm);
         }
@@ -143,8 +139,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   String uploadOtherDoc = '';
 
-  Future<void> pickAndUploadOtherDocument(
-      String userID, String formName) async {
+  Future<void> pickAndUploadOtherDocument(String userID, String formName) async {
     emit(UploadOtherFileLoading());
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -158,8 +153,8 @@ class HomeCubit extends Cubit<HomeState> {
         Reference pdfRef = storageRef.child(
             'other_Document/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
 
-        UploadTask uploadTask = pdfRef.putData(
-            docFile!, SettableMetadata(contentType: 'application/pdf'));
+        UploadTask uploadTask =
+            pdfRef.putData(docFile!, SettableMetadata(contentType: 'application/pdf'));
         await uploadTask;
 
         uploadOtherDoc = await pdfRef.getDownloadURL();
@@ -186,8 +181,8 @@ class HomeCubit extends Cubit<HomeState> {
         Reference pdfRef = storageRef.child(
             'Procurement/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.pdf');
 
-        UploadTask uploadTask = pdfRef.putData(
-            docFile!, SettableMetadata(contentType: 'application/pdf'));
+        UploadTask uploadTask =
+            pdfRef.putData(docFile!, SettableMetadata(contentType: 'application/pdf'));
         await uploadTask;
 
         uploadProcurment = await pdfRef.getDownloadURL();
@@ -220,8 +215,7 @@ class HomeCubit extends Cubit<HomeState> {
         final storageRef = FirebaseStorage.instance.ref();
         Reference pdfRef = storageRef.child(
             '$fileName/$userID/$formName${DateFormat('yyy-MM-dd-hh:mm').format(DateTime.now())}.$fileType');
-        await pdfRef.putData(
-            docFile!, SettableMetadata(contentType: 'application/$fileType'));
+        await pdfRef.putData(docFile!, SettableMetadata(contentType: 'application/$fileType'));
         // await uploadTask;
         // documentType = ;
         // controller?.text = documentType ?? "";
@@ -333,14 +327,20 @@ class HomeCubit extends Cubit<HomeState> {
       'sentBy': sentBy,
       'sentDate': DateTime.now(),
       'isFullySigned': false,
-      'formTitle':  selectedTitleName== 'Other'?otherTitle.text :selectedTitleName,
-    }).then((_) async {
+      'formTitle': selectedTitleName == 'Other' ? otherTitle.text : selectedTitleName,
+      'signedBy': [
+        SignatureModel(
+          email: Constants.userModel?.email ?? 'No Email',
+          name: Constants.userModel?.name ?? 'No Name',
+          signatureLink: Constants.userModel?.mainSignature ?? 'No Signature',
+        ).toMap()
+      ],
+     }).then((_) async {
       await FirebaseFirestore.instance.collection('sentForms').add({
         'ref': formReference,
       });
 
-      await AppFunctions.sendEmailTo(
-          toEmail: requiredEmails[0], fromEmail: sentBy);
+      await AppFunctions.sendEmailTo(toEmail: requiredEmails[0], fromEmail: sentBy);
       emit(SendForm());
     });
     formSent = true;
@@ -400,8 +400,8 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
-  TextEditingController commercialRegistrationController =
-  TextEditingController();
+
+  TextEditingController commercialRegistrationController = TextEditingController();
   TextEditingController electronicInvoiceController = TextEditingController();
   TextEditingController advancePaymentController = TextEditingController();
   TextEditingController pettyCashDocument = TextEditingController();
@@ -420,9 +420,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<FormModel?> getForm() async {
     DocumentReference<Map<String, dynamic>?>? ref =
-    selectedItem!.contains('PaymentRequest')
-        ? formPaymentReference
-        : formReference;
+
+        selectedItem!.contains('PaymentRequest') ? formPaymentReference : formReference;
     await ref?.get().then((onValue) {
       return FormModel.fromJson(onValue.data());
     });
@@ -455,7 +454,7 @@ class HomeCubit extends Cubit<HomeState> {
     await formPaymentReference!.set({
       'form_reference': formPaymentReference,
       'formID': formID,
-      'commentPettyCash':commentPettyCash.text,
+      'commentPettyCash': commentPettyCash.text,
       'pettyCashDocument': pettyCashDocument.text,
       'pathURL': pathURL,
       'downloadLink': downloadLink,
@@ -466,7 +465,8 @@ class HomeCubit extends Cubit<HomeState> {
       'sentBy': sentBy,
       'sentDate': DateTime.now(),
       'isFullySigned': false,
-      'formTitle': selectedTitleName== 'Other'?otherTitle.text :selectedTitleName,
+
+      'formTitle': selectedTitleName == 'Other' ? otherTitle.text : selectedTitleName,
       'paymentType': paymentType,
       'commercialRegistration': commercialRegistrationController.text,
       'electronicInvoice': electronicInvoiceController.text,
@@ -476,16 +476,41 @@ class HomeCubit extends Cubit<HomeState> {
       'invoiceNumber': invoiceNumber,
       'bankAccountNumber': bankAccountNumber,
       'serviceType': serviceType,
+      'signedBy': [
+        SignatureModel(
+          email: Constants.userModel?.email ?? 'No Email',
+          name: Constants.userModel?.name ?? 'No Name',
+          signatureLink: Constants.userModel?.mainSignature ?? 'No Signature',
+        ).toMap()
+      ],
     }).then((_) async {
       formSent = true;
       emit(SendPaymentForm());
-      await FirebaseFirestore.instance
-          .collection('sentForms')
-          .add({'ref': formPaymentReference});
-
-      await AppFunctions.sendEmailTo(
-          toEmail: requiredEmails[0], fromEmail: sentBy);
+      await FirebaseFirestore.instance.collection('sentForms').add({'ref': formPaymentReference});
+      await AppFunctions.sendEmailTo(toEmail: requiredEmails[1], fromEmail: sentBy);
     });
+  }
+
+  List<FormModel> allForms = [];
+  List<FormModel> allFormsView = [];
+
+  getAllForms() async {
+    allForms.clear();
+    allFormsView.clear();
+    await FirebaseFirestore.instance.collection('sentForms').get().then((onValue) async {
+      for (var element in onValue.docs) {
+        DocumentReference<Map<String, dynamic>> ref;
+        ref = await element.data()['ref'];
+        await ref.get().then((onValue) async {
+          allForms.add(FormModel.fromJson(onValue.data()));
+        });
+      }
+    });
+    allFormsView = allForms.toList();
+    allFormsView.sort((a, b) {
+      return b.sentDate!.microsecondsSinceEpoch.compareTo(a.sentDate!.microsecondsSinceEpoch);
+    });
+    emit(GetAllForms());
   }
   List<FormModel> allForms = [];
   List<FormModel> allFormsView = [];

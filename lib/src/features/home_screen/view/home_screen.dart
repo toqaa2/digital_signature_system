@@ -57,6 +57,7 @@ class HomeScreen extends StatelessWidget {
                                   color: AppColors.mainColor,
                                 ),
                               ):
+
                               EmailGridWidget(emailDataList: cubit.allFormsView,),
                               ConditionalStepWidget(cubit: cubit),
                               // YourOtherWidget(), // Replace with your actual widget
@@ -101,7 +102,8 @@ class EmailGridWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color:
               item.isFullySigned==true?
-              Colors.green.withAlpha(30)
+
+                  Colors.green.withAlpha(30)
                   :
               Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -123,11 +125,12 @@ class EmailGridWidget extends StatelessWidget {
                     DateTime.fromMicrosecondsSinceEpoch(
                         item.sentDate?.microsecondsSinceEpoch ?? 0))}"),
                 const Divider(),
+
                 Text("Required to Sign", style: TextStyle(fontWeight: FontWeight.bold,color: AppColors.mainColor)),
                 if (item.sentTo != null && item.sentTo!.isNotEmpty)
                   ...item.sentTo!.map((e) => Text(e)).toList(),
                 const Divider(),
-                Text("Signed By", style: TextStyle(fontWeight: FontWeight.bold,color: AppColors.mainColor)),
+                 Text("Signed By", style: TextStyle(fontWeight: FontWeight.bold,color: AppColors.mainColor)),
                 if (item.signedBy != null && item.signedBy!.isNotEmpty)
                   ...item.signedBy!.map((e) => Text(e.email)).toList(),
               ],

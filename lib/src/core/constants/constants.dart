@@ -8,7 +8,7 @@ abstract class Constants {
     email: 'i.medhat@waseela-cf.com',
     department: 'department',
    isFirstLogin:  false,
-    name:  'name',
+    name:  'Ibrahim Medhat',
     role: ' role ',
     userId: 'i.medhat@waseela-cf.com',
     mainSignature: 'https://firebasestorage.googleapis.com/v0/b/e-document-70241.firebasestorage.app/o/Signature%2Fi.medhat%40waseela-cf.com%2Fsignature.png?alt=media&token=42b2ca30-860a-44ae-a6b8-24965c4ac106',

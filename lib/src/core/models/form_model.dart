@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/models/comment_model.dart';
 
 class FormModel {
@@ -13,7 +14,7 @@ class FormModel {
   List<CommentModel>? comments;
   List<String>? sentTo;
   String? sentBy;
-  List<SignedByModel>? signedBy;
+  List<SignatureModel>? signedBy;
   String? serviceType;
   String? pathURL;
   bool? isFullySigned;
@@ -92,8 +93,7 @@ class FormModel {
         if (signedDate != null) 'signedDate': signedDate,
         if (formTitle != null) 'formTitle': formTitle,
         if (paymentType != null) 'paymentType': paymentType,
-        if (commercialRegistration != null)
-          'commercialRegistration': commercialRegistration,
+        if (commercialRegistration != null) 'commercialRegistration': commercialRegistration,
         if (electronicInvoice != null) 'electronicInvoice': electronicInvoice,
         if (advancePayment != null) 'advancePayment': advancePayment,
         if (taxID != null) 'taxID': taxID,
@@ -125,7 +125,7 @@ class FormModel {
             ? []
             : List.generate(
                 json?['signedBy'] == null ? 0 : json?['signedBy'].length,
-                (index) => SignedByModel.fromJson(json?['signedBy']?[index]),
+                (index) => SignatureModel.fromJson(json?['signedBy']?[index]),
               );
     serviceType = json?['serviceType'] ?? '';
     comments = List.generate(
@@ -135,7 +135,7 @@ class FormModel {
     isFullySigned = json?['isFullySigned'];
     sentDate = json?['sentDate'];
     signedDate = json?['signedDate'];
-    uploadProcurment = json?['uploadProcurment']??'';
+    uploadProcurment = json?['uploadProcurment'] ?? '';
     formTitle = json?['formTitle'];
     paymentType = json?['paymentType'] ?? '';
     commercialRegistration = json?['commercialRegistration'] ?? '';
@@ -148,60 +148,26 @@ class FormModel {
   }
 }
 
-class SignedByModel {
+class SignatureModel {
   final String email;
   final String signatureLink;
-  final List<SignatureModel> signatureModelList;
+  final String name;
 
-  SignedByModel({
+  SignatureModel({
     required this.email,
+    required this.name,
     required this.signatureLink,
-    required this.signatureModelList,
   });
 
-  factory SignedByModel.fromJson(Map<String, dynamic>? json) => SignedByModel(
+  factory SignatureModel.fromJson(Map<String, dynamic>? json) => SignatureModel(
         email: json?['email'] ?? 'No Email',
+        name: json?['name'] ?? json?['email'],
         signatureLink: json?['signature_link'] ?? "",
-        signatureModelList: List.generate(
-          json?['signature'] == null ? 0 : json?['signature'].length,
-          (index) => SignatureModel.fromJson(json?['signature']?[index]),
-        ),
       );
 
   Map<String, dynamic> toMap() => {
         'email': email,
         'signature_link': signatureLink,
-        'signature': List.generate(
-          signatureModelList.length,
-          (index) => signatureModelList[index].toMap(),
-        ),
-      };
-}
-
-class SignatureModel {
-  num page;
-  num scale;
-  num signatureX;
-  num signatureY;
-
-  SignatureModel({
-    required this.page,
-    required this.scale,
-    required this.signatureX,
-    required this.signatureY,
-  });
-
-  factory SignatureModel.fromJson(Map<String, dynamic>? json) => SignatureModel(
-        page: json?['page'] ?? 0,
-        scale: json?['scale'] ?? 0,
-        signatureX: json?['signature_x'] ?? 0,
-        signatureY: json?['signature_y'] ?? 0,
-      );
-
-  Map<String, dynamic> toMap() => {
-        'page': page,
-        'scale': scale,
-        'signature_x': signatureX,
-        'signature_y': signatureY,
+        'name': name,
       };
 }

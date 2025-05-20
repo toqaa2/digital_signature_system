@@ -196,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 fontSize: 14, color: Colors.white),
                             text: "Login",
                           ),
-                          TextButton(
+        TextButton(
                               onPressed: () {
                                 showEmailDialog();
                               },
