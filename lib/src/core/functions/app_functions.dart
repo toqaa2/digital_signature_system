@@ -3,15 +3,14 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/helper/enums/form_enum.dart';
-import 'package:signature_system/src/core/models/form_model.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 import 'package:pdf/widgets.dart' as pw;
-import 'package:flutter_pdfview/flutter_pdfview.dart';
 
 class AppFunctions {
   static SystemRoleEnum getSystemRole(String systemRole) {
@@ -24,9 +23,8 @@ class AppFunctions {
   }
 
   static sendEmailTo(
-      {required String toEmail, required String fromEmail}) async
-  {
-     await http.post(
+      {required String toEmail, required String fromEmail}) async {
+    await http.post(
       Uri.parse('https://api.emailjs.com/api/v1.0/email/send'),
       headers: {
         'Content-Type': "application/json",
@@ -43,18 +41,45 @@ class AppFunctions {
       }),
     );
   }
+  static sendEmailToFinance(
+      {required String toEmail, required String fromEmail,required String title}) async {
+    await http.post(
+      Uri.parse('https://api.emailjs.com/api/v1.0/email/send'),
+      headers: {
+        'Content-Type': "application/json",
+      },
+      body: json.encode({
+        'service_id': "service_onxkzts",
+        'template_id': "template_px600a9",
+        'user_id': "uKgn4fDs-ds-799qo",
+        'template_params': {
+          'tittle': title,
+          'email':toEmail,
+          'name': fromEmail,
+          'time': DateFormat('yyy/MM/dd hh:mm').format(DateTime.now()),
+          'message': '''
+          There is a new approved payment request please check it out.
+          ''',
+        },
+      }),
+    );
+  }
 
   static img.Image imageDecode(Uint8List imageData) {
     return img.decodeImage(imageData)!;
   }
 
-  static Future<Uint8List> saveWidgetsAsPdf(List<GlobalKey> globalKeys,String fileName,) async {
+  static Future<Uint8List> saveWidgetsAsPdf(
+    List<GlobalKey> globalKeys,
+    String fileName,
+  ) async {
     if (globalKeys.isEmpty) {
       throw ArgumentError(
           'The number of global keys must match the number of image names.');
     }
 
     try {
+      final pddf = PdfDocument();
       final pdf = pw.Document();
 
       for (int i = 0; i < globalKeys.length; i++) {
@@ -86,12 +111,7 @@ class AppFunctions {
           pw.Page(
             pageFormat: pageFormat,
             build: (pw.Context context) {
-
-              return pw.Column(
-                children: [
-
-                ]
-              );
+              // return pw.Column(children: []);
 
               return pw.Center(
                   child: pw.Image(
@@ -105,7 +125,7 @@ class AppFunctions {
 
       // Save the PDF to bytes
       Uint8List bytes = await pdf.save();
-      await downloadPdfFromBytes(bytes,fileName);
+      await downloadPdfFromBytes(bytes, fileName);
       return bytes;
       // Trigger a download of the PDF file
     } catch (e) {
@@ -113,20 +133,21 @@ class AppFunctions {
     }
   }
 
-  static Future<void> downloadPdfFromBytes(Uint8List bytes, String fileName) async{
+  static Future<void> downloadPdfFromBytes(
+      Uint8List bytes, String fileName) async {
     if (kIsWeb) {
       try {
-    // Trigger a download of the PDF file
-    final blob = html.Blob([bytes]);
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.document.createElement('a') as html.AnchorElement
-    ..href = url
-    ..style.display = 'none'
-    ..download = '$fileName.pdf'; // Set the PDF file name
-    html.document.body!.children.add(anchor);
-    anchor.click();
-    html.document.body!.children.remove(anchor);
-    html.Url.revokeObjectUrl(url);
+        // Trigger a download of the PDF file
+        final blob = html.Blob([bytes]);
+        final url = html.Url.createObjectUrlFromBlob(blob);
+        final anchor = html.document.createElement('a') as html.AnchorElement
+          ..href = url
+          ..style.display = 'none'
+          ..download = '$fileName.pdf'; // Set the PDF file name
+        html.document.body!.children.add(anchor);
+        anchor.click();
+        html.document.body!.children.remove(anchor);
+        html.Url.revokeObjectUrl(url);
       } catch (e) {
         debugPrint('Error downloading PDF from bytes: $e');
       }
@@ -150,7 +171,4 @@ class AppFunctions {
       debugPrint('Error saving widgets as PDF: $e');
     }
   }
-
-
-
 }

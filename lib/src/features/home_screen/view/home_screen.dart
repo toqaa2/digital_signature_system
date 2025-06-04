@@ -7,7 +7,10 @@ import 'package:signature_system/src/features/home_screen/view/widgets/success_c
 import '../../../core/constants/constants.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../../core/style/colors.dart';
+import '../../requests/presentation/view/screens/signed_document_screen.dart';
 import '../manager/home_cubit.dart';
+import 'package:intl/intl.dart' as intl;
+
 
 
 class HomeScreen extends StatelessWidget {
@@ -16,12 +19,13 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomeCubit()..fetchForms()..fetchUserEmails()..getAllForms(),
+      create: (context) => HomeCubit()..fetchForms()..fetchUserEmails()..getAllForms()..getAllPaymentForms(),
       child: BlocConsumer<HomeCubit, HomeState>(
         listener: (context, state) {},
         builder: (context, state) {
           HomeCubit cubit = HomeCubit.get(context);
-          final isAdmin = Constants.userModel?.email == "t.hesham@waseela-cf.com";
+          final isAdmin = (Constants.userModel?.email == "t.hesham@waseela-cf.com"|| Constants.userModel?.email == "n.othman@waseela-cf.com");
+          final isFinance = Constants.userModel?.department == "Finance";
 
           return Scaffold(
             backgroundColor: Colors.transparent,
@@ -67,7 +71,92 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                   )
-                      : Column(
+                      : isFinance?
+                  DefaultTabController(
+                    length: 2,
+                    child: Column(
+                      children: [
+                        TabBar(
+                          labelColor: Colors.black,
+                          indicatorColor: Colors.blue,
+                          tabs: const [
+
+                            Tab(text: "Fully Signed Payment Requests"),
+                            Tab(text: "Send Request"),
+                          ],
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.8,
+                          child: TabBarView(
+                            children: [
+
+                              cubit.isLoadingForms == true?
+                              Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.mainColor,
+                                ),
+                              ):
+                              Expanded(
+                                child: ListView.builder(
+                                  itemCount: cubit.allPaymentFormsView.length,
+                                  itemBuilder: (context, index) {
+                                    final receivedForm = cubit.allPaymentFormsView[index];
+                                    return ListTile(
+                                      title: Text(
+                                        receivedForm.formTitle.toString(),
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: AppColors.mainColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      subtitle: Text(
+                                        receivedForm.formName.toString(),
+                                        // "Payment Request Memo",
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                      trailing: Column(
+                                        spacing: 4,
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Sent By: ${receivedForm.sentBy.toString()}",
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          Text(
+                                            "at: ${intl.DateFormat('yyy-MM-dd hh:mm a').format(DateTime.fromMicrosecondsSinceEpoch(receivedForm.sentDate?.microsecondsSinceEpoch ?? 0))}",
+                                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (context) => SignedDocumentScreen(
+                                            formModel: receivedForm,
+                                            canDownload: true,
+                                          ),
+                                        ))
+                                            .then((onValue) {
+                                          // widget.cubit
+                                          //     .getReceivedForms(Constants.userModel?.userId ?? '');
+                                        });
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                              ConditionalStepWidget(cubit: cubit),
+                              // YourOtherWidget(), // Replace with your actual widget
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ):
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ConditionalStepWidget(cubit: cubit),

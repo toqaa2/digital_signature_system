@@ -31,8 +31,7 @@ class _SignedDocumentScreenState extends State<SignedDocumentScreen> {
           widget.formModel.pettyCashDocument!.isNotEmpty ||
           widget.formModel.taxID!.isNotEmpty ||
           widget.formModel.serviceType!.isNotEmpty ||
-          widget.formModel.bankName!.isNotEmpty ||
-          widget.formModel.bankAccountNumber!.isNotEmpty ||
+          widget.formModel.bankDetails!.isNotEmpty ||
           widget.formModel.invoiceNumber!.isNotEmpty ||
           widget.formModel.commercialRegistration!.isNotEmpty ||
           widget.formModel.advancePayment!.isNotEmpty ||
@@ -103,20 +102,9 @@ class _SignedDocumentScreenState extends State<SignedDocumentScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
 
-                        if (widget.formModel.taxID!.isNotEmpty)
-                          Text(
-                              "TaxID:${widget.formModel.taxID!} "),
-
                         if (widget.formModel.serviceType!.isNotEmpty)
                           Text(
                               "Service Type: ${widget.formModel.serviceType!}"),
-                        if (widget.formModel.bankName!.isNotEmpty)
-                          Text(
-                              "Bank Name: ${widget.formModel.bankName!}"),
-                        if (widget.formModel.bankAccountNumber!
-                            .isNotEmpty)
-                          Text(
-                              "Bank Account No.: ${widget.formModel.bankAccountNumber!}"),
                         if (widget.formModel.invoiceNumber!.isNotEmpty)
                           Text(
                               "Invoice Number: ${widget.formModel.invoiceNumber!}"),
@@ -141,6 +129,32 @@ class _SignedDocumentScreenState extends State<SignedDocumentScreen> {
                               onTap: () async {
                                 AppFunctions.downloadPdf(widget.formModel
                                     .commercialRegistration!);
+                              }),
+                        if (widget.formModel.taxID!.isNotEmpty)
+                          ButtonWidget(
+                              verticalMargin: 2,
+                              buttonColor: Colors.green,
+                              minWidth: 230,
+                              height: 35,
+                              textStyle: TextStyle(fontSize: 12, color: Colors.white),
+                              text: "Download Tax ID",
+                              onTap: () async {
+                                AppFunctions.downloadPdf(widget.formModel.taxID!);
+                              }),
+                        if (widget.formModel.bankDetails!
+                            .isNotEmpty)
+                          ButtonWidget(
+                              verticalMargin: 2,
+                              buttonColor: Colors.green,
+                              minWidth: 230,
+                              height: 35,
+                              textStyle: TextStyle(
+                                  fontSize: 12, color: Colors.white),
+                              text:
+                              "Download Bank Details",
+                              onTap: () async {
+                                AppFunctions.downloadPdf(widget.formModel
+                                    .bankDetails!);
                               }),
                         if (widget.formModel.uploadProcurment!.isNotEmpty)
                           ButtonWidget(

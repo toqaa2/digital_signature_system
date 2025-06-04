@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:signature_system/src/features/login_screen/manager/login_cubit.dart';
 import 'package:signature_system/src/features/login_screen/view/widgets/custom_text_field.dart';
 import 'package:signature_system/src/core/constants/constants.dart';
@@ -202,10 +203,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                               child: Text("Reset Password")),
                           Spacer(),
-                          Text(
-                            'Powered by Waseela Digitalization Team \n v${Constants.version}',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 8),
+                          FutureBuilder(
+                            future:   PackageInfo.fromPlatform(),
+
+                            builder:(context, snapshot) =>  Text(
+                              'Powered by Waseela Digitalization Team \n v${snapshot.data?.version??''}',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 8),
+                            ),
                           ),
                         ],
                       ),

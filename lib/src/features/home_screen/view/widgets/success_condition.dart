@@ -126,11 +126,9 @@ class ConditionalStepWidget extends StatelessWidget {
                                             formLink: cubit
                                                 .selectedFormModel!.formLink!,
                                             taxID: cubit.taxIDController.text,
-                                            bankAccountNumber: cubit
-                                                .bankAccountNumberController
-                                                .text,
-                                            bankName:
-                                                cubit.bankNameController.text,
+
+                                            bankDetails:
+                                                cubit.bankDetails.text,
                                             downloadLink: "",
                                             pathURL: "",
                                             invoiceNumber: cubit

@@ -9,6 +9,7 @@ final class ChangeStepPrev extends HomeState {}
 final class ChangeStepNext extends HomeState {}
 final class FormsFetched extends HomeState {}
 final class FormSelected extends HomeState {}
+final class GetAllPaymentForms extends HomeState {}
 final class SendForm extends HomeState {}
 final class SendPaymentForm extends HomeState {}
 final class GetAllForms extends HomeState {}

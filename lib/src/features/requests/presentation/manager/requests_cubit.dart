@@ -22,6 +22,20 @@ class RequestsCubit extends Cubit<RequestsState> {
   List<FormModel> sentFormsView = [];
   List<FormModel> fullySignedView = [];
 
+  Future<List<String>> getFinanceTeam() async {
+    List<String> financeEmails = [];
+    await FirebaseFirestore.instance.collection('users').get().then(
+      (value) {
+        for (var element in value.docs) {
+          if (element.data()['department'] == 'Digitilization') {
+            financeEmails.add(element.id);
+          }
+        }
+      },
+    );
+    return financeEmails;
+  }
+
   getFullySignedForms() async {
     allForms.clear();
     allFormsView.clear();
@@ -178,13 +192,10 @@ class RequestsCubit extends Cubit<RequestsState> {
         comments = commentList.map((e) => CommentModel.fromJson(e)).toList();
       }
       emit(GetComments());
-    }).catchError((error) {
-    });
+    }).catchError((error) {});
   }
 
-
   Future addComment(FormModel formModel) async {
-
     print(formModel.comments?.length);
     comments = formModel.comments!.toList();
     print(comments.length);
@@ -219,9 +230,9 @@ class RequestsCubit extends Cubit<RequestsState> {
       await Future.delayed(const Duration(seconds: 1));
       bool isLastRequiredEmail = false;
       form.signedBy!.add(SignatureModel(
-        email: Constants.userModel?.email??'No Email',
-        name: Constants.userModel?.name??'No Name',
-        signatureLink: Constants.userModel?.mainSignature??'No Signature',
+        email: Constants.userModel?.email ?? 'No Email',
+        name: Constants.userModel?.name ?? 'No Name',
+        signatureLink: Constants.userModel?.mainSignature ?? 'No Signature',
       ));
       List<Map<String, dynamic>> signedByMeList = List.generate(
         form.signedBy?.length ?? 0,
@@ -237,6 +248,16 @@ class RequestsCubit extends Cubit<RequestsState> {
         'signedBy': signedByMeList,
         'isFullySigned': isLastRequiredEmail,
       });
+      if (isLastRequiredEmail && form.formName!.contains('PaymentRequest')) {
+        List<String> financeEmails = await getFinanceTeam();
+        print(financeEmails);
+        for (String financeEmail in financeEmails) {
+          await AppFunctions.sendEmailToFinance(
+              title: form.formTitle ?? '',
+              toEmail: financeEmail,
+              fromEmail: form.sentBy ?? '');
+        }
+      }
       if (form.sentTo!.length != form.signedBy!.length) {
         await AppFunctions.sendEmailTo(
             toEmail: form.sentTo?[form.signedBy?.length ?? 0] ?? '',
@@ -247,9 +268,9 @@ class RequestsCubit extends Cubit<RequestsState> {
       debugPrint('Sign Error: $e');
     }
   }
-
+  late bool isValidToSign;
   bool checkIfValidToSign(FormModel form) {
-    late bool isValidToSign;
+
     for (int i = 0; i < form.sentTo!.length; i++) {
       if (Constants.userModel!.email == form.sentTo![i] && i == 0) {
         isValidToSign = true;
@@ -266,9 +287,9 @@ class RequestsCubit extends Cubit<RequestsState> {
     }
     return isValidToSign;
   }
-
   Future<void> deleteSentDocument({
     required String formID,
+    required FormModel formModel,
     required userId,
     required List<String> emailsToRemoveFrom,
   }) async {
@@ -288,6 +309,19 @@ class RequestsCubit extends Cubit<RequestsState> {
         .collection('sent_forms')
         .doc(formID)
         .delete();
+    await FirebaseFirestore.instance
+        .collection('sentForms')
+        .get()
+        .then((value) async {
+      for (var element in value.docs) {
+        if (element.data()['ref'] == formModel.formReference) {
+          await FirebaseFirestore.instance
+              .collection('sentForms')
+              .doc(element.id)
+              .delete();
+        }
+      }
+    });
     emit(DeletedSuccessfully());
     getSentForms(Constants.userModel!.email!);
   }
@@ -343,12 +377,15 @@ class RequestsCubit extends Cubit<RequestsState> {
         receivedFormRef = await element['formRef'];
         await receivedFormRef.get().then((onValue) {
           var form = FormModel.fromJson(onValue.data());
+          bool isValid= checkIfValidToSign(form);
           if (form.signedBy?.any(
                   (element) => element.email == Constants.userModel?.email) ??
               false) {
             signedByMe.add(form);
           } else {
-            receivedForms.add(form);
+            if (isValid) {
+              receivedForms.add(form);
+            }
           }
         });
       }

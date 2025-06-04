@@ -151,6 +151,7 @@ class SentListView extends StatelessWidget {
                     GestureDetector(
                       onTap: (){
                         cubit.deleteSentDocument(
+                          formModel: sentForm,
                           userId: Constants.userModel!.userId,
                             formID: sentForm.formID!,
                             emailsToRemoveFrom: sentForm.sentTo!);

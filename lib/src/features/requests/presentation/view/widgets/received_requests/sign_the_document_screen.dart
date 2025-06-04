@@ -1,8 +1,10 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:signature_system/src/core/functions/app_functions.dart';
+import 'package:signature_system/src/core/helper/extension/distance.dart';
 import 'package:signature_system/src/core/models/form_model.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:signature_system/src/core/shared_widgets/custom_button.dart';
@@ -140,8 +142,27 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
                   SizedBox(height: 20),
                   Expanded(
                       child: ListView(
-                        scrollDirection: Axis.horizontal,
+                        scrollDirection: Axis.vertical,
                         children: [
+                          ...List.generate(widget.formModel.sentTo!.length, (index) {
+                            bool isSigned = widget.formModel.signedBy!.any(
+                                  (element) => element.email == widget.formModel.sentTo![index],
+                            );
+                            return Row(
+                              spacing: 5,
+                              children: [
+                                SvgPicture.asset(
+                                  isSigned
+                                      ? 'assets/Signed status.svg'
+                                      : 'assets/pending_status.svg',
+                                  width: 22,
+                                  height: 22,
+                                ),
+                                Text(widget.formModel.sentTo![index]),
+                              ],
+                            );
+                          }),
+                          10.isHeight,
                           ...pdfPageSignatures,
                           SignaturesTableWidget(signatures: widget.formModel.signedBy,),
                         ],
@@ -192,8 +213,8 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
           formModel.pettyCashDocument!.isNotEmpty ||
           formModel.taxID!.isNotEmpty ||
           formModel.serviceType!.isNotEmpty ||
-          formModel.bankName!.isNotEmpty ||
-          formModel.bankAccountNumber!.isNotEmpty ||
+          formModel.bankDetails!.isNotEmpty ||
+
           formModel.invoiceNumber!.isNotEmpty ||
           formModel.commercialRegistration!.isNotEmpty ||
           formModel.advancePayment!.isNotEmpty ||
@@ -256,14 +277,10 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        if (widget.formModel.taxID!.isNotEmpty)
-                          Text("TaxID:${widget.formModel.taxID!} "),
+
                         if (widget.formModel.serviceType!.isNotEmpty)
                           Text("Service Type: ${widget.formModel.serviceType!}"),
-                        if (widget.formModel.bankName!.isNotEmpty)
-                          Text("Bank Name: ${widget.formModel.bankName!}"),
-                        if (widget.formModel.bankAccountNumber!.isNotEmpty)
-                          Text("Bank Account No.: ${widget.formModel.bankAccountNumber!}"),
+
                         if (widget.formModel.invoiceNumber!.isNotEmpty)
                           Text("Invoice Number: ${widget.formModel.invoiceNumber!}"),
                       ],
@@ -272,6 +289,17 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
                       spacing: 10,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
+                        if (widget.formModel.taxID!.isNotEmpty)
+                          ButtonWidget(
+                              verticalMargin: 2,
+                              buttonColor: Colors.green,
+                              minWidth: 230,
+                              height: 35,
+                              textStyle: TextStyle(fontSize: 12, color: Colors.white),
+                              text: "Download Tax ID",
+                              onTap: () async {
+                                AppFunctions.downloadPdf(widget.formModel.taxID!);
+                              }),
                         if (widget.formModel.commercialRegistration!.isNotEmpty)
                           ButtonWidget(
                               verticalMargin: 2,
@@ -282,6 +310,21 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
                               text: "Download Commercial Registration",
                               onTap: () async {
                                 AppFunctions.downloadPdf(widget.formModel.commercialRegistration!);
+                              }),
+                        if (widget.formModel.bankDetails!
+                            .isNotEmpty)
+                          ButtonWidget(
+                              verticalMargin: 2,
+                              buttonColor: Colors.green,
+                              minWidth: 230,
+                              height: 35,
+                              textStyle: TextStyle(
+                                  fontSize: 12, color: Colors.white),
+                              text:
+                              "Download Bank Details",
+                              onTap: () async {
+                                AppFunctions.downloadPdf(widget.formModel
+                                    .bankDetails!);
                               }),
                         if (widget.formModel.advancePayment!.isNotEmpty)
                           ButtonWidget(

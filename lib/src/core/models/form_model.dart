@@ -27,9 +27,8 @@ class FormModel {
   String? advancePayment;
   String? taxID;
 
-  String? bankName;
+  String? bankDetails;
   String? invoiceNumber;
-  String? bankAccountNumber;
   DocumentReference<Map<String, dynamic>>? formReference;
 
   FormModel({
@@ -57,9 +56,8 @@ class FormModel {
     this.electronicInvoice,
     this.advancePayment,
     this.taxID,
-    this.bankName,
+    this.bankDetails,
     this.invoiceNumber,
-    this.bankAccountNumber,
   });
 
   Map<String, dynamic> toMap() => {
@@ -97,9 +95,9 @@ class FormModel {
         if (electronicInvoice != null) 'electronicInvoice': electronicInvoice,
         if (advancePayment != null) 'advancePayment': advancePayment,
         if (taxID != null) 'taxID': taxID,
-        if (bankName != null) 'bankName': bankName,
+        if (bankDetails != null) 'bankDetails': bankDetails,
         if (invoiceNumber != null) 'invoiceNumber': invoiceNumber,
-        if (bankAccountNumber != null) 'bankAccountNumber': bankAccountNumber,
+
       };
 
   FormModel.fromJson(Map<String, dynamic>? json) {
@@ -142,9 +140,9 @@ class FormModel {
     electronicInvoice = json?['electronicInvoice'] ?? '';
     advancePayment = json?['advancePayment'] ?? '';
     taxID = json?['taxID'] ?? '';
-    bankName = json?['bankName'] ?? '';
+    bankDetails = json?['bankDetails'] ?? '';
     invoiceNumber = json?['invoiceNumber'] ?? '';
-    bankAccountNumber = json?['bankAccountNumber'] ?? '';
+
   }
 }
 
