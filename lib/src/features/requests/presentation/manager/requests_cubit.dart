@@ -396,6 +396,10 @@ class RequestsCubit extends Cubit<RequestsState> {
         return b.sentDate!.microsecondsSinceEpoch
             .compareTo(a.sentDate!.microsecondsSinceEpoch);
       });
+      signedByMeView.sort((a, b) {
+        return b.sentDate!.microsecondsSinceEpoch
+            .compareTo(a.sentDate!.microsecondsSinceEpoch);
+      });
     });
     emit(GetReceivedForms());
   }

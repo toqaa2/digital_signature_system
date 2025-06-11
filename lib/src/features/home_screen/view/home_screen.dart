@@ -209,7 +209,8 @@ class EmailGridWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text("Sent by: ${item.sentBy}",style: TextStyle(color: AppColors.mainColor),),
+                Text("${item.formTitle}",style: TextStyle(color: AppColors.mainColor),),
+                Text("Sent by: ${item.sentBy}",),
                 Text("Sent Date: ${DateFormat('yyy/MM/dd hh:mm a').format(
                     DateTime.fromMicrosecondsSinceEpoch(
                         item.sentDate?.microsecondsSinceEpoch ?? 0))}"),
