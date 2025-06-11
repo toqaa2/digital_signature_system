@@ -62,12 +62,13 @@ class _SignedByMeScreenState extends State<SignedByMeScreen> {
                             ),
                       // textColor: Color(0xFFF6F6F6),
                       title: Text(
-                        signedByMe.formName.toString(),
+                        signedByMe.formTitle.toString(),
                         // "Payment Request Memo",
                         style: TextStyle(fontSize: 14),
                       ),
                       subtitle: Text(
-                        signedByMe.sentBy.toString(),
+
+                        "Sent by : ${signedByMe.sentBy.toString()}",
                         // "Email@Waseela-cf.com",
                         style: TextStyle(
                             fontSize: 12,

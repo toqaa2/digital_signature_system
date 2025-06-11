@@ -515,7 +515,10 @@ bool?isLoadingForms;
         DocumentReference<Map<String, dynamic>> ref;
         ref = await element.data()['ref'];
         await ref.get().then((onValue) async {
-          allForms.add(FormModel.fromJson(onValue.data()));
+          FormModel form =FormModel.fromJson(onValue.data());
+          if(!form.isFullySigned!){
+            allForms.add(form);
+          }
         });
       }
     });
