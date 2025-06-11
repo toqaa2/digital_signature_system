@@ -58,7 +58,7 @@ class _ViewSinglePageWithSignatureState extends State<ViewSinglePageWithSignatur
             ),
           ),
           AspectRatio(
-            aspectRatio: 5 / 2,
+            aspectRatio: 5 / 7,
             child: Container(
               color: Colors.transparent,
             ),
