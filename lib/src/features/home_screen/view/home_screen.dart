@@ -96,57 +96,55 @@ class HomeScreen extends StatelessWidget {
                                   color: AppColors.mainColor,
                                 ),
                               ):
-                              Expanded(
-                                child: ListView.builder(
-                                  itemCount: cubit.allPaymentFormsView.length,
-                                  itemBuilder: (context, index) {
-                                    final receivedForm = cubit.allPaymentFormsView[index];
-                                    return ListTile(
-                                      title: Text(
-                                        receivedForm.formTitle.toString(),
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: AppColors.mainColor,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      subtitle: Text(
-                                        receivedForm.formName.toString(),
-                                        // "Payment Request Memo",
-                                        style: TextStyle(fontSize: 12),
-                                      ),
-                                      trailing: Column(
-                                        spacing: 4,
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Sent By: ${receivedForm.sentBy.toString()}",
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                            ),
+                              ListView.builder(
+                                itemCount: cubit.allPaymentFormsView.length,
+                                itemBuilder: (context, index) {
+                                  final receivedForm = cubit.allPaymentFormsView[index];
+                                  return ListTile(
+                                    title: Text(
+                                      receivedForm.formTitle.toString(),
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: AppColors.mainColor,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    subtitle: Text(
+                                      receivedForm.formName.toString(),
+                                      // "Payment Request Memo",
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                    trailing: Column(
+                                      spacing: 4,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Sent By: ${receivedForm.sentBy.toString()}",
+                                          style: TextStyle(
+                                            fontSize: 12,
                                           ),
-                                          Text(
-                                            "at: ${intl.DateFormat('yyy-MM-dd hh:mm a').format(DateTime.fromMicrosecondsSinceEpoch(receivedForm.sentDate?.microsecondsSinceEpoch ?? 0))}",
-                                            style: TextStyle(color: Colors.grey, fontSize: 12),
-                                          ),
-                                        ],
-                                      ),
-                                      onTap: () {
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(
-                                          builder: (context) => SignedDocumentScreen(
-                                            formModel: receivedForm,
-                                            canDownload: true,
-                                          ),
-                                        ))
-                                            .then((onValue) {
-                                          // widget.cubit
-                                          //     .getReceivedForms(Constants.userModel?.userId ?? '');
-                                        });
-                                      },
-                                    );
-                                  },
-                                ),
+                                        ),
+                                        Text(
+                                          "at: ${intl.DateFormat('yyy-MM-dd hh:mm a').format(DateTime.fromMicrosecondsSinceEpoch(receivedForm.sentDate?.microsecondsSinceEpoch ?? 0))}",
+                                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                        builder: (context) => SignedDocumentScreen(
+                                          formModel: receivedForm,
+                                          canDownload: true,
+                                        ),
+                                      ))
+                                          .then((onValue) {
+                                        // widget.cubit
+                                        //     .getReceivedForms(Constants.userModel?.userId ?? '');
+                                      });
+                                    },
+                                  );
+                                },
                               ),
                               ConditionalStepWidget(cubit: cubit),
                               // YourOtherWidget(), // Replace with your actual widget
