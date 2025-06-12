@@ -69,6 +69,7 @@ class AppFunctions {
     return img.decodeImage(imageData)!;
   }
 
+
   static Future<Uint8List> saveWidgetsAsPdf(
     List<GlobalKey> globalKeys,
     String fileName,
@@ -155,20 +156,20 @@ class AppFunctions {
       debugPrint('Downloading PDF from bytes is only supported on the web.');
     }
   }
-
-  static downloadPdf(String link) {
+  static void downloadPdf(String link) {
     try {
       final url = link;
-      final anchor = html.document.createElement('a') as html.AnchorElement
-        ..href = url
-        ..style.display = 'none'
-        ..download = 'images.pdf'; // Set the PDF file name
+      final anchor = html.AnchorElement(href: url)
+        ..target = '_blank'
+        ..rel = 'noopener'
+        ..style.display = 'none';
+
       html.document.body!.children.add(anchor);
       anchor.click();
       html.document.body!.children.remove(anchor);
-      html.Url.revokeObjectUrl(url);
     } catch (e) {
-      debugPrint('Error saving widgets as PDF: $e');
+      debugPrint('Error opening PDF in new tab: $e');
     }
   }
+
 }

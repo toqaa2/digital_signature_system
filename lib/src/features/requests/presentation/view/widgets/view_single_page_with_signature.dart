@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:signature_system/src/core/functions/app_functions.dart';
 import 'package:signature_system/src/core/models/form_model.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 

@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:signature_system/src/features/login_screen/manager/login_cubit.dart';
 import 'package:signature_system/src/features/login_screen/view/widgets/custom_text_field.dart';
-import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/helper/extension/distance.dart';
 import 'package:signature_system/src/core/shared_widgets/custom_button.dart';
 import 'package:signature_system/src/core/style/colors.dart';

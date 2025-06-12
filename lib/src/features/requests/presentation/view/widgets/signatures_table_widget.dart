@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/models/form_model.dart';
 import 'package:signature_system/src/core/style/colors.dart';
 

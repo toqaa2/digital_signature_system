@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:signature_system/src/core/models/form_model.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:signature_system/src/features/requests/presentation/view/widgets/signatures_table_widget.dart';
 import 'package:signature_system/src/features/requests/presentation/view/widgets/view_signed_document.dart';
 
 import '../../../../../core/functions/app_functions.dart';
@@ -14,11 +13,12 @@ class SignedDocumentScreen extends StatefulWidget {
     super.key,
     required this.formModel,
     this.canDownload = false,
+    this.onRequestDone,
   });
 
   final FormModel formModel;
   final bool canDownload;
-
+final VoidCallback? onRequestDone;
   @override
   State<SignedDocumentScreen> createState() => _SignedDocumentScreenState();
 }
@@ -313,6 +313,20 @@ class _SignedDocumentScreenState extends State<SignedDocumentScreen> {
                             });
                           },
                         ),
+
+                      if(widget.onRequestDone!=null)
+                      ButtonWidget(
+                        verticalMargin: 2,
+                        buttonColor: Colors.green,
+                        minWidth: 200,
+                        height: 30,
+                        textStyle: TextStyle(
+                          fontSize: 12,
+                          color:Colors.white,
+                        ),
+                        text: "Request Done",
+                        onTap:  widget.onRequestDone!,
+                      ),
                     ],
                   )
                 ],
