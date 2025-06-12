@@ -500,7 +500,15 @@ class HomeCubit extends Cubit<HomeState> {
 
   List<FormModel> allForms = [];
   List<FormModel> allFormsView = [];
+  Future<void> isDoneForm({required DocumentReference ref})async{
+    ref.set({
+      'isDone':true
+    },SetOptions(merge: true));
 
+    emit(FormIsDone());
+
+
+  }
   bool? isLoadingDashboard;
 bool?isLoadingForms;
   getAllForms() async {
@@ -531,37 +539,102 @@ bool?isLoadingForms;
 
     emit(GetAllForms());
   }
+  dateQueryAllPaymentForms(DateTimeRange? dateRange) {
+    if (dateRange != null) {
+      allPaymentFormsView = allPaymentFormsView.where((element) {
+        return (element.sentDate!.toDate().isAfter(dateRange.start) ||
+            element.sentDate!.toDate().isAtSameMomentAs(dateRange.start)) &&
+            (element.sentDate!.toDate().isBefore(dateRange.end) ||
+                element.sentDate!.toDate().isAtSameMomentAs(dateRange.end));
+      }).toList();
+      emit(Search());
+    }
+  }
+
+  searchAllPaymentForms(String? title) {
+    if (title == null || title.isEmpty) {
+      allPaymentFormsView = allPaymentForms.toList();
+      emit(Search());
+      return;
+    }
+    allPaymentFormsView.clear();
+    allPaymentFormsView =
+        allPaymentForms.where((element) => element.formTitle == title).toList();
+    emit(Search());
+  }
+
+  dateQueryCompletedPaymentForms(DateTimeRange? dateRange) {
+    if (dateRange != null) {
+      completedPaymentFormsView = completedPaymentFormsView.where((element) {
+        return (element.sentDate!.toDate().isAfter(dateRange.start) ||
+            element.sentDate!.toDate().isAtSameMomentAs(dateRange.start)) &&
+            (element.sentDate!.toDate().isBefore(dateRange.end) ||
+                element.sentDate!.toDate().isAtSameMomentAs(dateRange.end));
+      }).toList();
+      emit(Search());
+    }
+  }
+
+  searchCompletePaymentForms(String? title) {
+    if (title == null || title.isEmpty) {
+      completedPaymentFormsView = completedPaymentForms.toList();
+      emit(Search());
+      return;
+    }
+    completedPaymentFormsView.clear();
+    completedPaymentFormsView =
+        completedPaymentForms.where((element) => element.formTitle == title).toList();
+    emit(Search());
+  }
   List<FormModel> allPaymentForms = [];
   List<FormModel> allPaymentFormsView = [];
+  List<FormModel> completedPaymentForms = [];
+  List<FormModel> completedPaymentFormsView = [];
+
   getAllPaymentForms() async {
     allPaymentForms.clear();
     allPaymentFormsView.clear();
+    completedPaymentForms.clear();
+    completedPaymentFormsView.clear();
     isLoadingForms = true;
-
+emit(GetAllPaymentFormsLoading());
     await FirebaseFirestore.instance
         .collection('fullySignedForms')
         .get()
         .then((onValue) async {
       for (var element in onValue.docs) {
-        DocumentReference<Map<String, dynamic>> ref;
-        ref = await element.data()['ref'];
+        DocumentReference<Map<String, dynamic>> ref = element.data()['ref'];
 
         await ref.get().then((onValue) async {
-          var form = FormModel.fromJson(onValue.data());
-          if (form.formName!.contains('PaymentRequest')) {
-            allPaymentForms.add(form);
+          var formData = onValue.data();
+          if (formData == null) return;
+
+          var form = FormModel.fromJson(formData);
+
+          if (form.formName != null && form.formName!.contains('PaymentRequest')) {
+            bool isDone = formData['isDone'] == true;
+
+            if (isDone) {
+              completedPaymentForms.add(form);
+            } else {
+              allPaymentForms.add(form);
+            }
           }
         });
       }
     });
-
+    completedPaymentFormsView = completedPaymentForms.toList();
     allPaymentFormsView = allPaymentForms.toList();
     allPaymentFormsView.sort((a, b) {
       return b.sentDate!.microsecondsSinceEpoch
           .compareTo(a.sentDate!.microsecondsSinceEpoch);
     });
-    isLoadingForms = false;
+    completedPaymentFormsView.sort((a, b) {
+      return b.sentDate!.microsecondsSinceEpoch
+          .compareTo(a.sentDate!.microsecondsSinceEpoch);
+    });
 
+    isLoadingForms = false;
     emit(GetAllPaymentForms());
   }
 }

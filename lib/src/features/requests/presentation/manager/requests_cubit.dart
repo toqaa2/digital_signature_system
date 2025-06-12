@@ -59,6 +59,11 @@ class RequestsCubit extends Cubit<RequestsState> {
     });
     emit(GetAllFormsDone());
   }
+  List<FormModel> financeDoneForms = [];
+  List<FormModel> financeDoneFormsView = [];
+
+
+
 
   dateQueryFullySigned(DateTimeRange? dateRange) {
     if (dateRange != null) {

@@ -79,6 +79,7 @@ class _AllFormsScreenState extends State<AllFormsScreen> {
                           builder: (context) => SignedDocumentScreen(
                             formModel: receivedForm,
                             canDownload: true,
+
                           ),
                         ))
                             .then((onValue) {

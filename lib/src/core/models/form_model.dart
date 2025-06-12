@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:signature_system/src/core/constants/constants.dart';
 import 'package:signature_system/src/core/models/comment_model.dart';
 
 class FormModel {
   String? formID;
   String? formLink;
+  bool? isDone;
   String? uploadProcurment;
   String? otherDocument;
   String? pettyCashDocument;
@@ -39,6 +39,7 @@ class FormModel {
     this.otherDocument,
     this.uploadProcurment,
     this.sentTo,
+    this.isDone,
     this.comments,
     this.commentPettyCash,
     this.pettyCashDocument,
@@ -85,6 +86,7 @@ class FormModel {
           (index) => serviceType?[index],
         ),
         if (isFullySigned != null) 'isFullySigned': isFullySigned,
+        if (isDone != null) 'isDone': isDone,
         if (sentDate != null) 'sentDate': sentDate,
         if (pathURL != null) 'pathURL': pathURL,
         if (uploadProcurment != null) 'uploadProcurment': uploadProcurment,
@@ -103,6 +105,7 @@ class FormModel {
   FormModel.fromJson(Map<String, dynamic>? json) {
     otherDocument = json?['otherDocument'] ?? '';
     formID = json?['formID'];
+    isDone = json?['isDone']??=false;
     formLink = json?['formLink'];
     commentPettyCash = json?['commentPettyCash'] ?? '';
     pettyCashDocument = json?['pettyCashDocument'] ?? '';
