@@ -71,25 +71,19 @@ class AppFunctions {
 
 
   static Future<Uint8List> saveWidgetsAsPdf(
-    List<GlobalKey> globalKeys,
+    GlobalKey globalKeys,
     String fileName,
   ) async {
-    if (globalKeys.isEmpty) {
-      throw ArgumentError(
-          'The number of global keys must match the number of image names.');
-    }
+
 
     try {
-      final pddf = PdfDocument();
+
       final pdf = pw.Document();
 
-      for (int i = 0; i < globalKeys.length; i++) {
-        final globalKey = globalKeys[i];
+
+        final globalKey = globalKeys;
 
         // Check if the global key's context is valid
-        if (globalKey.currentContext == null) {
-          continue; // Skip this key if the context is invalid
-        }
 
         // Capture the widget as an image
         RenderRepaintBoundary boundary = globalKey.currentContext!
@@ -122,7 +116,7 @@ class AppFunctions {
             },
           ),
         );
-      }
+
 
       // Save the PDF to bytes
       Uint8List bytes = await pdf.save();

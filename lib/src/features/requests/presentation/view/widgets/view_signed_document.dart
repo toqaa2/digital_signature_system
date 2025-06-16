@@ -29,7 +29,7 @@ class _ViewSignedDocumentWidgetState extends State<ViewSignedDocumentWidget> {
 
   Uint8List? documentBytes;
 
-  List<GlobalKey<State<StatefulWidget>>> paintKeys = [];
+  GlobalKey<State<StatefulWidget>> paintKeys= GlobalKey<State<StatefulWidget>>();
 
   List<Widget> pdfPageSignatures = [];
 
@@ -41,11 +41,10 @@ class _ViewSignedDocumentWidgetState extends State<ViewSignedDocumentWidget> {
         final PdfDocument document = PdfDocument(inputBytes: documentBytes!);
         pageCount = document.pages.count;
         document.dispose();
-        paintKeys = List.generate(pageCount + 1, (index) => GlobalKey<State<StatefulWidget>>());
+        // paintKeys = List.generate(pageCount + 1, (index) => GlobalKey<State<StatefulWidget>>());
         pdfPageSignatures = List.generate(
           pageCount,
           (index) => ViewSinglePageWithSignature(
-            paintKey: paintKeys[index],
             formModel: widget.formModel,
             documentBytes: documentBytes!,
             page: index,
@@ -90,14 +89,15 @@ class _ViewSignedDocumentWidgetState extends State<ViewSignedDocumentWidget> {
               child: Center(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              child: Column(
-                children: [
-                  ...pdfPageSignatures,
-                  if (paintKeys.isNotEmpty)
-                    RepaintBoundary(
-                        key: paintKeys[paintKeys.length - 1],
-                        child: SignaturesTableWidget(signatures: widget.formModel.signedBy))
-                ],
+              child: RepaintBoundary(
+                key:paintKeys ,
+                child: Column(
+                  children: [
+                    ...pdfPageSignatures,
+                    // if (paintKeys.isNotEmpty)
+                      SignaturesTableWidget(signatures: widget.formModel.signedBy),
+                  ],
+                ),
               ),
             ),
           )),

@@ -542,6 +542,7 @@ bool?isLoadingForms;
   dateQueryAllPaymentForms(DateTimeRange? dateRange) {
     if (dateRange != null) {
       allPaymentFormsView = allPaymentFormsView.where((element) {
+
         return (element.sentDate!.toDate().isAfter(dateRange.start) ||
             element.sentDate!.toDate().isAtSameMomentAs(dateRange.start)) &&
             (element.sentDate!.toDate().isBefore(dateRange.end) ||
