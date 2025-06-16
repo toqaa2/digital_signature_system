@@ -191,7 +191,6 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
             formModel: widget.formModel,
             documentBytes: documentBytes!,
             page: index,
-            paintKey: paintKeys[index],
           ),
         );
         setState(() {});
