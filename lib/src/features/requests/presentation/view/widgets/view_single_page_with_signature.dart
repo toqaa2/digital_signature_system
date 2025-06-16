@@ -51,14 +51,15 @@ class _ViewSinglePageWithSignatureState extends State<ViewSinglePageWithSignatur
             enableTextSelection: false,
             interactionMode: PdfInteractionMode.pan,
           ),
-        ),
-        AspectRatio(
-          aspectRatio: 5 / 2,
-          child: Container(
-            color: Colors.transparent,
-          ),
-        )
-      ],
+          AspectRatio(
+            aspectRatio: 5 / 7,
+            child: Container(
+              color: Colors.transparent,
+            ),
+          )
+        ],
+      ),
+
     );
   }
 }

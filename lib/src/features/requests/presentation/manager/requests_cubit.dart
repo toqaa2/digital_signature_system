@@ -27,7 +27,7 @@ class RequestsCubit extends Cubit<RequestsState> {
     await FirebaseFirestore.instance.collection('users').get().then(
       (value) {
         for (var element in value.docs) {
-          if (element.data()['department'] == 'Digitilization') {
+          if (element.data()['department'] == 'Finance') {
             financeEmails.add(element.id);
           }
         }
