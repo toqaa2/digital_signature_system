@@ -29,10 +29,8 @@ class _ViewSignedDocumentWidgetState extends State<ViewSignedDocumentWidget> {
 
   Uint8List? documentBytes;
 
-  GlobalKey<State<StatefulWidget>> paintKeys= GlobalKey<State<StatefulWidget>>();
-
-  List<Widget> pdfPageSignatures = [];
-
+  List<GlobalKey<State<StatefulWidget>>> paintKeys = [];
+List<Widget> pdfPageSignatures=[];
   Future<void> loadPdfFromUrl(String url) async {
     try {
       final response = await http.get(Uri.parse(url));
@@ -41,13 +39,18 @@ class _ViewSignedDocumentWidgetState extends State<ViewSignedDocumentWidget> {
         final PdfDocument document = PdfDocument(inputBytes: documentBytes!);
         pageCount = document.pages.count;
         document.dispose();
-        // paintKeys = List.generate(pageCount + 1, (index) => GlobalKey<State<StatefulWidget>>());
+        paintKeys = List.generate(pageCount + 1, (index) => GlobalKey<State<StatefulWidget>>());
         pdfPageSignatures = List.generate(
           pageCount,
-          (index) => ViewSinglePageWithSignature(
-            formModel: widget.formModel,
-            documentBytes: documentBytes!,
-            page: index,
+          (index) => RepaintBoundary(
+            key: paintKeys[index],
+            child: ViewSinglePageWithSignature(
+              signatures: widget.formModel.signedBy!,
+              showTable: index == pageCount - 1,
+              formModel: widget.formModel,
+              documentBytes: documentBytes!,
+              page: index,
+            ),
           ),
         );
         setState(() {});
@@ -64,11 +67,13 @@ class _ViewSignedDocumentWidgetState extends State<ViewSignedDocumentWidget> {
       debugPrint('Error in received widget view is : $e');
     }
   }
+
   @override
   void initState() {
     super.initState();
     loadPdfFromUrl(widget.formModel.formLink ?? '');
   }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -89,15 +94,8 @@ class _ViewSignedDocumentWidgetState extends State<ViewSignedDocumentWidget> {
               child: Center(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              child: RepaintBoundary(
-                key:paintKeys ,
-                child: Column(
-                  children: [
-                    ...pdfPageSignatures,
-                    // if (paintKeys.isNotEmpty)
-                      SignaturesTableWidget(signatures: widget.formModel.signedBy),
-                  ],
-                ),
+              child: Column(
+                children: pdfPageSignatures,
               ),
             ),
           )),

@@ -188,6 +188,7 @@ class _SignTheDocumentScreenState extends State<SignTheDocumentScreen> {
           document.pages.count,
           (index) => ViewSinglePageWithSignature(
             key: ValueKey(index),
+            showTable: index==document.pages.count,
             formModel: widget.formModel,
             documentBytes: documentBytes!,
             page: index,

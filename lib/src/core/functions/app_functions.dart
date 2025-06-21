@@ -71,7 +71,7 @@ class AppFunctions {
 
 
   static Future<Uint8List> saveWidgetsAsPdf(
-    GlobalKey globalKeys,
+    List<GlobalKey> globalKeys,
     String fileName,
   ) async {
 
@@ -81,9 +81,14 @@ class AppFunctions {
       final pdf = pw.Document();
 
 
-        final globalKey = globalKeys;
+      for (int i = 0; i < globalKeys.length; i++) {
+        final globalKey = globalKeys[i];
 
         // Check if the global key's context is valid
+        if (globalKey.currentContext == null) {
+          print('Error: Global key context is null for index $i');
+          continue; // Skip this key if the context is invalid
+        }
 
         // Capture the widget as an image
         RenderRepaintBoundary boundary = globalKey.currentContext!
@@ -91,32 +96,32 @@ class AppFunctions {
         // Get the original size of the widget
         double originalWidth = boundary.size.width;
         double originalHeight = boundary.size.height;
+
         ui.Image image = await boundary.toImage(
             pixelRatio: 3.0); // Increase pixel ratio for better quality
         ByteData? byteData =
-            await image.toByteData(format: ui.ImageByteFormat.png);
+        await image.toByteData(format: ui.ImageByteFormat.png);
         Uint8List pngBytes = byteData!.buffer.asUint8List();
         // Calculate the aspect ratio of the original image
+        final double aspectRatio = originalWidth / originalHeight;
 
         // Define the page format and size. Match the image's aspect ratio for best results
         PdfPageFormat pageFormat =
-            PdfPageFormat(originalWidth, originalHeight, marginAll: 0);
+        PdfPageFormat(originalWidth, originalHeight, marginAll: 0);
         // Add a page with the image
         pdf.addPage(
           pw.Page(
             pageFormat: pageFormat,
             build: (pw.Context context) {
-              // return pw.Column(children: []);
-
               return pw.Center(
                   child: pw.Image(
-                fit: pw.BoxFit.fill,
-                pw.MemoryImage(pngBytes),
-              ));
+                    fit: pw.BoxFit.fill,
+                    pw.MemoryImage(pngBytes),
+                  ));
             },
           ),
         );
-
+      }
 
       // Save the PDF to bytes
       Uint8List bytes = await pdf.save();
