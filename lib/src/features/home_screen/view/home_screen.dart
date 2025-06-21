@@ -193,16 +193,15 @@ class HomeScreen extends StatelessWidget {
                                                                     true,
                                                                 onRequestDone:
                                                                     () {
-                                                                  print(
-                                                                      "Teeeeeeeeeeeeeest");
                                                                   cubit
                                                                       .isDoneForm(
                                                                           ref: receivedForm
                                                                               .formReference!)
                                                                       .then(
                                                                           (onValue) {
-                                                                    Navigator.pop(
-                                                                        context);
+                                                                    if(context.mounted) {
+                                                                      Navigator.pop(context);
+                                                                    }
                                                                     cubit
                                                                         .getAllPaymentForms();
                                                                   });
@@ -377,7 +376,7 @@ class EmailGridWidget extends StatelessWidget {
             border: Border.all(color: Colors.grey.shade300),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
+                color: Colors.grey.withAlpha(1),
                 blurRadius: 6,
                 offset: const Offset(0, 2),
               )

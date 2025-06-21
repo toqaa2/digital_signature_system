@@ -107,20 +107,8 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> resetPassword(String email) async {
-    try {
+
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-      print("Password reset email sent. Check your inbox.");
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'invalid-email') {
-        print("The email address is not valid.");
-      } else if (e.code == 'user-not-found') {
-        print("No user found for that email.");
-      } else {
-        print("An error occurred: ${e.message}");
-      }
-    } catch (e) {
-      print("An error occurred: $e");
-    }
   }
 
   void onResetPasswordPressed(String email) {

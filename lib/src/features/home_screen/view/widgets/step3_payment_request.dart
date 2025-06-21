@@ -17,7 +17,6 @@ class Step3PaymentRequest extends StatefulWidget {
 class _Step3PaymentRequestState extends State<Step3PaymentRequest> {
   @override
   Widget build(BuildContext context) {
-    print('here1');
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
       child: widget.cubit.selectedPaymentType == 'Petty Cash'

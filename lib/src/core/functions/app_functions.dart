@@ -86,7 +86,6 @@ class AppFunctions {
 
         // Check if the global key's context is valid
         if (globalKey.currentContext == null) {
-          print('Error: Global key context is null for index $i');
           continue; // Skip this key if the context is invalid
         }
 
@@ -103,7 +102,6 @@ class AppFunctions {
         await image.toByteData(format: ui.ImageByteFormat.png);
         Uint8List pngBytes = byteData!.buffer.asUint8List();
         // Calculate the aspect ratio of the original image
-        final double aspectRatio = originalWidth / originalHeight;
 
         // Define the page format and size. Match the image's aspect ratio for best results
         PdfPageFormat pageFormat =

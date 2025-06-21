@@ -315,8 +315,6 @@ class HomeCubit extends Cubit<HomeState> {
     requiredEmails = requiredEmails.reversed.toList();
     await addMeToSign(email: Constants.userModel!.email!, context: context);
     requiredEmails += selectedFormModel?.requiredToSign ?? [];
-    print(requiredEmails);
-    String formIDWithDate = formName + DateTime.now().toString();
     formReference = FirebaseFirestore.instance
         .collection('users')
         .doc(userId)

@@ -33,9 +33,6 @@ class _MyAppState extends State<MyApp> {
     await remoteConfig.fetchAndActivate();
     String remoteConfigVersion = remoteConfig.getString('version');
 
-    print("Appversion = $appVersion");
-    print("remote version = $remoteConfigVersion");
-    print(remoteConfigVersion.compareTo(appVersion));
     return remoteConfigVersion.compareTo(appVersion)==1;
   }
 

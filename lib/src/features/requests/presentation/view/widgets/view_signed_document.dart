@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:signature_system/src/core/functions/app_functions.dart';
 import 'package:signature_system/src/core/models/form_model.dart';
 import 'package:signature_system/src/core/shared_widgets/custom_button.dart';
-import 'package:signature_system/src/features/requests/presentation/view/widgets/signatures_table_widget.dart';
 import 'package:signature_system/src/features/requests/presentation/view/widgets/view_single_page_with_signature.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 

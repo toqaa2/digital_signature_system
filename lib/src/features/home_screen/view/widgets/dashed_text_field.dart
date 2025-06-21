@@ -25,7 +25,6 @@ class _DashedTextFieldState extends State<DashedTextField> {
   void didUpdateWidget(covariant DashedTextField oldWidget) {
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
-    print('updated');
     setState(() {
       controller = widget.controller;
     });
@@ -42,7 +41,6 @@ class _DashedTextFieldState extends State<DashedTextField> {
 
   @override
   Widget build(BuildContext context) {
-    print('here2 controller ${controller.toString()}');
     if (controller.text.isNotEmpty) {
       setState(() {
         isLoading = false;

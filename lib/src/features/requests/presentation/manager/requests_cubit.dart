@@ -201,9 +201,7 @@ class RequestsCubit extends Cubit<RequestsState> {
   }
 
   Future addComment(FormModel formModel) async {
-    print(formModel.comments?.length);
     comments = formModel.comments!.toList();
-    print(comments.length);
     comments.add(CommentModel(
       userID: Constants.userModel?.userId,
       comment: commentsController.text,
@@ -255,7 +253,6 @@ class RequestsCubit extends Cubit<RequestsState> {
       });
       if (isLastRequiredEmail && form.formName!.contains('PaymentRequest')) {
         List<String> financeEmails = await getFinanceTeam();
-        print(financeEmails);
         for (String financeEmail in financeEmails) {
           await AppFunctions.sendEmailToFinance(
               title: form.formTitle ?? '',
