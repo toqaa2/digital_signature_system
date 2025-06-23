@@ -3,8 +3,10 @@ description: "A new Flutter project."
 version: 1.0.13+1
 
 environment:
+
   sdk: ^3.5.0
 dependencies:
+  dartz:
   intl:
   web:
   syncfusion_flutter_pdf:

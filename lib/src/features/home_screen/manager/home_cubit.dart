@@ -265,22 +265,22 @@ class HomeCubit extends Cubit<HomeState> {
     emit(SendForm());
   }
 
-  void selectItem(String? newValue) {
-    switch (newValue) {
-      case 'Program Lunch Memo':
-        formType = FormType.programLunchMemo;
-      case 'Campaign Memo':
-        formType = FormType.campaignMemo;
-      case 'Internal Committee Memo':
-        formType = FormType.internalCommitteeMemo;
-      case 'Merchant Onboarding Memo':
-        formType = FormType.merchantOnboardingMemo;
-      case 'Payment Request Memo':
-        formType = FormType.paymentRequestMemo;
-    }
-    selectedItem = newValue!;
-    emit(ChangeValue());
-  }
+  // void selectItem(String? newValue) {
+  //   switch (newValue) {
+  //     case 'Program Lunch Memo':
+  //       formType = FormType.programLunchMemo;
+  //     case 'Campaign Memo':
+  //       formType = FormType.campaignMemo;
+  //     case 'Internal Committee Memo':
+  //       formType = FormType.internalCommitteeMemo;
+  //     case 'Merchant Onboarding Memo':
+  //       formType = FormType.merchantOnboardingMemo;
+  //     case 'Payment Request Memo':
+  //       formType = FormType.paymentRequestMemo;
+  //   }
+  //   selectedItem = newValue!;
+  //   emit(ChangeValue());
+  // }
 
   void selectPaymentType(String? newValue) {
     selectedPaymentType = newValue!;

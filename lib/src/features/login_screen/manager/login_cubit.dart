@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:signature_system/src/features/layout/view/layout_screen.dart';
+import 'package:signature_system/src/features/login_screen/data/auth_implementaion.dart';
 import 'package:signature_system/src/features/login_screen/view/change_password_screen.dart';
 import 'package:signature_system/src/core/models/user_model.dart';
 import '../../../core/constants/constants.dart';
@@ -24,39 +25,30 @@ class LoginCubit extends Cubit<LoginState> {
     String uid;
     isLoading = true;
     emit(Loading());
-    await FirebaseAuth.instance
-        .signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim())
-
+    await FirebaseAuthImpl.login(email: emailController.text.trim(), password: passwordController.text.trim())
         .then((value) async {
-      uid = emailController.text.trim();
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(uid)
-          .get()
-          .then((value) {
-        updatePassword();
+      value.fold(
+        (l) => Fluttertoast.showToast(msg: l),
+        (r) async {
+          uid = emailController.text.trim();
+          await FirebaseFirestore.instance.collection("users").doc(uid).get().then((value) {
+            updatePassword();
 
-        Constants.userModel = UserModel.fromJson(value.data());
-        isLoading = false;
-        emit(NotLoading());
-        if (context.mounted) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) => Constants.userModel!.isFirstLogin ?? true
-                  ? ChangePasswordScreen()
-                  : const LayoutScreen(),
-            ),
+            Constants.userModel = UserModel.fromJson(value.data());
+            isLoading = false;
+            emit(NotLoading());
+            if (context.mounted) {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => Constants.userModel!.isFirstLogin ?? true ? ChangePasswordScreen() : const LayoutScreen(),
+                ),
                 (route) => false,
-
-          );
-        }
-      });
-    }).catchError((onError) {
-      Fluttertoast.showToast(msg: onError.message.toString());
+              );
+            }
+          });
+        },
+      );
     });
-    emit(NotLoading());
   }
 
   bool isPasswordVisible = true;
@@ -74,13 +66,8 @@ class LoginCubit extends Cubit<LoginState> {
         emit(NotLoading());
         return;
       }
-      await FirebaseAuth.instance.currentUser!
-          .updatePassword(passwordController.text.trim())
-          .then((value) async {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(Constants.userModel?.email)
-            .set(
+      await FirebaseAuth.instance.currentUser!.updatePassword(passwordController.text.trim()).then((value) async {
+        await FirebaseFirestore.instance.collection('users').doc(Constants.userModel?.email).set(
           {
             'isFirstLogin': false,
             'password': passwordController.text.trim(),
@@ -107,8 +94,7 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> resetPassword(String email) async {
-
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
   }
 
   void onResetPasswordPressed(String email) {
@@ -120,9 +106,6 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> updatePassword() async {
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(emailController.text)
-        .update({"password": passwordController.text});
+    await FirebaseFirestore.instance.collection("users").doc(emailController.text).update({"password": passwordController.text});
   }
 }

@@ -4,7 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:signature_system/src/core/models/form_model.dart';
 import 'package:signature_system/src/features/requests/presentation/view/widgets/signatures_table_widget.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-
+// Future<Either<String, bool>> login({required String email, required String password}) async {
+//     try {
+//       UserCredential userCredentials =
+//           await FirebaseAuth.instance.signInWithEmailAndPassword(email: email.trim(), password: password.trim());
+//       if(userCredentials.user !=null){
+//         return right(true);
+//       }else{
+//         return left('This user is not registered');
+//       }
+//     } on FirebaseException catch (e) {
+//       return left(e.message??'Unknown Error');
+//     }
+//   }
 class ViewSinglePageWithSignature extends StatefulWidget {
   const ViewSinglePageWithSignature({
     super.key,
