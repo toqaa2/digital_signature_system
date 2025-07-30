@@ -15,6 +15,7 @@ abstract class Constants {
   );
   static final List<String> titleName = [
     'Other',
+    'Collection Expenses',
     'Problematic Asset Committee',
     'Procurement Committee',
     'Product / Pricing Committee',
